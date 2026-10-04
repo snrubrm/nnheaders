@@ -11,6 +11,9 @@ ScalableFont::ScalableFont()
       mLineFeed(50), mDefaultCharWidths{0, 40, 40}, _2f(2), mFontFace(0),
       mAlternateChar('?') {}
 
+// 0x7101327178 / 0x710132717c
+ScalableFont::~ScalableFont() {}
+
 // NON_MATCHING: same stores; ours merges the two halfword zeros with the size into a pair store (the original keeps
 // them as separate halfword stores)
 // 0x71013270f0

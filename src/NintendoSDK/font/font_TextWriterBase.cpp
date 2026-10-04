@@ -4,6 +4,7 @@
 
 #include <limits>
 #include <algorithm>
+#include <cmath>
 
 namespace nn::font {
 
@@ -49,6 +50,77 @@ f32 TextWriterBase<CharType>::Print(const CharType* string, s32 length, s32 arg3
     mCursorX = writer.mCursorX;
     mCursorY = writer.mCursorY;
     return width;
+}
+
+// 0x7101328db4 (char) / 0x710132a13c (u16)
+// NON_MATCHING: natural shared alignment logic changes branch structure and local writer scheduling.
+template <typename CharType>
+f32 TextWriterBase<CharType>::AdjustCursor(f32* x, f32* y, const CharType* string, s32 length) {
+    f32 bounds_x = 0.0f;
+    f32 bounds_y = 0.0f;
+    if ((mDrawFlag & 0x333) != 0 && (mDrawFlag & 0x333) != 0x300) {
+        Rectangle rect{};
+        CalculateStringRect(&rect, string, length);
+        bounds_x = rect.left + rect.right;
+        bounds_y = rect.top + rect.bottom;
+    }
+
+    switch (mDrawFlag & 0x30) {
+    case 0x10: {
+        f32 offset = bounds_x * 0.5f;
+        if (static_cast<u8>(_60))
+            offset = std::ceil(offset);
+        *x -= offset;
+        break;
+    }
+    case 0x20:
+        *x -= bounds_x;
+        break;
+    }
+    switch (mDrawFlag & 0x300) {
+    case 0x100: {
+        f32 offset = bounds_y * 0.5f;
+        if (static_cast<u8>(_60))
+            offset = std::ceil(offset);
+        *y -= offset;
+        break;
+    }
+    case 0x200:
+        *y -= bounds_y;
+        break;
+    }
+
+    f32 cursor_x = *x;
+    const u32 line_alignment = mDrawFlag & 3;
+    if (line_alignment == 1 || line_alignment == 2) {
+        f32 line_width;
+        {
+            TextWriterBase writer(*this);
+            Rectangle line{};
+            const CharType* next = string;
+            writer.SetCursorX(0.0f);
+            writer.SetCursorY(0.0f);
+            writer.CalculateLineRectImpl(&line, &next, length);
+            line_width = line.right - line.left;
+        }
+        if (line_alignment == 1) {
+            f32 bounds_half = bounds_x * 0.5f;
+            f32 line_half = line_width * 0.5f;
+            if (static_cast<u8>(_60)) {
+                bounds_half = std::ceil(bounds_half);
+                line_half = std::ceil(line_half);
+            }
+            cursor_x = *x + (bounds_half - line_half);
+        } else {
+            cursor_x = bounds_x - line_width + *x;
+        }
+    }
+    SetCursorX(cursor_x);
+    f32 cursor_y = *y;
+    if ((mDrawFlag & 0x300) != 0x300)
+        cursor_y += GetFontAscent();
+    SetCursorY(cursor_y);
+    return bounds_x;
 }
 
 // 0x7101329190

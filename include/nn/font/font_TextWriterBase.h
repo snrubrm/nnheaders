@@ -34,6 +34,7 @@ public:
     void SetWidthLimit(f32 limit) { mWidthLimit = limit; }
 
 protected:
+    f32 AdjustCursor(f32* x, f32* y, const CharType* string, s32 length);
     f32 PrintImpl(const CharType* string, s32 length, s32, const f32*, const f32*);
     bool CalculateLineRectImpl(Rectangle*, const CharType** string, s32 length);
 
