@@ -119,6 +119,12 @@ void Layout::UnbindAnimation(AnimTransform* anim) {
     anim->UnbindAll();
 }
 
+// 0x7100ab72a8
+void Layout::UnbindAnimation(Pane* pane) {
+    for (AnimTransform& anim : mAnimTransformList)
+        anim.UnbindPane(pane);
+}
+
 // 0x7100ab72fc
 void Layout::UnbindAllAnimation() {
     for (AnimTransform& anim : mAnimTransformList)

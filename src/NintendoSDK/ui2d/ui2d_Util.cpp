@@ -1,8 +1,15 @@
 #include <nn/ui2d/Util.h>
+#include <nn/ui2d/AnimTransform.h>
 #include <nn/util/util_BytePtr.h>
 #include <cstring>
 
 namespace nn::ui2d {
+
+// 0x7100abc950
+void BindAnimation(AnimTransform* transform, Group* group, bool enabled) {
+    transform->BindGroup(group);
+    transform->SetEnabled(enabled);
+}
 
 // 0x7100abc73c
 // NON_MATCHING: decimal remainder instruction selection differs.

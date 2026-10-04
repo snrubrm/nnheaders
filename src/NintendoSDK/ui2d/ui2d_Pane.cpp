@@ -155,6 +155,31 @@ const Material* Pane::FindMaterialByName(const char* name, bool recursive) const
 // 0x7100ab9414
 void Pane::DrawSelf(DrawInfo&, gfx::CommandBuffer&) {}
 
+// 0x7100ab9418
+void Pane::BindAnimation(AnimTransform* transform, bool recursive, bool enabled) {
+    transform->BindPane(this, recursive);
+    transform->SetEnabled(enabled);
+}
+
+// 0x7100ab9464
+void Pane::UnbindAnimation(AnimTransform* transform, bool recursive) {
+    UnbindAnimationSelf(transform);
+    if (recursive) {
+        for (Pane& child : mChildList)
+            child.UnbindAnimation(transform, true);
+    }
+}
+
+// 0x7100ab94d4
+void Pane::UnbindAnimationSelf(AnimTransform* transform) {
+    const u8 count = GetMaterialCount();
+    for (s32 i = 0; i < count; ++i) {
+        if (Material* material = GetMaterial(i))
+            transform->UnbindMaterial(material);
+    }
+    transform->UnbindPane(this);
+}
+
 // 0x7100ab9590
 Material* Pane::GetMaterial() const {
     if (GetMaterialCount() == 0)
