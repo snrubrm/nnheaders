@@ -1,4 +1,5 @@
 #include <nn/ui2d/Material.h>
+#include <nn/ui2d/AnimTransform.h>
 #include <nn/ui2d/BuildTypes.h>
 #include <nn/util/util_BytePtr.h>
 
@@ -46,6 +47,16 @@ void TexMap::SetWrapMode(TexWrap wrap_s, TexWrap wrap_t) {
 void TexMap::SetFilter(TexFilter min_filter, TexFilter mag_filter) {
     mMinFilter = min_filter;
     mMagFilter = mag_filter;
+}
+
+// 0x7100ac3720
+void Material::BindAnimation(AnimTransform* transform) {
+    transform->BindMaterial(this);
+}
+
+// 0x7100ac3738
+void Material::UnbindAnimation(AnimTransform* transform) {
+    transform->UnbindMaterial(this);
 }
 
 }  // namespace nn::ui2d
