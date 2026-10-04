@@ -11,6 +11,7 @@
 namespace nn::ui2d {
 
 class Pane;
+struct ResGroup;
 
 // An entry of a group's pane list (allocated with Layout::AllocateMemory, 0x18 bytes).
 struct PaneLink {
@@ -26,6 +27,7 @@ public:
         PaneLinkList;
 
     explicit Group(const char* name);
+    Group(const ResGroup*, Pane* root);
     virtual ~Group();
 
     void AppendPane(Pane* pane);

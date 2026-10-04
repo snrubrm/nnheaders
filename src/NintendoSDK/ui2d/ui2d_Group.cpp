@@ -2,6 +2,8 @@
 
 #include <new>
 #include <nn/ui2d/Layout.h>
+#include <nn/ui2d/Pane.h>
+#include <nn/util/util_BytePtr.h>
 
 namespace nn::ui2d {
 
@@ -18,6 +20,18 @@ static bool IsNameEqual(const char* a, const char* b) {
 
 // 0x7100ab629c
 Group::Group(const char* name) : mName(name), mIsUserAllocated(false) {}
+
+// NON_MATCHING: list initialization assigns a different temporary register for the borrowed resource name.
+// 0x7100ab62c4
+Group::Group(const ResGroup* resource, Pane* root)
+    : Group(util::ConstBytePtr(resource, 8).Get<char>()) {
+    // The grp1 resource retains its name and contains counted, fixed-stride pane names.
+    for (size_t index = 0; index < *util::ConstBytePtr(resource, 0x2a).Get<u16>(); ++index) {
+        const char* pane_name = util::ConstBytePtr(resource, 0x2c + index * 24).Get<char>();
+        if (Pane* pane = root->FindPaneByName(pane_name, true))
+            AppendPane(pane);
+    }
+}
 
 // 0x7100ab63d8
 Group::~Group() {
