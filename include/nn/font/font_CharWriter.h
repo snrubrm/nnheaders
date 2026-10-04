@@ -28,6 +28,11 @@ public:
         mScaleY = y;
     }
 
+    // inline-only in the original; names are guesses. Scale reads recur in
+    // GetFontWidth / GetFontHeight and eui::TagProcessor (0x7100be6fa0).
+    f32 GetScaleX() const { return mScaleX; }
+    f32 GetScaleY() const { return mScaleY; }
+
     f32 GetCursorX() const { return mCursorX; }
     f32 GetCursorY() const { return mCursorY; }
     void SetCursorX(f32 x) { mCursorX = x; }
