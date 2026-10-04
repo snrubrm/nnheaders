@@ -40,4 +40,34 @@ Material* Picture::GetMaterial(s32 index) const {
     return nullptr;
 }
 
+// 0x7100ab9fcc
+util::Unorm8x4 Picture::GetVertexColor(s32 index) const {
+    return mVertexColors[index];
+}
+
+// 0x7100ab9fd8
+void Picture::SetVertexColor(s32 index, const util::Unorm8x4& color) {
+    mVertexColors[index] = color;
+}
+
+// 0x7100ab9fe8
+u8 Picture::GetVertexColorElement(s32 index) const {
+    return mVertexColors[index / 4].v[index % 4];
+}
+
+// 0x7100aba010
+void Picture::SetVertexColorElement(s32 index, u8 value) {
+    mVertexColors[index / 4].v[index % 4] = value;
+}
+
+// 0x7100ab9fbc
+void Picture::sub_7100AB9FBC(util::Float2* coordinates, s32 index) const {
+    mTexCoordArray.GetCoord(coordinates, index);
+}
+
+// 0x7100ab9fc4
+void Picture::sub_7100AB9FC4(s32 index, const util::Float2* coordinates) {
+    mTexCoordArray.SetCoord(index, coordinates);
+}
+
 }  // namespace nn::ui2d

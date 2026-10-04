@@ -28,6 +28,13 @@ public:
     ~Picture() override;
     void Finalize(gfx::Device*) override;
 
+    util::Unorm8x4 GetVertexColor(s32) const override;
+    void SetVertexColor(s32, const util::Unorm8x4&) override;
+    u8 GetVertexColorElement(s32) const override;
+    void SetVertexColorElement(s32, u8) override;
+    void sub_7100AB9FBC(util::Float2*, s32) const;
+    void sub_7100AB9FC4(s32, const util::Float2*);
+
     u8 GetMaterialCount() const override;
     Material* GetMaterial(s32) const override;
 
