@@ -60,7 +60,7 @@ static_assert(offsetof(Layout::PartsBuildDataSet, mPartsPane) == 0x10);
 // BuildWithName (0xab67e4), BuildImpl, BuildPartsImpl (0xab68c0) and the
 // resource Pane constructor (0xab7f7c) establish the complete argument record.
 // The shader callback (0xac2cb8) fills UserShaderInformation from the resource's
-// extended user data. No layout for that callback's result is assumed here.
+// extended user data into the UserShaderInformation record.
 struct BuildArgSet {
     util::Float2 mPartsScale;
     util::Float2 mRootSize;
