@@ -8,7 +8,6 @@
 #include <nn/gfx/gfx_Device.h>
 #include <nn/types.h>
 #include <nn/ui2d/Types.h>
-#include <nn/ui2d/UserShaderInformation.h>
 
 namespace nn {
 namespace ui2d {
@@ -16,6 +15,7 @@ class AnimTransform;
 class BuildResultInformation;
 struct BuildArgSet;
 struct ResMaterial;
+struct UserShaderInformation;
 
 class TextureInfo;
 

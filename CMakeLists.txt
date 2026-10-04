@@ -314,7 +314,6 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/ui2d/ui2d_TextBox.cpp
   src/NintendoSDK/ui2d/ui2d_ResourceAccessor.cpp
   src/NintendoSDK/ui2d/ui2d_ControlSrc.cpp
-  src/NintendoSDK/ui2d/ui2d_UserShaderInformation.cpp
   src/NintendoSDK/ui2d/ui2d_Util.cpp
 
   src/NintendoSDK/nvn/nvn_CppFuncPtrImpl.h
