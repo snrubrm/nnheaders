@@ -119,6 +119,31 @@ u16 TextBox::GetStringBufferLength() const {
     return mTextBufBytes - 1;
 }
 
+// 0x7100abb0e0
+void TextBox::Finalize(gfx::Device* device) {
+    Pane::Finalize(device);
+    if (mMaterial && !mMaterial->IsUserAllocated()) {
+        mMaterial->Finalize(device);
+        Material* material = mMaterial;
+        if (material) {
+            material->~Material();
+            Layout::FreeMemory(material);
+        }
+        mMaterial = nullptr;
+    }
+    FreeStringBuffer(device);
+    if (_140) {
+        Layout::FreeMemory(_140->_8);
+        Layout::FreeMemory(_140->_0);
+        Layout::FreeMemory(_140);
+        _140 = nullptr;
+    }
+    if (_158) {
+        Layout::FreeMemory(_158);
+        _158 = nullptr;
+    }
+}
+
 // 0x7100abb1e0
 util::Unorm8x4 TextBox::GetVertexColor(s32 index) const {
     return mTextColors[index / 2];

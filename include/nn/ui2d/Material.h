@@ -54,6 +54,7 @@ public:
     Material(const Material&, gfx::Device*);
 
     void Initialize();
+    void Finalize(gfx::Device*);
     void ReserveMem(s32, s32, s32, s32, bool, s32, bool, s32, bool, bool);
     void SetupUserShaderConstantBufferInformation(nn::ui2d::UserShaderInformation const&);
 
@@ -64,6 +65,10 @@ public:
     // Names are guesses. Evidence: Material::ReserveMem (0x7100ac27c4) and Material(const Material&) (0x7100ac3398)
     // read / write the two capacity words, Picture::Append (0x7100ab9e8c) and eui::ApplyTextureInfoToMaterial
     // (0x7100bed6bc) read the count and index the array.
+    // Inline-only in the original; name follows Pane/Group. Picture::Finalize and
+    // TextBox::Finalize skip destruction when bit 0 at +0x4a is set.
+    bool IsUserAllocated() const { return detail::TestBit(mFlags, 0); }
+
     s32 GetTexMapCount() const { return mMemCount.texMap; }
     TexMap* GetTexMapArray() const { return static_cast<TexMap*>(mMem); }
 
@@ -93,7 +98,9 @@ private:
     /* 0x30 */ u8 _30[0x8];
     /* 0x38 */ void* _38;
     /* 0x40 */ void* _40;
-    /* 0x48 */ u8 _48[4];
+    /* 0x48 */ u8 _48[2];
+    /* 0x4a */ u8 mFlags;
+    /* 0x4b */ u8 _4b;
 };
 }  // namespace ui2d
 }  // namespace nn
