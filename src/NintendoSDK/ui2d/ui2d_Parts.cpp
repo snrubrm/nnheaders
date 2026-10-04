@@ -9,6 +9,8 @@ Parts::Parts(const ResParts* resource, const ResParts*, const BuildArgSet& args)
 // 0x7100ab9928
 Parts::Parts(const Parts& other) : Pane(other), mPartsLayoutLink{{}, nullptr} {}
 
+// 0x7100ab9964 / 0x7100ab9968
+Parts::~Parts() {}
 
 // 0x7100ab998c
 Pane* Parts::FindPaneByNameRecursive(const char* name) {
