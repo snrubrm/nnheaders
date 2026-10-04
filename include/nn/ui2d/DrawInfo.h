@@ -22,7 +22,7 @@ public:
     NN_RUNTIME_TYPEINFO_BASE()
 
     DrawInfo();
-    virtual ~DrawInfo() = default;
+    virtual ~DrawInfo();
 
     // 0x7100ac0714 (name after the NintendoWare layout library; copies the matrix to +0x10)
     void SetProjMtx(const util::Matrix4x4fType& matrix);

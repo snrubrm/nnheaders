@@ -350,3 +350,4 @@ endfunction()
 nn_ver(NN_WARE)
 nn_ver(NN_SDK)
 target_compile_definitions(NintendoSDK PRIVATE NN_SDK_TYPE="${NN_SDK_TYPE}")
+
