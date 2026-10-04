@@ -145,6 +145,7 @@ public:
     void SetResourceBuffer(void* resource, FontInformation* font_info, FontKerningTable* kerning,
                            gfx::MemoryPool* pool, s64 pool_offset, u64 pool_size);
     void* RemoveResourceBuffer();
+    void GenTextureNames(gfx::Device* device);
     void RegisterTextureViewToDescriptorPool(
         bool (*register_function)(gfx::DescriptorSlot*, const gfx::TextureView&, void*),
         void* user_data);

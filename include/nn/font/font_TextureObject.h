@@ -29,6 +29,10 @@ public:
     bool IsColorBlackWhiteInterpolationEnabled() const { return mBlackWhiteInterpolation; }
     void SetColorBlackWhiteInterpolationEnabled(bool enabled) { mBlackWhiteInterpolation = enabled; }
 
+    // inline-only in the original; names are guesses. Set / Reset and
+    // ResFontBase::GenTextureNames / UnloadTexture establish these data and state reads.
+    bool IsSet() const { return _18; }
+    const void* GetData() const { return mData; }
     u16 GetFormat() const { return mFormat; }
     gfx::DescriptorSlot* GetDescriptorSlot() { return &mDescriptorSlot; }
 
@@ -56,6 +60,8 @@ static_assert(sizeof(TextureObject) == 0x28);
 class ResourceTextureObject : public TextureObject {
 public:
     ResourceTextureObject() { Reset(); }
+
+    void Initialize(gfx::Device* device, gfx::MemoryPool* pool, s64 pool_offset, u64 pool_size);
 
     const gfx::TextureView* GetTextureView() const override { return mResTexture->GetTextureView(); }
     gfx::TextureView* GetTextureView() override { return mResTexture->GetTextureView(); }

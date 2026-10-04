@@ -2,6 +2,22 @@
 
 namespace nn::font {
 
+// NON_MATCHING: the compiler loads the sheet data before the resource base for the byte offset calculation.
+// 0x7101326d3c
+void ResFontBase::GenTextureNames(gfx::Device* device) {
+    if (mTexture.IsSet())
+        return;
+    const FontTextureGlyph* glyph = GetTextureGlyph();
+    const u8 sheet_count = GetActiveSheetCount();
+    mTexture.Set(GetPointer<void>(mFileHeader, glyph->sheetImage), glyph->sheetFormat,
+                 glyph->sheetWidth, glyph->sheetHeight, sheet_count, true);
+    const u16 format = mTexture.GetFormat() & 0x3fff;
+    if (format > 19 || format == 1 || format == 6 || format == 7)
+        return;
+    const s64 offset = static_cast<const u8*>(mTexture.GetData()) - static_cast<const u8*>(mResource);
+    mTexture.Initialize(device, mMemoryPool, mPoolOffset + offset, mPoolSize);
+}
+
 // 0x71013265d8
 s32 ResFontBase::GetWidth() const {
     return mFontInfo->width;
