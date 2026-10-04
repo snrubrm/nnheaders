@@ -108,5 +108,7 @@ protected:
 };
 static_assert(sizeof(Layout) == 0x60);
 
+void sub_710132B114(Layout::AllocateFunction allocate, Layout::FreeFunction free, void* user_data);
+
 }  // namespace ui2d
 }  // namespace nn

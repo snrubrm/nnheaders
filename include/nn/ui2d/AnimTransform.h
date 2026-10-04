@@ -16,6 +16,8 @@ class Group;
 class Material;
 class Pane;
 class ResourceAccessor;
+struct ResAnimationContent;
+struct ResExtUserData;
 
 // Resource blocks (offsets read by the accessors below).
 struct ResAnimationBlock {
@@ -121,6 +123,10 @@ public:
     void UnbindGroup(const Group* group) override;
     void UnbindMaterial(const Material* material) override;
     void UnbindAll() override;
+
+    virtual void AnimatePaneImpl(Pane* pane, const ResAnimationContent* content);
+    virtual void AnimateMaterialImpl(Material* material, const ResAnimationContent* content);
+    virtual void AnimateExtUserDataImpl(ResExtUserData* data, const ResAnimationContent* content);
 
 protected:
     /* 0x28 */ void* _28;  // allocations released by the destructor

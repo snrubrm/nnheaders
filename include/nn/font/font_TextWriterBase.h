@@ -24,6 +24,8 @@ public:
     s32 GetTabWidth() const { return mTabWidth; }
 
 protected:
+    static TagProcessorBase<CharType> sDefaultTagProcessor;
+
     /* 0x3c */ f32 mWidthLimit;
     /* 0x40 */ f32 mCharSpace;
     /* 0x44 */ f32 mLineSpace;

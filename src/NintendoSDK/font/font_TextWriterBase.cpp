@@ -1,6 +1,17 @@
 #include <nn/font/font_TextWriterBase.h>
+#include <nn/font/font_TagProcessorBase.h>
+
+#include <limits>
 
 namespace nn::font {
+
+template <typename CharType>
+TagProcessorBase<CharType> TextWriterBase<CharType>::sDefaultTagProcessor;
+
+template <typename CharType>
+TextWriterBase<CharType>::TextWriterBase()
+    : mWidthLimit(std::numeric_limits<f32>::max()), mCharSpace(0.0f), mLineSpace(0.0f), _48(0),
+      mTabWidth(4), mDrawFlag(0), mTagProcessor(&sDefaultTagProcessor), _60(0) {}
 
 // 0x7101329100
 template <typename CharType>

@@ -301,6 +301,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/font/font_TextureObject.cpp
   src/NintendoSDK/font/font_TextWriterBase.cpp
   src/NintendoSDK/ui2d/ui2d_AnimTransform.cpp
+  src/NintendoSDK/ui2d/ui2d_Allocator.cpp
   src/NintendoSDK/ui2d/ui2d_ArcExtractor.cpp
   src/NintendoSDK/ui2d/ui2d_DrawInfo.cpp
   src/NintendoSDK/ui2d/ui2d_Group.cpp
@@ -349,4 +350,3 @@ endfunction()
 nn_ver(NN_WARE)
 nn_ver(NN_SDK)
 target_compile_definitions(NintendoSDK PRIVATE NN_SDK_TYPE="${NN_SDK_TYPE}")
-
