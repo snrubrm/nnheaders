@@ -1,6 +1,7 @@
 #include <nn/ui2d/AnimTransform.h>
 
 #include <nn/ui2d/Layout.h>
+#include <nn/ui2d/Group.h>
 
 namespace nn::ui2d {
 
@@ -84,6 +85,12 @@ AnimTransformBasic::~AnimTransformBasic() {
 // 0x7100ab4f18
 void AnimTransformBasic::UnbindAll() {
     mBindCount = 0;
+}
+
+// 0x7100ab4e60
+void AnimTransformBasic::UnbindGroup(const Group* group) {
+    for (const PaneLink& link : group->mPaneLinkList)
+        UnbindPane(link.pane);
 }
 
 }  // namespace nn::ui2d

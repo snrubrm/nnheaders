@@ -69,6 +69,13 @@ const void* Layout::GetLayoutResourceData(const char* name) const {
     return mResourceAccessor->FindResourceByName(0x626c7974, resource_name);
 }
 
+// 0x7100ab7214
+const void* Layout::GetAnimResourceData(const char* name) const {
+    char resource_name[136];
+    util::SNPrintf(resource_name, sizeof(resource_name), "%s_%s.bflan", mName, name);
+    return mResourceAccessor->FindResourceByName(0x616e696d, resource_name);
+}
+
 // 0x7100ab7dc0
 // NON_MATCHING: Layout constructor list initialization store grouping.
 Layout* Layout::BuildPartsLayout(BuildResultInformation* result, gfx::Device* device,
