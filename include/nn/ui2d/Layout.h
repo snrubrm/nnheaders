@@ -99,6 +99,7 @@ public:
     AnimTransform* CreateAnimTransformBasic();
     bool BuildWithName(BuildResultInformation*, gfx::Device*, ResourceAccessor*, ControlCreator*,
                        TextSearcher*, const BuildOption&, const char* name, bool is_utf8);
+    const void* GetLayoutResourceData(const char* name) const;
 
 protected:
     typedef util::IntrusiveList<AnimTransform,
@@ -114,7 +115,7 @@ protected:
     /* 0x28 */ Size mLayoutSize;
     /* 0x30 */ const char* mName;
     /* 0x38 */ u64 _38;
-    /* 0x40 */ u64 _40;
+    /* 0x40 */ ResourceAccessor* mResourceAccessor;
     /* 0x48 */ PartsLayoutList mPartsLayoutList;
     /* 0x58 */ UserShaderCallback mUserShaderCallback;
 };

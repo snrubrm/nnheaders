@@ -15,6 +15,8 @@ struct ResMaterialList;
 struct ResPaneBasicInfo;
 struct ResExtUserDataList;
 struct UserShaderInformation;
+class Parts;
+struct ResParts;
 
 // BuildImpl (0xab6bcc) collects the three resource blocks and their owner.
 // Resource list names and field names are descriptive guesses.
@@ -26,6 +28,29 @@ struct BuildResSet {
     Layout* mLayout;
 };
 static_assert(sizeof(BuildResSet) == 0x28);
+
+// BuildPartsImpl constructs this 0x30-byte record at 0xab6b14. Its 0x28-byte
+// resource entries select replacement pane data and extended user data.
+struct Layout::PartsBuildDataSet {
+    struct Entry {
+        char mPaneName[24];
+        u8 mTextOverrideFlags;
+        u8 mPaneOverrideFlags;
+        u8 _1a;
+        u32 mPaneResourceOffset;
+        u32 mExtUserDataOffset;
+        u32 mPaneBasicInfoOffset;
+    };
+    s32 mCount;
+    const Entry* mEntries;
+    Parts* mPartsPane;
+    const ResParts* mResource;
+    const BuildResSet* mResources;
+    util::Float2 mPartsScale;
+};
+static_assert(sizeof(Layout::PartsBuildDataSet::Entry) == 0x28);
+static_assert(sizeof(Layout::PartsBuildDataSet) == 0x30);
+static_assert(offsetof(Layout::PartsBuildDataSet, mPartsPane) == 0x10);
 
 // BuildWithName (0xab67e4), BuildImpl, BuildPartsImpl (0xab68c0) and the
 // resource Pane constructor (0xab7f7c) establish the complete argument record.

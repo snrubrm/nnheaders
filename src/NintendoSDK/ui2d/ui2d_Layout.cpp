@@ -3,6 +3,7 @@
 #include <new>
 #include <nn/ui2d/BuildTypes.h>
 #include <nn/ui2d/ResourceAccessor.h>
+#include <nn/util.h>
 #include <nn/ui2d/TextBox.h>
 
 namespace nn::ui2d {
@@ -35,7 +36,7 @@ void Layout::SetTagProcessor(font::TagProcessorBase<u16>* tag_processor) {
 // pointer together with the node's second link
 // 0x7100ab662c
 Layout::Layout()
-    : mPane(nullptr), _20(nullptr), mLayoutSize{}, mName(nullptr), _40(0),
+    : mPane(nullptr), _20(nullptr), mLayoutSize{}, mName(nullptr), mResourceAccessor(nullptr),
       mUserShaderCallback(nullptr) {}
 
 // 0x7100ab67e4
@@ -59,6 +60,13 @@ bool Layout::BuildWithName(BuildResultInformation* result, gfx::Device* device,
     args.mIsUtf8 = is_utf8;
     args.mUserShaderCallback = mUserShaderCallback;
     return BuildImpl(result, device, resource, resource_accessor, args, nullptr);
+}
+
+// 0x7100ab7ebc
+const void* Layout::GetLayoutResourceData(const char* name) const {
+    char resource_name[72];
+    util::SNPrintf(resource_name, sizeof(resource_name), "%s.bflyt", name);
+    return mResourceAccessor->FindResourceByName(0x626c7974, resource_name);
 }
 
 // The original keeps the vtable store (a plain empty body drops it); `{ ; }` as in upstream's
