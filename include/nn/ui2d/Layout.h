@@ -28,9 +28,12 @@ public:
     virtual void UpdateAnimFrame(f32 frame);
     virtual void AnimateAndUpdateAnimFrame(f32 frame);
 
-    static void SetAllocator(void* (*)(size_t, size_t, void*), void (*)(void*, void*), void*);
-    static void AllocateMemory(size_t, size_t);
-    static void AllocateMemory(size_t);
+    typedef void* (*AllocateFunction)(size_t size, size_t alignment, void* user_data);
+    typedef void (*FreeFunction)(void* ptr, void* user_data);
+
+    static void SetAllocator(AllocateFunction, FreeFunction, void* user_data);
+    // The callers pass the alignment (the CSV's one-argument name for 0x7100ab65f4 is an IDA guess).
+    static void* AllocateMemory(size_t size, size_t alignment);
     static void FreeMemory(void* src);
 
     Pane* GetPane() const { return mPane; }
@@ -50,8 +53,9 @@ private:
     u64 _58;
     u64 _60;
 
-    static void* g_pAllocateFunction;
-    static void* g_pFreeFunction;
+    static AllocateFunction g_pAllocateFunction;
+    static FreeFunction g_pFreeFunction;
+    static void* g_pUserData;
 };
 }  // namespace ui2d
 }  // namespace nn

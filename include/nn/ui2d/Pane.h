@@ -13,9 +13,6 @@
 #include <nn/util/MathTypes.h>
 #include <nn/util/util_IntrusiveList.h>
 
-namespace nn::util {
-struct Unorm8x4;
-}
 
 namespace nn::ui2d::detail {
 
@@ -24,7 +21,7 @@ class PaneBase {
 
 public:
     PaneBase();
-    virtual ~PaneBase();
+    virtual ~PaneBase() = default;
 
     util::IntrusiveListNode m_Link;
 };
@@ -39,7 +36,7 @@ class ResPane;
 struct BuildArgSet;
 class Material;
 struct ResExtUserDataList;
-class ResExtUserData;
+struct ResExtUserData;
 
 class Pane : public detail::PaneBase {
 public:
@@ -57,12 +54,14 @@ public:
 
     ~Pane() override;
     virtual void Finalize(gfx::Device*);
-    virtual s32 GetVertexColor(s32);
+    // Color element 16 is the alpha (Pane::GetColorElement reads / writes mAlpha for it); the others are vertex
+    // color elements. A plain pane has no vertex colors (GetVertexColor returns -1, the element getter 0xff).
+    virtual util::Unorm8x4 GetVertexColor(s32) const;
     virtual void SetVertexColor(s32, util::Unorm8x4 const&);
-    virtual u8 GetColorElement(s32);
-    virtual void SetColorElement(u32, u8);
-    virtual u8 GetVertexColorElement(s32);
-    virtual void SetVertexColorElement(u32, u8);
+    virtual u8 GetColorElement(s32) const;
+    virtual void SetColorElement(s32, u8);
+    virtual u8 GetVertexColorElement(s32) const;
+    virtual void SetVertexColorElement(s32, u8);
     // The result is a byte (callers zero-extend it; Picture / TextBox return 0 or 1).
     virtual u8 GetMaterialCount() const;
     virtual Material* GetMaterial(s32) const;
@@ -73,6 +72,8 @@ public:
     virtual void BindAnimation(AnimTransform*, bool, bool);
     virtual void UnbindAnimation(AnimTransform*, bool);
     virtual void UnbindAnimationSelf(AnimTransform*);
+    // Slot 19 (0x7100ab98d8): forwards its arguments to Calculate() (the bool is masked to one bit).
+    virtual void m19(DrawInfo&, CalculateContext&, bool);
     virtual void Calculate(DrawInfo&, CalculateContext&, bool);
     virtual void Draw(DrawInfo&, gfx::CommandBuffer&);
     virtual void DrawSelf(DrawInfo&, gfx::CommandBuffer&);
@@ -84,7 +85,14 @@ public:
     void PrependChild(Pane*);
     void InsertChild(Pane*, Pane*);
     void RemoveChild(Pane*);
+    // The animated copy of the list (PaneFlagEx_ExtUserDataAnimationEnabled) replaces the resource's list as the
+    // source of the entries.
+    u16 GetExtUserDataCount() const;
+    const ResExtUserData* GetExtUserDataArray() const;
     const ResExtUserData* FindExtUserDataByName(const char*) const;
+
+    // Public: eui::Screen::m80 (0x71009cf8a4) inlines it on a pane of another class.
+    void SetVisible(bool state) { detail::SetBit(&mFlags, PaneFlag_Visible, state); }
 
     void Show() { SetVisible(true); }
     void Hide() { SetVisible(false); }
@@ -158,7 +166,6 @@ protected:
 
     const util::Float2& GetVertexPos() const;
 
-    void SetVisible(bool state) { detail::SetBit(&mFlags, PaneFlag_Visible, state); }
     void SetInfluencedAlpha(bool state) {
         detail::SetBit(&mFlags, PaneFlag_InfluencedAlpha, state);
     }
@@ -199,7 +206,7 @@ private:
     util::MatrixT4x3fType mMtx;
     const util::MatrixT4x3fType* mUserMtx;
     const ResExtUserDataList* mExtUserDataList;
-    void* mAnimExtUserData;
+    ResExtUserDataList* mAnimExtUserData;
     char mPanelName[25];
     char mUserData[9];
     u16 _DA;

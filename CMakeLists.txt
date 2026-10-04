@@ -191,6 +191,9 @@ add_library(NintendoSDK OBJECT
   include/nn/ui2d/Material.h
   include/nn/ui2d/Pane.h
   include/nn/ui2d/Parts.h
+  include/nn/ui2d/ResExtUserData.h
+  include/nn/ui2d/TextBox.h
+  include/nn/ui2d/TextureInfo.h
   include/nn/ui2d/Types.h
   include/nn/ui2d/Util.h
   include/nn/g3d/BindFuncTable.h
@@ -283,6 +286,11 @@ add_library(NintendoSDK OBJECT
   include/vapours/results/psc_results.hpp
   include/vapours/results/nfp_results.hpp
   include/nv.h
+
+  src/NintendoSDK/font/font_TagProcessorBase.cpp
+  src/NintendoSDK/ui2d/ui2d_Layout.cpp
+  src/NintendoSDK/ui2d/ui2d_Pane.cpp
+  src/NintendoSDK/ui2d/ui2d_TextBox.cpp
 
   src/NintendoSDK/nvn/nvn_CppFuncPtrImpl.h
   src/NintendoSDK/nvn/nvn_FuncPtrImpl.h

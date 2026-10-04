@@ -16,7 +16,7 @@ struct ResHermiteKey;
 class ResourceTextureInfo;
 class ShaderInfo;
 struct ResExtUserDataList;
-class ResExtUserData;
+struct ResExtUserData;
 
 bool LoadTexture(ResourceTextureInfo*, gfx::Device*, const void*);
 void LoadArchiveShader(ShaderInfo*, gfx::Device*, void*, const void*, gfx::MemoryPool*, s64, u64);
