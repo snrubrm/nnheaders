@@ -16,7 +16,7 @@ bool TextBox::InitializeStringWithTextSearcherInfo(gfx::Device* device, const Bu
                                                   const TextSearcher::TextInfo& info) {
     if (!info.mText)
         return false;
-    s32 length = info.mTextLength;
+    s32 length = u16(info.mTextLength);
     if (length == 0)
         length = std::char_traits<u16>::length(info.mText);
     if (info.mBufferLength != 0)
@@ -34,7 +34,7 @@ bool TextBox::InitializeStringWithTextSearcherInfoUtf8(gfx::Device* device, cons
                                                       const TextSearcher::TextInfoUtf8& info) {
     if (!info.mText)
         return false;
-    s32 length = info.mTextLength;
+    s32 length = u16(info.mTextLength);
     if (length == 0) {
         const char* cursor = info.mText;
         while (*cursor) {
