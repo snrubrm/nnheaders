@@ -21,7 +21,7 @@ public:
     f32 GetFontWidth() const;
     f32 GetFontHeight() const;
     f32 GetFontAscent() const;
-    void PrintGlyph(const Glyph& glyph);
+    f32 PrintGlyph(const Glyph& glyph);
 
     void SetScale(f32 x, f32 y) {
         mScaleX = x;
@@ -66,6 +66,9 @@ public:
     const Font* GetFont() const { return mFont; }
     bool IsWidthFixed() const { return mIsWidthFixed; }
     f32 GetFixedWidth() const { return mFixedWidth; }
+
+private:
+    void sub_7101323DC8(const Glyph* glyph, f32 glyph_x);
 
 protected:
     /* 0x00 */ util::Unorm8x4 mTextColors[2];  // top, bottom

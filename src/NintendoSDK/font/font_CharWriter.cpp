@@ -33,4 +33,20 @@ void CharWriter::SetFontSize(f32 width, f32 height) {
     SetScale(width / mFont->GetWidth(), height / mFont->GetHeight());
 }
 
+// 0x7101323d30
+f32 CharWriter::PrintGlyph(const Glyph& glyph) {
+    f32 advance;
+    f32 left;
+    if (mIsWidthFixed) {
+        advance = mFixedWidth;
+        left = (advance - glyph.charWidth * mScaleX) * 0.5f + mScaleX * glyph.leftWidth;
+    } else {
+        advance = glyph.charWidth * mScaleX;
+        left = mScaleX * glyph.leftWidth;
+    }
+    sub_7101323DC8(&glyph, mCursorX + left);
+    mCursorX += advance;
+    return advance;
+}
+
 }  // namespace nn::font
