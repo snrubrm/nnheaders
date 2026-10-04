@@ -26,14 +26,16 @@ TextBox::TextBox(BuildResultInformation* result, gfx::Device* device,
     const ResTextBox* formatting = resource;
     const ResTextBox* text = resource;
     const BuildResSet* font_resources = args.mResources;
+    const BuildResSet* string_resources = args.mResources;
     if (replacement) {
         if (args.mTextOverrideFlags == 0 && args._44 == 0) {
             formatting = replacement;
             text = replacement;
             font_resources = args.mOverrideResources;
+            string_resources = args.mOverrideResources;
         } else if (args.mTextOverrideFlags & 1) {
             text = replacement;
-            font_resources = args.mOverrideResources;
+            string_resources = args.mOverrideResources;
         }
     }
 
@@ -149,7 +151,7 @@ TextBox::TextBox(BuildResultInformation* result, gfx::Device* device,
     if (text->mTextIdOffset)
         mTextId = util::ConstBytePtr(text, text->mTextIdOffset).Get<char>();
     param->mFlags = formatting->mTextFlags;
-    param->mRootLayout = font_resources->mLayout;
+    param->mRootLayout = string_resources->mLayout;
     param->mText = util::ConstBytePtr(text, text->mTextOffset).Get();
     const u32 buffer_length = formatting->mTextBufferBytes / 2;
     param->mBufferLength = buffer_length ? buffer_length - 1 : 0;
