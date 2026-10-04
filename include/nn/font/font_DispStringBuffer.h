@@ -28,6 +28,7 @@ public:
     // Clears the initialized capacity; called before destruction by TextBox::FreeStringBuffer.
     void sub_7101324090(gfx::Device*);
     static size_t sub_71013240A4(const InitializeArg&);
+    static size_t sub_71013240B4(gfx::Device*, const InitializeArg&);
 
     // BuildConstantBuffer and the drawing helper keep byte offsets at 0/4, flags at8,
     // and up to eight texture/count/flag records at10. Names are inferred from those uses.

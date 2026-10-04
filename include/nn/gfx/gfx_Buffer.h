@@ -14,7 +14,11 @@ public:
 
     static const bool IsMemoryPoolRequired = true;
 
-    static size_t GetBufferAlignment(TDevice<TTarget>*, const InfoType&);
+    // inline-only in the original; forwards to the platform implementation in
+    // DispStringBuffer GPU accounting (0x71013240b4) and TextBox alignment (0x7100abcb10).
+    static size_t GetBufferAlignment(TDevice<TTarget>* device, const InfoType& info) {
+        return detail::BufferImpl<TTarget>::GetBufferAlignment(device, info);
+    }
 
     TBuffer();
     void Initialize(TDevice<TTarget>*, const InfoType&, TMemoryPool<TTarget>*, ptrdiff_t, size_t);
