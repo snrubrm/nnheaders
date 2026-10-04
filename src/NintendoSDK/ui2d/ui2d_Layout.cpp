@@ -34,7 +34,9 @@ void Layout::SetTagProcessor(font::TagProcessorBase<u16>* tag_processor) {
 // NON_MATCHING: same stores; the original stores the list node link together with the vtable and the root pane
 // pointer together with the node's second link
 // 0x7100ab662c
-Layout::Layout() : mPane(nullptr), _20(nullptr), mName(nullptr), _40(0), mUserShaderCallback(nullptr) {}
+Layout::Layout()
+    : mPane(nullptr), _20(nullptr), mLayoutSize{}, mName(nullptr), _40(0),
+      mUserShaderCallback(nullptr) {}
 
 // 0x7100ab67e4
 bool Layout::BuildWithName(BuildResultInformation* result, gfx::Device* device,

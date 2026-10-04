@@ -75,11 +75,11 @@ public:
     virtual void SetTagProcessor(font::TagProcessorBase<u16>* tag_processor);
     virtual bool BuildImpl(BuildResultInformation*, gfx::Device*, const void*, ResourceAccessor*,
                            const BuildArgSet&, const PartsBuildDataSet*);
-    virtual bool BuildPartsImpl(BuildResultInformation*, gfx::Device*, const void*,
+    virtual Pane* BuildPartsImpl(BuildResultInformation*, gfx::Device*, const void*,
                                 const PartsBuildDataSet*, BuildArgSet&, BuildResSet&, u32);
     virtual Pane* BuildPaneObj(BuildResultInformation*, gfx::Device*, u32, const void*, const void*,
                                const BuildArgSet&);
-    virtual bool BuildPartsLayout(BuildResultInformation*, gfx::Device*, const char*,
+    virtual Layout* BuildPartsLayout(BuildResultInformation*, gfx::Device*, const char*,
                                   const PartsBuildDataSet&, const BuildArgSet&);
     virtual void CalculateImpl(DrawInfo&, bool);
 
