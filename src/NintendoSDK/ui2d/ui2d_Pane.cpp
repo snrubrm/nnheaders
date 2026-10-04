@@ -131,6 +131,18 @@ void Pane::RemoveChild(Pane* child) {
 Pane::~Pane() {}
 
 // 0x7100ab8be4
+Pane* Pane::FindPaneByName(const char* name, bool recursive) {
+    if (IsNameEqual(name))
+        return this;
+    if (recursive) {
+        for (Pane& child : mChildList) {
+            if (Pane* found = child.FindPaneByNameRecursive(name))
+                return found;
+        }
+    }
+    return nullptr;
+}
+
 const Pane* Pane::FindPaneByName(const char* name, bool recursive) const {
     return const_cast<Pane*>(this)->FindPaneByName(name, recursive);
 }
@@ -162,6 +174,16 @@ Material* Pane::GetMaterial(s32) const {
 }
 
 // 0x7100ab9758
+Pane* Pane::FindPaneByNameRecursive(const char* name) {
+    if (IsNameEqual(name))
+        return this;
+    for (Pane& child : mChildList) {
+        if (Pane* found = child.FindPaneByNameRecursive(name))
+            return found;
+    }
+    return nullptr;
+}
+
 const Pane* Pane::FindPaneByNameRecursive(const char* name) const {
     return const_cast<Pane*>(this)->FindPaneByNameRecursive(name);
 }

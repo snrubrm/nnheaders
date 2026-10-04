@@ -202,6 +202,18 @@ protected:
     void setMaxPanelFlag(bool state) { detail::SetBit(&mFlags, PaneFlag_MaxPaneFlag, state); }
 
 private:
+    // inline-only in the original; name is a guess.
+    // The bounded comparison repeats in both Pane searches and Parts' recursive search.
+    bool IsNameEqual(const char* name) const {
+        for (s32 i = 0; i < 24; ++i) {
+            if (mPanelName[i] != name[i])
+                return false;
+            if (mPanelName[i] == '\0')
+                return true;
+        }
+        return true;
+    }
+
     void Initialize();
     const Pane& operator=(const Pane&);
     void CalculateScaleFromPartsRoot(util::Float2*, Pane*) const;
