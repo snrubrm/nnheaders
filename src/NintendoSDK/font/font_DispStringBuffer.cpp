@@ -2,6 +2,9 @@
 
 namespace nn::font {
 
+// 0x7101323fec
+DispStringBuffer::DispStringBuffer() = default;
+
 // 0x7101324014
 DispStringBuffer::~DispStringBuffer() {}
 
