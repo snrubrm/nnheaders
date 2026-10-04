@@ -28,6 +28,29 @@ f32 TextWriterBase<CharType>::GetLineHeight() const {
     return height * mScaleY + mLineSpace;
 }
 
+// 0x7101328578 (char) / 0x71013298f0 (u16)
+// NON_MATCHING: the compiler loads and stores cursor scalars separately.
+template <typename CharType>
+f32 TextWriterBase<CharType>::Print(const CharType* string, s32 length) {
+    TextWriterBase writer(*this);
+    const f32 width = writer.PrintImpl(string, length, 0, nullptr, nullptr);
+    mCursorX = writer.mCursorX;
+    mCursorY = writer.mCursorY;
+    return width;
+}
+
+// 0x71013285f8 (char) / 0x7101329970 (u16)
+// NON_MATCHING: the compiler loads and stores cursor scalars separately.
+template <typename CharType>
+f32 TextWriterBase<CharType>::Print(const CharType* string, s32 length, s32 arg3,
+                                  const f32* arg4, const f32* arg5) {
+    TextWriterBase writer(*this);
+    const f32 width = writer.PrintImpl(string, length, arg3, arg4, arg5);
+    mCursorX = writer.mCursorX;
+    mCursorY = writer.mCursorY;
+    return width;
+}
+
 // 0x7101329190
 // NON_MATCHING: null-string branch and line-bound update scheduling.
 template <>

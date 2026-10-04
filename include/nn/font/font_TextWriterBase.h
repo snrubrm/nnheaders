@@ -21,6 +21,8 @@ public:
     TextWriterBase();
     ~TextWriterBase();
 
+    f32 Print(const CharType* string, s32 length);
+    f32 Print(const CharType* string, s32 length, s32, const f32*, const f32*);
     f32 GetLineHeight() const;
     s32 GetTabWidth() const { return mTabWidth; }
     f32 CalculateStringWidth(const CharType* string, s32 length) const;
@@ -32,6 +34,7 @@ public:
     void SetWidthLimit(f32 limit) { mWidthLimit = limit; }
 
 protected:
+    f32 PrintImpl(const CharType* string, s32 length, s32, const f32*, const f32*);
     bool CalculateLineRectImpl(Rectangle*, const CharType** string, s32 length);
 
     static TagProcessorBase<CharType> sDefaultTagProcessor;
