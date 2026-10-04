@@ -69,6 +69,18 @@ const void* Layout::GetLayoutResourceData(const char* name) const {
     return mResourceAccessor->FindResourceByName(0x626c7974, resource_name);
 }
 
+// 0x7100ab7dc0
+// NON_MATCHING: Layout constructor list initialization store grouping.
+Layout* Layout::BuildPartsLayout(BuildResultInformation* result, gfx::Device* device,
+                                const char* name, const PartsBuildDataSet& parts,
+                                const BuildArgSet& args) {
+    const void* resource = GetLayoutResourceData(name);
+    Layout* layout = new (AllocateMemory(sizeof(Layout), 4)) Layout;
+    layout->mUserShaderCallback = mUserShaderCallback;
+    layout->BuildImpl(result, device, resource, mResourceAccessor, args, &parts);
+    return layout;
+}
+
 // The original keeps the vtable store (a plain empty body drops it); `{ ; }` as in upstream's
 // GameDataFlagSelector::~GameDataFlagSelector (commit 96101229).
 // 0x7100ab665c
