@@ -37,6 +37,20 @@ public:
     // eui::TagProcessor::BeginPrint (0x7100be5c70) and glyph drawing (0x7101323dc8).
     const util::Unorm8x4& GetTextColor(s32 index) const { return mTextColors[index]; }
 
+    // inline-only in the original; names are guesses. The two color stores recur in
+    // TextBox::SetupTextWriter (0x7100abc3d0) and eui::TagProcessor (0x7100be6c84 / be6d58).
+    void SetTextColor(const util::Unorm8x4& top, const util::Unorm8x4& bottom) {
+        mTextColors[0] = top;
+        mTextColors[1] = bottom;
+    }
+
+    // inline-only in the original; name is a guess. The font store recurs in
+    // TextBox::SetupTextWriter (0x7100abc3d0) and eui::TagProcessor (0x7100be6bec).
+    void SetFont(const Font* font) { mFont = font; }
+    // inline-only in the original; name is a guess. CharWriter's constructor and
+    // eui::TagProcessor (0x7100be6d58) write the byte at 0x39.
+    void SetAlpha(u8 alpha) { mAlpha = alpha; }
+
     const Font* GetFont() const { return mFont; }
     bool IsWidthFixed() const { return mIsWidthFixed; }
     f32 GetFixedWidth() const { return mFixedWidth; }
