@@ -23,7 +23,7 @@ void LoadArchiveShader(ShaderInfo*, gfx::Device*, void*, const void*, gfx::Memor
 void FreeArchiveShader(gfx::Device*, ShaderInfo*);
 void ConvertBlendsToArchiveShaderName(char*, s32, s32);
 bool ConvertArchiveShaderNameToBlends(s32*, s32*, const char*);
-s16 SearchShaderVariationIndexFromTable(const void*, s32, s32);
+s32 SearchShaderVariationIndexFromTable(const void*, s32, s32);
 void BindAnimation(AnimTransform*, Group*, bool);
 void UnbindAnimation(AnimTransform*, Group*);
 bool IsContain(const Pane*, const util::Float2&);
