@@ -86,9 +86,18 @@ public:
 
         reference operator*() const { return *m_Node; }
 
-        pointer operator->() const;
-        const_iterator& operator++();
-        const_iterator operator++(int);
+        pointer operator->() const { return m_Node; }
+
+        const_iterator& operator++() {
+            m_Node = m_Node->GetNext();
+            return *this;
+        }
+
+        const_iterator operator++(int) {
+            const_iterator temporary(*this);
+            ++(*this);
+            return temporary;
+        }
         const_iterator& operator--();
         const_iterator operator--(int);
         bool operator==(const const_iterator&) const;
@@ -214,18 +223,28 @@ public:
     public:
         typedef T value_type;
         typedef difference_type difference_type;
-        typedef value_type* pointer;
-        typedef value_type& reference;
+        typedef const value_type* pointer;
+        typedef const value_type& reference;
         typedef std::bidirectional_iterator_tag iterator_category;
 
-        reference operator*() const;
-        pointer operator->() const;
-        const_iterator& operator++();
-        const_iterator operator++(int);
+        reference operator*() const { return NodeTraits::GetItem(*m_Iterator); }
+
+        pointer operator->() const { return &NodeTraits::GetItem(*m_Iterator); }
+
+        const_iterator& operator++() {
+            ++m_Iterator;
+            return *this;
+        }
+
+        const_iterator operator++(int) {
+            const_iterator temporary(*this);
+            ++m_Iterator;
+            return temporary;
+        }
         const_iterator& operator--();
         const_iterator operator--(int);
         bool operator==(const const_iterator&) const;
-        bool operator!=(const const_iterator&) const;
+        bool operator!=(const const_iterator& ci) const { return m_Iterator != ci.m_Iterator; }
 
     private:
         friend class IntrusiveList;
