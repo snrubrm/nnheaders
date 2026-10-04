@@ -27,6 +27,19 @@ enum PaneFlagEx {
     PaneFlagEx_MaxPaneFlagEx
 };
 
+// Values of the two base position fields of a pane (low two bits horizontal, next two bits vertical).
+enum HorizontalPosition {
+    HorizontalPosition_Center,
+    HorizontalPosition_Left,
+    HorizontalPosition_Right,
+};
+
+enum VerticalPosition {
+    VerticalPosition_Center,
+    VerticalPosition_Top,
+    VerticalPosition_Bottom,
+};
+
 struct Size {
     static Size Create(f32, f32);
 

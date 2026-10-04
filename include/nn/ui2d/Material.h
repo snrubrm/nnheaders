@@ -13,6 +13,25 @@ class AnimTransform;
 class BuildResultInformation;
 struct UserShaderInformation;
 
+class TextureInfo;
+
+// One texture slot of a material: byte 0 holds flags (0x90 once a texture info has been set), the texture info
+// pointer is at +8 (TexMap::TexMap / TexMap::Set 0x7100aba554 / 0x7100aba568 store both).
+class TexMap {
+public:
+    explicit TexMap(const TextureInfo* info);
+    void Set(const TextureInfo* info);
+
+    const TextureInfo* GetTextureInfo() const { return mTextureInfo; }
+    // Name is a guess: the callers (eui::ApplyTextureInfoToMaterial, texture unloading) replace only the pointer.
+    void ReplaceTextureInfo(const TextureInfo* info) { mTextureInfo = info; }
+
+private:
+    u8 mFlags;
+    const TextureInfo* mTextureInfo;
+};
+static_assert(sizeof(TexMap) == 0x10);
+
 class Material {
 public:
     Material();
@@ -24,6 +43,40 @@ public:
     virtual ~Material();
     virtual void BindAnimation(nn::ui2d::AnimTransform*);
     virtual void UnbindAnimation(nn::ui2d::AnimTransform*);
+
+    // Names are guesses. Evidence: Material::ReserveMem (0x7100ac27c4) and Material(const Material&) (0x7100ac3398)
+    // read / write the two capacity words, Picture::Append (0x7100ab9e8c) and eui::ApplyTextureInfoToMaterial
+    // (0x7100bed6bc) read the count and index the array.
+    s32 GetTexMapCount() const { return mMemCount.texMap; }
+    TexMap* GetTexMapArray() const { return static_cast<TexMap*>(mMem); }
+
+private:
+    // Allocation counts (the same bit layout is used for the capacity at +0x10 and the used counts at +0x14; the
+    // order is the order of ReserveMem's parameters). Bit 16 of the capacity word is also cleared by ReserveMem.
+    struct MemInfo {
+        u32 texMap : 2;
+        u32 texSrt : 2;
+        u32 texCoordGen : 2;
+        u32 tevStage : 3;
+        u32 alphaCompare : 1;
+        u32 blend : 2;
+        u32 indirect : 1;
+        u32 projTexGen : 2;
+        u32 fontShadow : 1;
+        u32 _bit16 : 1;
+        u32 _padding : 15;
+    };
+
+    /* 0x08 */ u8 _8[0x8];
+    /* 0x10 */ MemInfo mMemCap;
+    /* 0x14 */ MemInfo mMemCount;
+    /* 0x18 */ void* mMem;  // one allocation; starts with the TexMap array
+    /* 0x20 */ u8 _20[0x8];
+    /* 0x28 */ u8 _28[0x8];
+    /* 0x30 */ u8 _30[0x8];
+    /* 0x38 */ void* _38;
+    /* 0x40 */ void* _40;
+    /* 0x48 */ u8 _48[4];
 };
 }  // namespace ui2d
 }  // namespace nn

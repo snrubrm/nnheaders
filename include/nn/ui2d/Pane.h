@@ -39,6 +39,7 @@ class ResPane;
 struct BuildArgSet;
 class Material;
 struct ResExtUserDataList;
+class ResExtUserData;
 
 class Pane : public detail::PaneBase {
 public:
@@ -62,7 +63,8 @@ public:
     virtual void SetColorElement(u32, u8);
     virtual u8 GetVertexColorElement(s32);
     virtual void SetVertexColorElement(u32, u8);
-    virtual u32 GetMaterialCount() const;
+    // The result is a byte (callers zero-extend it; Picture / TextBox return 0 or 1).
+    virtual u8 GetMaterialCount() const;
     virtual Material* GetMaterial(s32) const;
     virtual Pane* FindPaneByName(char const*, bool);
     virtual const Pane* FindPaneByName(char const*, bool) const;
@@ -82,6 +84,7 @@ public:
     void PrependChild(Pane*);
     void InsertChild(Pane*, Pane*);
     void RemoveChild(Pane*);
+    const ResExtUserData* FindExtUserDataByName(const char*) const;
 
     void Show() { SetVisible(true); }
     void Hide() { SetVisible(false); }
@@ -100,9 +103,25 @@ public:
     }
     bool IsMaxPanelFlag() const { return detail::TestBit(mFlags, PaneFlag_MaxPaneFlag); }
 
+    Pane* GetParent() const { return mParent; }
+    const char* GetName() const { return mPanelName; }
+
+    HorizontalPosition GetBasePositionH() const {
+        return static_cast<HorizontalPosition>(mBasePosition & 3);
+    }
+    VerticalPosition GetBasePositionV() const {
+        return static_cast<VerticalPosition>((mBasePosition >> 2) & 3);
+    }
+
     const util::Float3& GetPosition() const { return mPosition; }
     void SetPosition(const util::Float3& position) {
         mPosition = position;
+        SetGlobalMatrixDirty(true);
+    }
+    // Only x and y are stored (z is kept).
+    void SetPosition(const util::Float2& position) {
+        mPosition.x = position.x;
+        mPosition.y = position.y;
         SetGlobalMatrixDirty(true);
     }
 

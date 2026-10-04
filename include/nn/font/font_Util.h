@@ -7,7 +7,15 @@ public:
     const RuntimeTypeInfo* m_ParentTypeInfo;
 
     explicit RuntimeTypeInfo(const RuntimeTypeInfo* parent) : m_ParentTypeInfo(parent) {}
-    bool IsDerivedFrom(const RuntimeTypeInfo*) const;
+
+    // No out-of-line copy exists in the binary: the walk is inlined at the call sites.
+    bool IsDerivedFrom(const RuntimeTypeInfo* other) const {
+        for (const RuntimeTypeInfo* info = this; info; info = info->m_ParentTypeInfo) {
+            if (info == other)
+                return true;
+        }
+        return false;
+    }
 };
 
 }  // namespace nn::font::detail
