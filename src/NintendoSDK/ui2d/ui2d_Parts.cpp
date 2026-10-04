@@ -2,6 +2,14 @@
 
 namespace nn::ui2d {
 
+// 0x7100ab98e8
+Parts::Parts(const ResParts* resource, const ResParts*, const BuildArgSet& args)
+    : Pane(resource, args), mPartsLayoutLink{{}, nullptr} {}
+
+// 0x7100ab9928
+Parts::Parts(const Parts& other) : Pane(other), mPartsLayoutLink{{}, nullptr} {}
+
+
 // 0x7100ab998c
 Pane* Parts::FindPaneByNameRecursive(const char* name) {
     const char* own_name = GetName();
