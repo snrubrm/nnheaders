@@ -310,6 +310,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/ui2d/ui2d_Layout.cpp
   src/NintendoSDK/ui2d/ui2d_Material.cpp
   src/NintendoSDK/ui2d/ui2d_Pane.cpp
+  src/NintendoSDK/ui2d/ui2d_Parts.cpp
   src/NintendoSDK/ui2d/ui2d_Picture.cpp
   src/NintendoSDK/ui2d/ui2d_TextBox.cpp
   src/NintendoSDK/ui2d/ui2d_ResourceAccessor.cpp

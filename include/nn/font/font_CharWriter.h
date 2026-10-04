@@ -33,6 +33,13 @@ public:
     f32 GetScaleX() const { return mScaleX; }
     f32 GetScaleY() const { return mScaleY; }
 
+    // inline-only in the original; names are guesses. Reads recur in
+    // TagProcessor::processPictFontProcessTag_ (0x7100be6dcc) and
+    // CharWriter::PrintGlyph (0x7101323dc8); stores recur in the same
+    // tag handler and TextBox::SetupTextWriter (0x7100abc3d0).
+    f32 GetItalicRatio() const { return mItalicRatio; }
+    void SetItalicRatio(f32 ratio) { mItalicRatio = ratio; }
+
     f32 GetCursorX() const { return mCursorX; }
     f32 GetCursorY() const { return mCursorY; }
     void SetCursorX(f32 x) { mCursorX = x; }
