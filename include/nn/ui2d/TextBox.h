@@ -165,8 +165,8 @@ public:
     /* 0x120 */ f32 mItalicRatio;  // scaled together with mShadowItalicRatio by SetFontSize
     /* 0x124 */ util::Float2 mShadowOffset;
     /* 0x12c */ util::Float2 mShadowScale;
-    /* 0x134 */ u32 mShadowTopColor;
-    /* 0x138 */ u32 mShadowBottomColor;
+    /* 0x134 */ util::Unorm8x4 mShadowTopColor;
+    /* 0x138 */ util::Unorm8x4 mShadowBottomColor;
     /* 0x13c */ f32 mShadowItalicRatio;
     /* 0x140 */ Unk140* _140;
     /* 0x148 */ Material* mMaterial;

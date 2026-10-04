@@ -7,6 +7,8 @@
 #include <nn/ui2d/BuildTypes.h>
 #include <nn/ui2d/Layout.h>
 #include <nn/ui2d/Material.h>
+#include <nn/ui2d/ResourceAccessor.h>
+#include <nn/util/util_BytePtr.h>
 
 #include <cstring>
 #include <algorithm>
@@ -14,6 +16,147 @@
 #include <string>
 
 namespace nn::ui2d {
+
+// 0x7100aba5b8
+// NON_MATCHING: formatting defaults, resource-array loops and parameter-copy scheduling.
+TextBox::TextBox(BuildResultInformation* result, gfx::Device* device,
+                 InitializeStringParam* param, const ResTextBox* resource,
+                 const ResTextBox* replacement, const BuildArgSet& args)
+    : Pane(resource, args) {
+    const ResTextBox* formatting = resource;
+    const ResTextBox* text = resource;
+    const BuildResSet* font_resources = args.mResources;
+    if (replacement) {
+        if (args.mTextOverrideFlags == 0 && args._44 == 0) {
+            formatting = replacement;
+            text = replacement;
+            font_resources = args.mOverrideResources;
+        } else if (args.mTextOverrideFlags & 1) {
+            text = replacement;
+            font_resources = args.mOverrideResources;
+        }
+    }
+
+    mTextBuf = nullptr;
+    mTextId = nullptr;
+    mFont = nullptr;
+    mFontSize = {};
+    mLineSpace = 0.0f;
+    mCharSpace = 0.0f;
+    mTagProcessor = nullptr;
+    mTextBufBytes = 0;
+    mTextLength = 0;
+    mBits = {};
+    mTextPosition = 0;
+    mIsUtf8 = false;
+    mItalicRatio = 0.0f;
+    mShadowOffset = {};
+    mShadowScale = {{1.0f, 1.0f}};
+    mShadowTopColor = {{0, 0, 0, 255}};
+    mShadowBottomColor = {{0, 0, 0, 255}};
+    mShadowItalicRatio = 0.0f;
+    _140 = nullptr;
+    mMaterial = nullptr;
+    mDispStringBuf = nullptr;
+    _158 = nullptr;
+
+    mTextColors[0] = formatting->mTextColors[0];
+    mTextColors[1] = formatting->mTextColors[1];
+    mFontSize = formatting->mFontSize;
+    mTextPosition = formatting->mTextPosition;
+    mBits.textAlignment = formatting->mLineAlignment;
+    mCharSpace = formatting->mCharSpace;
+    mLineSpace = formatting->mLineSpace;
+    mItalicRatio = formatting->mItalicRatio;
+    mBits._3 = formatting->mTextFlags & 1;
+    _11d = (formatting->mTextFlags >> 5) & 1;
+    mShadowOffset = formatting->mShadowOffset;
+    mShadowScale = formatting->mShadowScale;
+    mShadowTopColor = formatting->mShadowColors[0];
+    mShadowBottomColor = formatting->mShadowColors[1];
+    mShadowItalicRatio = formatting->mShadowItalicRatio;
+    mBits._4 = (formatting->mTextFlags >> 2) & 1;
+    mBits._5 = (formatting->mTextFlags >> 3) & 1;
+    mBits._7 = (formatting->mTextFlags >> 4) & 1;
+    mBits._6 = 1;
+
+    // This variable resource payload starts with a byte count. Copy each
+    // float from its serialized position without assuming struct alignment.
+    if ((formatting->mTextFlags & 0x40) && formatting->_a0Offset) {
+        util::ConstBytePtr values(formatting, formatting->_a0Offset);
+        const u8 count = *values.Get<u8>();
+        values.Advance(1);
+        _140 = static_cast<Unk140*>(Layout::AllocateMemory(sizeof(Unk140), 4));
+        _140->_8 = static_cast<f32*>(Layout::AllocateMemory(sizeof(f32) * 16, 4));
+        _140->_0 = static_cast<f32*>(Layout::AllocateMemory(sizeof(f32) * 16, 4));
+        for (size_t i = 0; i < 16; ++i) {
+            if (i < count) {
+                std::memcpy(&_140->_8[i], values.Get(), sizeof(f32));
+                values.Advance(sizeof(f32));
+            } else {
+                _140->_8[i] = 0.0f;
+            }
+        }
+        for (size_t i = 0; i < 16; ++i) {
+            if (i < count) {
+                std::memcpy(&_140->_0[i], values.Get(), sizeof(f32));
+                values.Advance(sizeof(f32));
+            } else {
+                _140->_0[i] = 0.0f;
+            }
+        }
+    }
+
+    // Original 0xaba8dc..9dc decodes the flags and the optional relative table;
+    // its remaining resource fields and full extent are intentionally unknown.
+    if (mBits._7 && formatting->mPerCharacterTransformOffset) {
+        const void* transform = util::ConstBytePtr(
+            formatting, formatting->mPerCharacterTransformOffset).Get();
+        const bool has_entries = *util::ConstBytePtr(transform, 0xa).Get<u8>() != 0;
+        const void* entries = has_entries ? util::ConstBytePtr(transform, 0xc).Get() : nullptr;
+        const u8 count = entries ? *util::ConstBytePtr(entries, 4).Get<u8>() : 0;
+        const size_t size = count ? offsetof(Unk158, _18) + sizeof(Unk158::Entry) * count :
+                                   sizeof(Unk158);
+        _158 = static_cast<Unk158*>(Layout::AllocateMemory(size, 4));
+        _158->_0 = *util::ConstBytePtr(transform).Get<f32>();
+        _158->_4 = *util::ConstBytePtr(transform, 4).Get<f32>();
+        _158->_8 = nullptr;
+        _158->_10 = *util::ConstBytePtr(transform, 8).Get<u8>();
+        _158->_11 = *util::ConstBytePtr(transform, 9).Get<u8>();
+        _158->_12 = count;
+        if (entries) {
+            const u32* offsets = util::ConstBytePtr(entries, 8).Get<u32>();
+            for (size_t i = 0; i < count; ++i) {
+                const void* entry = util::ConstBytePtr(entries, offsets[i]).Get();
+                _158->_18[i]._0 = entry;
+                _158->_18[i]._8 = *util::ConstBytePtr(entry, 1).Get<u8>();
+            }
+        }
+    }
+
+    // Font-name offsets are relative to the table at +0xc, unlike materials.
+    const void* font_names = util::ConstBytePtr(font_resources->mFontList, 0xc).Get();
+    const u32* font_offsets = util::ConstBytePtr(font_names).Get<u32>();
+    const char* font_name = util::ConstBytePtr(font_names,
+                                            font_offsets[formatting->mFontIndex]).Get<char>();
+    mFont = font_resources->mResourceAccessor->AcquireFont(device, font_name);
+    const ResMaterial* material = detail::GetResMaterial(args.mResources, resource->mMaterialIndex);
+    const ResMaterial* replacement_material = replacement ?
+        detail::GetResMaterial(args.mOverrideResources, replacement->mMaterialIndex) : nullptr;
+    void* memory = Layout::AllocateMemory(sizeof(Material), 4);
+    mMaterial = memory ? new (memory) Material(result, device, material, replacement_material, args) :
+                         nullptr;
+    if (text->mTextIdOffset)
+        mTextId = util::ConstBytePtr(text, text->mTextIdOffset).Get<char>();
+    param->mFlags = formatting->mTextFlags;
+    param->mRootLayout = font_resources->mLayout;
+    param->mText = util::ConstBytePtr(text, text->mTextOffset).Get();
+    const u32 buffer_length = formatting->mTextBufferBytes / 2;
+    param->mBufferLength = buffer_length ? buffer_length - 1 : 0;
+    const s32 text_length = text->mTextBytes / 2;
+    param->mTextLength = text_length ? text_length - 1 : 0;
+    mIsUtf8 = args.mIsUtf8;
+}
 
 // 0x7100abcb10
 size_t sub_7100ABCB10(gfx::Device* device, int gpu_access, size_t size) {
