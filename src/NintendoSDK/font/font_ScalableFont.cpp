@@ -4,6 +4,13 @@
 
 namespace nn::font {
 
+// 0x7101327110
+// NON_MATCHING: member initialization store ordering and width-byte grouping.
+ScalableFont::ScalableFont()
+    : mTextureCache(nullptr), mWidth(40), mHeight(50), mAscent(40), mBaselinePos(40),
+      mLineFeed(50), mDefaultCharWidths{0, 40, 40}, _2f(2), mFontFace(0),
+      mAlternateChar('?') {}
+
 // NON_MATCHING: same stores; ours merges the two halfword zeros with the size into a pair store (the original keeps
 // them as separate halfword stores)
 // 0x71013270f0
