@@ -311,6 +311,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/ui2d/ui2d_Pane.cpp
   src/NintendoSDK/ui2d/ui2d_Picture.cpp
   src/NintendoSDK/ui2d/ui2d_TextBox.cpp
+  src/NintendoSDK/ui2d/ui2d_ResourceAccessor.cpp
 
   src/NintendoSDK/nvn/nvn_CppFuncPtrImpl.h
   src/NintendoSDK/nvn/nvn_FuncPtrImpl.h
@@ -351,4 +352,3 @@ endfunction()
 nn_ver(NN_WARE)
 nn_ver(NN_SDK)
 target_compile_definitions(NintendoSDK PRIVATE NN_SDK_TYPE="${NN_SDK_TYPE}")
-
