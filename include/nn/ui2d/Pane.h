@@ -42,7 +42,23 @@ class Pane : public detail::PaneBase {
 public:
     NN_RUNTIME_TYPEINFO_BASE();
 
-    struct CalculateContext;
+    // Set's original body identifies the matrix, scale, alpha and layout fields.
+    // The drawing-object pointer's type and the final flag remain unknown.
+    struct CalculateContext {
+        void Set(const DrawInfo&, const Layout*);
+
+        void* _0 = nullptr;
+        const util::Matrix4x3fType* mViewMtx = nullptr;
+        util::Float2 mLocationAdjustScale{};
+        f32 mAlpha = 0.0f;
+        bool _1c = false;
+        bool _1d = false;
+        bool _1e = false;
+        bool _1f = false;
+        const Layout* mLayout = nullptr;
+        bool _28 = false;
+    };
+    static_assert(sizeof(CalculateContext) == 0x30);
 
     typedef util::IntrusiveList<Pane, util::IntrusiveListMemberNodeTraits<
                                           detail::PaneBase, &detail::PaneBase::m_Link, Pane>>

@@ -11,6 +11,9 @@
 
 namespace nn::ui2d {
 
+class GraphicsResource;
+class Layout;
+
 // Layout evidence: DrawInfo::DrawInfo (0x7100ac06a4) stores identity matrices at +0x10 (4x4), +0x50 and +0x80
 // (4x3 each) and 1.0 / 1.0 at +0xb0; the next function (0x7100ac0714) copies a 4x4 matrix to +0x10; Pane::LoadMtx
 // copies the pane matrix to +0x80; eui::SetupDrawInfoOrtho writes the camera matrix to +0x50 and projects through
@@ -32,7 +35,9 @@ public:
     /* 0x50 */ util::Matrix4x3fType mViewMtx;
     /* 0x80 */ util::Matrix4x3fType mModelViewMtx;
     /* 0xb0 */ util::Float2 mLocationAdjustScale;
-    /* 0xb8 */ u64 _b8[6];  // zero-initialised
+    /* 0xb8 */ GraphicsResource* mGraphicsResource;
+    /* 0xc0 */ const Layout* mLayout;
+    /* 0xc8 */ u64 _c8[4];  // zero-initialised
     /* 0xe8 */ u8 _e8[3];
     /* 0xeb */ u8 _eb[7];  // zero-initialised flag bytes (Pane::LoadMtx clears the one at +0xee)
 };
