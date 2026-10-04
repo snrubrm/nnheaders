@@ -129,8 +129,16 @@ public:
     virtual void AnimateExtUserDataImpl(ResExtUserData* data, const ResAnimationContent* content);
 
 protected:
+    // SetResource allocates an array of 16-byte records. The target is a pane,
+    // material or extended user-data entry; each bind stores it with its content.
+    struct Binding {
+        const void* target;
+        const ResAnimationContent* content;
+    };
+    static_assert(sizeof(Binding) == 0x10);
+
     /* 0x28 */ void* _28;  // allocations released by the destructor
-    /* 0x30 */ void* _30;
+    /* 0x30 */ Binding* _30;
     /* 0x38 */ u16 mBindCount;
     /* 0x3a */ u16 _3a;
 };

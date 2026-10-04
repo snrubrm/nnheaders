@@ -2,6 +2,7 @@
 
 #include <nn/ui2d/Layout.h>
 #include <nn/ui2d/Group.h>
+#include <nn/ui2d/Pane.h>
 
 namespace nn::ui2d {
 
@@ -91,6 +92,78 @@ void AnimTransformBasic::UnbindAll() {
 void AnimTransformBasic::UnbindGroup(const Group* group) {
     for (const PaneLink& link : group->mPaneLinkList)
         UnbindPane(link.pane);
+}
+
+// 0x7100ab4eb4
+// NON_MATCHING: the natural u16 decrement emits sub rather than wrapped addition.
+void AnimTransformBasic::UnbindMaterial(const Material* material) {
+    for (s32 i = 0; i < mBindCount; ++i) {
+        if (_30[i].target != material)
+            continue;
+        if (i + 1 < mBindCount)
+            _30[i] = _30[mBindCount - 1];
+        --mBindCount;
+        break;
+    }
+}
+
+// 0x7100ab4cdc
+// NON_MATCHING: loop/callback scheduling and the natural u16 decrement differ.
+void AnimTransformBasic::UnbindPane(const Pane* pane) {
+    const u16 count = mBindCount;
+    for (s32 i = 0; i < count; ++i) {
+        if (_30[i].target == pane) {
+            if (i + 1 < mBindCount)
+                _30[i] = _30[mBindCount - 1];
+            --mBindCount;
+            break;
+        }
+
+        const u16 user_data_count = pane->GetExtUserDataCount();
+        for (s32 j = 0; j < user_data_count; ++j) {
+            if (_30[i].target == &pane->GetExtUserDataArray()[j]) {
+                if (i + 1 < mBindCount)
+                    _30[i] = _30[mBindCount - 1];
+                --mBindCount;
+                break;
+            }
+        }
+    }
+
+    const u8 material_count = pane->GetMaterialCount();
+    for (s32 i = 0; i < material_count; ++i) {
+        if (Material* material = pane->GetMaterial(i))
+            UnbindMaterial(material);
+    }
+}
+
+// 0x7100ab5088
+void AnimTransformBasic::AnimateMaterial(Material* material) {
+    if (!mEnabled)
+        return;
+    for (s32 i = 0; i < mBindCount; ++i) {
+        if (_30[i].target == material) {
+            AnimateMaterialImpl(material, _30[i].content);
+            break;
+        }
+    }
+}
+
+// 0x7100ab4fb4
+void AnimTransformBasic::AnimatePane(Pane* pane) {
+    if (!mEnabled)
+        return;
+    for (s32 i = 0; i < mBindCount; ++i) {
+        if (_30[i].target == pane) {
+            AnimatePaneImpl(pane, _30[i].content);
+            const u8 material_count = pane->GetMaterialCount();
+            for (s32 j = 0; j < material_count; ++j) {
+                if (Material* material = pane->GetMaterial(j))
+                    AnimateMaterial(material);
+            }
+            break;
+        }
+    }
 }
 
 }  // namespace nn::ui2d
