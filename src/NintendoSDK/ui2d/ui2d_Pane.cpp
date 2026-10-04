@@ -3,6 +3,7 @@
 #include <cstring>
 #include <nn/ui2d/ResExtUserData.h>
 #include <nn/ui2d/BuildTypes.h>
+#include <nn/ui2d/DrawInfo.h>
 #include <nn/ui2d/Layout.h>
 #include <nn/ui2d/Parts.h>
 #include <nn/util/util_StringUtil.h>
@@ -152,6 +153,19 @@ const Material* Pane::FindMaterialByName(const char* name, bool recursive) const
     return const_cast<Pane*>(this)->FindMaterialByName(name, recursive);
 }
 
+// 0x7100ab936c
+void Pane::Draw(DrawInfo& draw_info, gfx::CommandBuffer& command_buffer) {
+    if (!detail::TestBit(mFlags, PaneFlag_Visible) ||
+        !detail::TestBit(mFlags, PaneFlag_IsConstantBufferReady))
+        return;
+    if (detail::TestBit(mFlagEx, PaneFlagEx_IsConstantBufferReadySelf) && mGlobalAlpha != 0)
+        DrawSelf(draw_info, command_buffer);
+    if (detail::TestBit(mFlags, PaneFlag_InfluencedAlpha) && mGlobalAlpha == 0)
+        return;
+    for (Pane& child : mChildList)
+        child.Draw(draw_info, command_buffer);
+}
+
 // 0x7100ab9414
 void Pane::DrawSelf(DrawInfo&, gfx::CommandBuffer&) {}
 
@@ -178,6 +192,13 @@ void Pane::UnbindAnimationSelf(AnimTransform* transform) {
             transform->UnbindMaterial(material);
     }
     transform->UnbindPane(this);
+}
+
+// 0x7100ab9560
+// NON_MATCHING: memcpy destination address has an extra register move.
+void Pane::LoadMtx(DrawInfo& draw_info) {
+    std::memcpy(&draw_info.mModelViewMtx, &mMtx, sizeof(mMtx));
+    draw_info._eb[3] = 0;
 }
 
 // 0x7100ab9590

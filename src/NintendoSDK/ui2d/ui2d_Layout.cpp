@@ -2,6 +2,7 @@
 
 #include <new>
 #include <nn/ui2d/BuildTypes.h>
+#include <nn/ui2d/DrawInfo.h>
 #include <nn/ui2d/ResourceAccessor.h>
 #include <nn/util.h>
 #include <nn/ui2d/TextBox.h>
@@ -177,6 +178,19 @@ void* Layout::AllocateMemory(size_t size, size_t alignment) {
 // 0x7100ab6610
 void Layout::FreeMemory(void* ptr) {
     g_pFreeFunction(ptr, g_pUserData);
+}
+
+// 0x7100ab7770
+void Layout::Draw(DrawInfo& draw_info, gfx::CommandBuffer& command_buffer) {
+    if (!mPane)
+        return;
+    draw_info._eb[4] = 1;
+    draw_info._eb[0] = 6;
+    draw_info._eb[1] = 0;
+    draw_info._eb[2] = 0;
+    draw_info.mLayout = this;
+    mPane->Draw(draw_info, command_buffer);
+    draw_info.mLayout = nullptr;
 }
 
 }  // namespace nn::ui2d
