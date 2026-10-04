@@ -27,7 +27,8 @@ class CharStrmReader {
 public:
     typedef u32 (CharStrmReader::*ReadFunction)();
 
-    CharStrmReader(const void* stream, ReadFunction function) : mStream(stream), mReadFunction(function) {}
+    CharStrmReader(const void* stream, ReadFunction function)
+        : mStream(static_cast<const char*>(stream)), mReadFunction(function) {}
 
     u32 Next() { return (this->*mReadFunction)(); }
 
@@ -36,7 +37,8 @@ public:
     u32 ReadNextCharCp1252();
     u32 ReadNextCharSjis();
 
-    const void* mStream;
+    // ReadNextCharUtf8 passes this field directly to PickOutCharacterFromUtf8String(char*, const char**).
+    const char* mStream;
     ReadFunction mReadFunction;
 };
 static_assert(sizeof(CharStrmReader) == 0x18);

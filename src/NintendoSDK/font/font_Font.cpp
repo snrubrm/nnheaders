@@ -13,12 +13,10 @@ Font::~Font() {}
 void Font::Finalize(gfx::Device*) {}
 
 // 0x7100ab4144
-// NON_MATCHING: a typed local cursor avoids aliasing the void stream field.
+// NON_MATCHING: the character buffer and converted code occupy different stack slots.
 u32 CharStrmReader::ReadNextCharUtf8() {
-    const char* stream = static_cast<const char*>(mStream);
     char character[4];
-    util::PickOutCharacterFromUtf8String(character, &stream);
-    mStream = stream;
+    util::PickOutCharacterFromUtf8String(character, &mStream);
     u32 code = 0;
     util::ConvertCharacterUtf8ToUtf32(&code, character);
     return code;
@@ -26,23 +24,23 @@ u32 CharStrmReader::ReadNextCharUtf8() {
 
 // 0x7100ab4180
 u32 CharStrmReader::ReadNextCharUtf16() {
-    const u16* stream = static_cast<const u16*>(mStream);
+    const u16* stream = reinterpret_cast<const u16*>(mStream);
     const u32 character = *stream++;
-    mStream = stream;
+    mStream = reinterpret_cast<const char*>(stream);
     return character;
 }
 
 // 0x7100ab4194
 u32 CharStrmReader::ReadNextCharCp1252() {
-    const u8* stream = static_cast<const u8*>(mStream);
+    const u8* stream = reinterpret_cast<const u8*>(mStream);
     const u32 character = *stream++;
-    mStream = stream;
+    mStream = reinterpret_cast<const char*>(stream);
     return character;
 }
 
 // 0x7100ab41a8
 u32 CharStrmReader::ReadNextCharSjis() {
-    const u8* stream = static_cast<const u8*>(mStream);
+    const u8* stream = reinterpret_cast<const u8*>(mStream);
     u32 character = stream[0];
     if ((character >= 0x81 && character <= 0x9f) || character >= 0xe0) {
         character = (character << 8) | stream[1];
@@ -50,7 +48,7 @@ u32 CharStrmReader::ReadNextCharSjis() {
     } else {
         stream += 1;
     }
-    mStream = stream;
+    mStream = reinterpret_cast<const char*>(stream);
     return character;
 }
 
