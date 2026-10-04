@@ -29,6 +29,14 @@ public:
     void CalculateStringRect(Rectangle*, const CharType* string, s32 length) const;
     const CharType* FindPosOfWidthLimit(const CharType* string, s32 length) const;
 
+    // inline-only in the original; names are guesses. Both TextBox writer setup
+    // variants (0x7100abc3d0 / abc4d8) repeat these field writes; the constructor,
+    // GetLineHeight and tag processing establish their initial values and uses.
+    void SetLineSpace(f32 space) { mLineSpace = space; }
+    void SetCharSpace(f32 space) { mCharSpace = space; }
+    void SetTagProcessor(TagProcessorBase<CharType>* processor) { mTagProcessor = processor; }
+    void SetDrawFlag(u32 flag) { mDrawFlag = flag; }
+
     // inline-only in the original; name is a guess (TextBox::SetupTextWriter and
     // TextBoxEx::adjustText_ both set this width limit).
     void SetWidthLimit(f32 limit) { mWidthLimit = limit; }

@@ -1,6 +1,8 @@
 #include <nn/ui2d/TextBox.h>
 
 #include <nn/font/font_DispStringBuffer.h>
+#include <nn/font/font_TextWriterBase.h>
+#include <limits>
 #include <nn/gfx/gfx_Buffer.h>
 #include <nn/gfx/gfx_BufferInfo.h>
 #include <nn/util.h>
@@ -16,6 +18,45 @@
 #include <string>
 
 namespace nn::ui2d {
+
+// NON_MATCHING: natural text-alignment selection changes load order and conditional arithmetic.
+// 0x7100abc3d0
+void TextBox::SetupTextWriter(font::TextWriterBase<u16>* writer) const {
+    writer->SetCursorX(0.0f);
+    writer->SetCursorY(0.0f);
+    writer->SetFont(mFont);
+    if (mFont) {
+        writer->SetFontSize(mFontSize.width, mFontSize.height);
+        writer->SetLineSpace(mLineSpace);
+        writer->SetCharSpace(mCharSpace);
+        writer->SetWidthLimit(mBits._6 ? GetSize().width : std::numeric_limits<f32>::max());
+    }
+    if (mTagProcessor)
+        writer->SetTagProcessor(mTagProcessor);
+
+    u32 flags = 0;
+    if (!_140) {
+        const u32 horizontal = mTextPosition & 3;
+        const u32 vertical = (mTextPosition >> 2) & 3;
+        if (mBits.textAlignment != 0)
+            flags = mBits.textAlignment - 1;
+        else if (horizontal == HorizontalPosition_Center)
+            flags = 1;
+        else if (horizontal == HorizontalPosition_Right)
+            flags = 2;
+        if (horizontal == HorizontalPosition_Center)
+            flags |= 0x10;
+        else if (horizontal == HorizontalPosition_Right)
+            flags |= 0x20;
+        if (vertical == VerticalPosition_Center)
+            flags |= 0x100;
+        else if (vertical == VerticalPosition_Bottom)
+            flags |= 0x200;
+    }
+    writer->SetDrawFlag(flags);
+    writer->SetTextColor(mTextColors[0], mTextColors[1]);
+    writer->SetItalicRatio(mItalicRatio);
+}
 
 // 0x7100aba5b8
 // NON_MATCHING: formatting defaults, resource-array loops and parameter-copy scheduling.
