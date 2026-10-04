@@ -12,8 +12,9 @@ namespace nn::font {
 template <typename CharType>
 class TextWriterBase;
 
-// Layout evidence: TagProcessorBase::Process / CalculateRect read the writer at +0 and the x origin at +0x18 (the
-// middle members follow the NintendoWare font library).
+// Layout evidence: TextWriterBase<u16>::PrintImpl (0x7101329a04) constructs this
+// 0x30-byte context at sp+0xb0 and copies CharWriter scaleX/scaleY to +0x20/+0x24.
+// TagProcessorBase reads the writer at +0 and x origin at +0x18.
 template <typename CharType>
 struct PrintContext {
     TextWriterBase<CharType>* writer;
@@ -21,7 +22,8 @@ struct PrintContext {
     const CharType* strEnd;
     f32 xOrigin;
     f32 yOrigin;
-    u32 flags;
+    f32 scaleX;
+    f32 scaleY;
     void* userData;
 };
 

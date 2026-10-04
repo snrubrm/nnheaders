@@ -33,6 +33,10 @@ public:
     void SetCursorX(f32 x) { mCursorX = x; }
     void SetCursorY(f32 y) { mCursorY = y; }
 
+    // inline-only in the original; name is a guess. The color reads recur in
+    // eui::TagProcessor::BeginPrint (0x7100be5c70) and glyph drawing (0x7101323dc8).
+    const util::Unorm8x4& GetTextColor(s32 index) const { return mTextColors[index]; }
+
     const Font* GetFont() const { return mFont; }
     bool IsWidthFixed() const { return mIsWidthFixed; }
     f32 GetFixedWidth() const { return mFixedWidth; }
