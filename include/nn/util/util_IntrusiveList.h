@@ -37,8 +37,16 @@ private:
         m_Prev = node;
     }
 
-    void LinkNext(IntrusiveListNode*);
-    void LinkNext(IntrusiveListNode*, IntrusiveListNode*);
+    void LinkNext(IntrusiveListNode* node) { LinkNext(node, node); }
+
+    // Inlined in the original (e.g. in eui::ButtonBase::On).
+    void LinkNext(IntrusiveListNode* first, IntrusiveListNode* last) {
+        IntrusiveListNode* node = last->m_Prev;
+        first->m_Prev = this;
+        node->m_Next = m_Next;
+        m_Next->m_Prev = node;
+        m_Next = first;
+    }
 
     void Unlink() { Unlink(m_Next); }
 
@@ -130,7 +138,7 @@ public:
 
     void push_back(reference node) { m_Root.LinkPrev(&node); }
 
-    void push_front(reference);
+    void push_front(reference node) { m_Root.LinkNext(&node); }
     void pop_back();
 
     void pop_front() { m_Root.GetNext()->Unlink(); }
@@ -278,7 +286,7 @@ public:
 
     void push_back(reference value) { m_Implementation.push_back(ToNode(value)); }
 
-    void push_front(reference);
+    void push_front(reference value) { m_Implementation.push_front(ToNode(value)); }
     void pop_back();
     void pop_front();
     reference front();
