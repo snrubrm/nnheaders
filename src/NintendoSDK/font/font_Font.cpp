@@ -1,4 +1,5 @@
 #include <nn/font/font_Font.h>
+#include <nn/util.h>
 
 namespace nn::font {
 
@@ -10,6 +11,18 @@ Font::~Font() {}
 
 // 0x7100ab3680
 void Font::Finalize(gfx::Device*) {}
+
+// 0x7100ab4144
+// NON_MATCHING: a typed local cursor avoids aliasing the void stream field.
+u32 CharStrmReader::ReadNextCharUtf8() {
+    const char* stream = static_cast<const char*>(mStream);
+    char character[4];
+    util::PickOutCharacterFromUtf8String(character, &stream);
+    mStream = stream;
+    u32 code = 0;
+    util::ConvertCharacterUtf8ToUtf32(&code, character);
+    return code;
+}
 
 // 0x7100ab4180
 u32 CharStrmReader::ReadNextCharUtf16() {
