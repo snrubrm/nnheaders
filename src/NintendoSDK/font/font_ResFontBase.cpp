@@ -1,4 +1,5 @@
 #include <nn/font/font_ResFont.h>
+#include <nn/util/util_BytePtr.h>
 
 namespace nn::font {
 
@@ -16,6 +17,58 @@ void ResFontBase::GenTextureNames(gfx::Device* device) {
         return;
     const s64 offset = static_cast<const u8*>(mTexture.GetData()) - static_cast<const u8*>(mResource);
     mTexture.Initialize(device, mMemoryPool, mPoolOffset + offset, mPoolSize);
+}
+
+// 0x7101326af8
+// NON_MATCHING: shared resource-table lookup changes binary-search control flow and register allocation.
+s32 ResFontBase::GetKerning(u32 first, u32 second) const {
+    if (!mKerningTable || !mKerningEnabled)
+        return 0;
+    if (mRangeCount != 0) {
+        s32 index = 0;
+        for (; index < mRangeCount; ++index) {
+            if (mRangeBegin[index] <= first && first <= mRangeEnd[index])
+                break;
+        }
+        if (index >= mRangeCount)
+            return 0;
+        for (index = 0; index < mRangeCount; ++index) {
+            if (mRangeBegin[index] <= second && second <= mRangeEnd[index])
+                break;
+        }
+        if (index >= mRangeCount)
+            return 0;
+    }
+
+    // The KRNG payload contains a counted table of character codes and relative
+    // second-table offsets. Each second table contains character codes and signed kerning.
+    const auto find_entry = [](const void* table, u32 code) -> const void* {
+        u32 begin = 0;
+        u32 end = *util::ConstBytePtr(table).Get<u16>();
+        for (;;) {
+            const u32 index = (begin + end) / 2;
+            const util::ConstBytePtr entry(table, 4 + index * 8);
+            const u32 entry_code = *entry.Get<u32>();
+            if (entry_code == code)
+                return entry.Get();
+            if (entry_code < code) {
+                if (begin == index)
+                    return nullptr;
+                begin = index;
+            } else {
+                if (end == index)
+                    return nullptr;
+                end = index;
+            }
+        }
+    };
+    const void* entry = find_entry(mKerningTable, first);
+    if (!entry)
+        return 0;
+    const u32 table_offset = *util::ConstBytePtr(entry, 4).Get<u32>();
+    const void* second_table = util::ConstBytePtr(mKerningTable, table_offset).Get();
+    entry = find_entry(second_table, second);
+    return entry ? *util::ConstBytePtr(entry, 4).Get<s16>() : 0;
 }
 
 // 0x71013265d8
