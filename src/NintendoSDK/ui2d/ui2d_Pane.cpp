@@ -101,6 +101,30 @@ Pane::Pane(const ResPane* resource, const BuildArgSet& args)
     SetGlobalMatrixDirty(true);
 }
 
+// 0x7100ab8840
+void Pane::Finalize(gfx::Device* device) {
+    PaneList::iterator it = mChildList.begin();
+    while (it != mChildList.end()) {
+        PaneList::iterator current = it++;
+        mChildList.erase(current);
+        if (current->IsUserAllocated())
+            continue;
+        Parts* parts = font::DynamicCast<Parts>(&*current);
+        if (parts && parts->mPartsLayoutLink.layout) {
+            Layout* layout = parts->mPartsLayoutLink.layout;
+            layout->Finalize(device);
+            layout->~Layout();
+            Layout::FreeMemory(layout);
+        } else {
+            current->Finalize(device);
+            current->~Pane();
+            Layout::FreeMemory(&*current);
+        }
+    }
+    if (detail::TestBit(mFlagEx, PaneFlagEx_ExtUserDataAnimationEnabled))
+        Layout::FreeMemory(mAnimExtUserData);
+}
+
 // 0x7100ab89e0
 void Pane::AppendChild(Pane* child) {
     mChildList.push_back(*child);

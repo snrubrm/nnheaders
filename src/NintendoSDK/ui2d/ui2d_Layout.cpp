@@ -3,6 +3,7 @@
 #include <new>
 #include <nn/ui2d/BuildTypes.h>
 #include <nn/ui2d/DrawInfo.h>
+#include <nn/ui2d/Group.h>
 #include <nn/ui2d/ResourceAccessor.h>
 #include <nn/util.h>
 #include <nn/ui2d/TextBox.h>
@@ -39,6 +40,38 @@ void Layout::SetTagProcessor(font::TagProcessorBase<u16>* tag_processor) {
 Layout::Layout()
     : mPane(nullptr), _20(nullptr), mLayoutSize{}, mName(nullptr), mResourceAccessor(nullptr),
       mUserShaderCallback(nullptr) {}
+
+// 0x7100ab6674
+void Layout::Finalize(gfx::Device* device) {
+    mPartsLayoutList.clear();
+    if (_20) {
+        GroupContainer* groups = _20;
+        groups->~GroupContainer();
+        FreeMemory(groups);
+    }
+    _20 = nullptr;
+    if (mPane && !mPane->IsUserAllocated()) {
+        mPane->Finalize(device);
+        Pane* pane = mPane;
+        if (pane) {
+            pane->~Pane();
+            FreeMemory(pane);
+        }
+        mPane = nullptr;
+    }
+    AnimTransformList::iterator it = mAnimTransformList.begin();
+    while (it != mAnimTransformList.end()) {
+        AnimTransformList::iterator current = it++;
+        mAnimTransformList.erase(current);
+        current->~AnimTransform();
+        FreeMemory(&*current);
+    }
+    mLayoutSize = {};
+    mName = nullptr;
+    _38 = 0;
+    mResourceAccessor = nullptr;
+    mUserShaderCallback = nullptr;
+}
 
 // 0x7100ab67e4
 bool Layout::BuildWithName(BuildResultInformation* result, gfx::Device* device,

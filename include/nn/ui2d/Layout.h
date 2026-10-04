@@ -22,6 +22,7 @@ class TagProcessorBase;
 namespace ui2d {
 class AnimResource;
 class DrawInfo;
+class GroupContainer;
 class Pane;
 class Parts;
 class ShaderInfo;
@@ -59,6 +60,7 @@ public:
 
     Layout();
     virtual ~Layout();
+    void Finalize(gfx::Device* device);
 
     virtual void DeleteAnimTransform(AnimTransform*);
     virtual void BindAnimation(AnimTransform*);
@@ -116,7 +118,7 @@ protected:
 
     /* 0x08 */ AnimTransformList mAnimTransformList;
     /* 0x18 */ Pane* mPane;
-    /* 0x20 */ void* _20;
+    /* 0x20 */ GroupContainer* _20;
     /* 0x28 */ Size mLayoutSize;
     /* 0x30 */ const char* mName;
     /* 0x38 */ u64 _38;
