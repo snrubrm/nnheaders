@@ -42,6 +42,12 @@ public:
     virtual void EndPrint(PrintContext<CharType>* context);
     virtual void BeginCalculateRect(PrintContext<CharType>* context);
     virtual void EndCalculateRect(PrintContext<CharType>* context);
+
+protected:
+    // inline-only in the original (Process and CalculateRect both run them); names follow the NintendoWare font
+    // library
+    void ProcessLinefeed(PrintContext<CharType>* context) const;
+    void ProcessTab(PrintContext<CharType>* context) const;
 };
 
 }  // namespace nn::font

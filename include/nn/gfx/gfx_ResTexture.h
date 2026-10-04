@@ -21,10 +21,12 @@ public:
 
     TextureInfo* GetTextureInfo();
     const TextureInfo* GetTextureInfo() const;
-    detail::Caster<void> GetTexture();
-    detail::Caster<const void> GetTexture() const;
-    detail::Caster<void> GetTextureView();
-    detail::Caster<const void> GetTextureView() const;
+    detail::Caster<void> GetTexture() { return detail::Caster<void>(pTexture.Get()); }
+    detail::Caster<const void> GetTexture() const { return detail::Caster<const void>(pTexture.Get()); }
+    detail::Caster<void> GetTextureView() { return detail::Caster<void>(pTextureView.Get()); }
+    detail::Caster<const void> GetTextureView() const {
+        return detail::Caster<const void>(pTextureView.Get());
+    }
     const char* GetName() const;
     size_t GetDataSize() const;
     ResUserData* GetUserData(int);

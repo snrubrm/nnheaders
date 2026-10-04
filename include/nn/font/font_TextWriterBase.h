@@ -1,0 +1,37 @@
+/**
+ * @file font_TextWriterBase.h
+ * @brief Writes strings of CharType characters with a TagProcessorBase.
+ */
+
+#pragma once
+
+#include <nn/font/font_CharWriter.h>
+
+namespace nn::font {
+
+template <typename CharType>
+class TagProcessorBase;
+
+// Instantiated for char and unsigned short. Members past CharWriter: TextWriterBase::TextWriterBase (0x71013290b8),
+// GetLineHeight (0x7101329104), TextBox::SetupTextWriter, the tab / line processing in TagProcessorBase.
+template <typename CharType>
+class TextWriterBase : public CharWriter {
+public:
+    TextWriterBase();
+    ~TextWriterBase();
+
+    f32 GetLineHeight() const;
+    s32 GetTabWidth() const { return mTabWidth; }
+
+protected:
+    /* 0x3c */ f32 mWidthLimit;
+    /* 0x40 */ f32 mCharSpace;
+    /* 0x44 */ f32 mLineSpace;
+    /* 0x48 */ u32 _48;
+    /* 0x4c */ s32 mTabWidth;
+    /* 0x50 */ u32 mDrawFlag;
+    /* 0x58 */ TagProcessorBase<CharType>* mTagProcessor;
+    /* 0x60 */ u16 _60;
+};
+
+}  // namespace nn::font

@@ -6,12 +6,9 @@
 #pragma once
 
 #include <nn/font/font_Util.h>
+#include <nn/gfx/gfx_Device.h>
 #include <nn/gfx/gfx_DescriptorSlot.h>
 #include <nn/types.h>
-
-namespace nn::gfx {
-class Device;
-}
 
 namespace nn::ui2d {
 

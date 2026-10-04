@@ -289,7 +289,14 @@ add_library(NintendoSDK OBJECT
   include/vapours/results/nfp_results.hpp
   include/nv.h
 
+  src/NintendoSDK/font/font_CharWriter.cpp
+  src/NintendoSDK/font/font_Font.cpp
+  src/NintendoSDK/font/font_ResFont.cpp
+  src/NintendoSDK/font/font_ResFontBase.cpp
+  src/NintendoSDK/font/font_ScalableFont.cpp
   src/NintendoSDK/font/font_TagProcessorBase.cpp
+  src/NintendoSDK/font/font_TextureObject.cpp
+  src/NintendoSDK/font/font_TextWriterBase.cpp
   src/NintendoSDK/ui2d/ui2d_DrawInfo.cpp
   src/NintendoSDK/ui2d/ui2d_Layout.cpp
   src/NintendoSDK/ui2d/ui2d_Material.cpp
