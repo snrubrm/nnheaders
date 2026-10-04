@@ -28,10 +28,14 @@ public:
     void Copy(void const*, s32);
     bool CompareCopiedInstanceTest(nn::ui2d::detail::TexCoordArray const&) const;
 
-    u16 _0;
+    // Reserve allocates 32 bytes per entry; coordinate accessors copy four Float2 values.
+    using Quad = nn::util::Float2[4];
+
+    u8 mCapacity;
+    u8 mSize;
     u16 _2;
     u32 _4;                     // padding?
-    nn::ui2d::Layout* mLayout;  // _8
+    Quad* mCoords;  // _8
 };
 }  // namespace detail
 }  // namespace ui2d
