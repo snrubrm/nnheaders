@@ -5,6 +5,33 @@
 
 namespace nn::ui2d {
 
+// 0x7100ab89e0
+void Pane::AppendChild(Pane* child) {
+    mChildList.push_back(*child);
+    child->mParent = this;
+    child->SetGlobalMatrixDirty(true);
+}
+
+// 0x7100ab8a14
+void Pane::PrependChild(Pane* child) {
+    mChildList.insert(mChildList.begin(), *child);
+    child->mParent = this;
+    child->SetGlobalMatrixDirty(true);
+}
+
+// 0x7100ab8a48
+void Pane::InsertChild(Pane* position, Pane* child) {
+    mChildList.insert(mChildList.iterator_to(*position), *child);
+    child->mParent = this;
+    child->SetGlobalMatrixDirty(true);
+}
+
+// 0x7100ab8a78
+void Pane::RemoveChild(Pane* child) {
+    mChildList.erase(mChildList.iterator_to(*child));
+    child->mParent = nullptr;
+}
+
 // 0x7100ab7f78
 Pane::~Pane() {}
 
@@ -47,6 +74,34 @@ const Pane* Pane::FindPaneByNameRecursive(const char* name) const {
 // 0x7100ab982c
 const Material* Pane::FindMaterialByNameRecursive(const char* name) const {
     return const_cast<Pane*>(this)->FindMaterialByNameRecursive(name);
+}
+
+// 0x7100ab8aac
+util::Float2 Pane::GetVertexPos() const {
+    util::Float2 pos;
+    pos.x = 0.0f;
+    pos.y = 0.0f;
+    switch (GetBasePositionH()) {
+    case HorizontalPosition_Center:
+        pos.x = mSize.width * -0.5f;
+        break;
+    case HorizontalPosition_Right:
+        pos.x = -mSize.width;
+        break;
+    default:
+        break;
+    }
+    switch (GetBasePositionV()) {
+    case VerticalPosition_Center:
+        pos.y = mSize.height * 0.5f;
+        break;
+    case VerticalPosition_Bottom:
+        pos.y = mSize.height;
+        break;
+    default:
+        break;
+    }
+    return pos;
 }
 
 // 0x7100ab8b08

@@ -40,6 +40,19 @@ enum VerticalPosition {
     VerticalPosition_Bottom,
 };
 
+// Texture map sampler settings (values follow the NintendoWare layout library; TexMap::SetWrapMode / SetFilter
+// store them in two and one bits).
+enum TexWrap {
+    TexWrap_Clamp,
+    TexWrap_Repeat,
+    TexWrap_Mirror,
+};
+
+enum TexFilter {
+    TexFilter_Near,
+    TexFilter_Linear,
+};
+
 struct Size {
     static Size Create(f32, f32);
 

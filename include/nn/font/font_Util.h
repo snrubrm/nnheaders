@@ -41,3 +41,17 @@ public:
     virtual const nn::font::detail::RuntimeTypeInfo* GetRuntimeTypeInfo() const {                  \
         return GetRuntimeTypeInfoStatic();                                                         \
     }
+
+namespace nn::font {
+
+// The runtime type check the library's callers inline (the target type's static info is evaluated before the
+// null test; Layout::SetTagProcessor's helper 0x7100ab79a8 does it for TextBox).
+template <typename T, typename U>
+T* DynamicCast(U* object) {
+    const detail::RuntimeTypeInfo* type = T::GetRuntimeTypeInfoStatic();
+    if (object && object->GetRuntimeTypeInfo()->IsDerivedFrom(type))
+        return static_cast<T*>(object);
+    return nullptr;
+}
+
+}  // namespace nn::font

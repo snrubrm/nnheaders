@@ -68,6 +68,12 @@ public:
     const font::Font* GetFont() const;
     const Size& GetFontSize() const { return mFontSize; }
     void SetFontSize(const Size& size);
+    void SetTagProcessor(font::TagProcessorBase<u16>* tag_processor) {
+        const bool changed = mTagProcessor != tag_processor;
+        mBits.textChanged |= changed;
+        if (changed)
+            mTagProcessor = tag_processor;
+    }
     // The text rectangle (0x7100abb2f0).
     void GetTextDrawRect() const;
 

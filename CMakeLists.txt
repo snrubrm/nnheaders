@@ -187,10 +187,12 @@ add_library(NintendoSDK OBJECT
   include/nn/util/util_StringUtil.h
   include/nn/util/util_StringView.h
   include/nn/ui2d/detail/TexCoordArray.h
+  include/nn/ui2d/DrawInfo.h
   include/nn/ui2d/Layout.h
   include/nn/ui2d/Material.h
   include/nn/ui2d/Pane.h
   include/nn/ui2d/Parts.h
+  include/nn/ui2d/Picture.h
   include/nn/ui2d/ResExtUserData.h
   include/nn/ui2d/TextBox.h
   include/nn/ui2d/TextureInfo.h
@@ -288,8 +290,11 @@ add_library(NintendoSDK OBJECT
   include/nv.h
 
   src/NintendoSDK/font/font_TagProcessorBase.cpp
+  src/NintendoSDK/ui2d/ui2d_DrawInfo.cpp
   src/NintendoSDK/ui2d/ui2d_Layout.cpp
+  src/NintendoSDK/ui2d/ui2d_Material.cpp
   src/NintendoSDK/ui2d/ui2d_Pane.cpp
+  src/NintendoSDK/ui2d/ui2d_Picture.cpp
   src/NintendoSDK/ui2d/ui2d_TextBox.cpp
 
   src/NintendoSDK/nvn/nvn_CppFuncPtrImpl.h

@@ -6,6 +6,7 @@
 #pragma once
 
 #include <nn/types.h>
+#include <nn/ui2d/Types.h>
 
 namespace nn {
 namespace ui2d {
@@ -15,19 +16,33 @@ struct UserShaderInformation;
 
 class TextureInfo;
 
-// One texture slot of a material: byte 0 holds flags (0x90 once a texture info has been set), the texture info
-// pointer is at +8 (TexMap::TexMap / TexMap::Set 0x7100aba554 / 0x7100aba568 store both).
+// One texture slot of a material: byte 0 holds the sampler settings (0x90 once a texture info has been set: clamp,
+// linear / linear), the texture info pointer is at +8 (TexMap::TexMap / TexMap::Set 0x7100aba554 / 0x7100aba568
+// store both).
 class TexMap {
 public:
+    TexMap();
     explicit TexMap(const TextureInfo* info);
+    ~TexMap();
+    void Finalize();
     void Set(const TextureInfo* info);
+    void SetWrapMode(TexWrap wrap_s, TexWrap wrap_t);
+    void SetFilter(TexFilter min_filter, TexFilter mag_filter);
 
     const TextureInfo* GetTextureInfo() const { return mTextureInfo; }
     // Name is a guess: the callers (eui::ApplyTextureInfoToMaterial, texture unloading) replace only the pointer.
     void ReplaceTextureInfo(const TextureInfo* info) { mTextureInfo = info; }
 
 private:
-    u8 mFlags;
+    union {
+        u8 mFlags;
+        struct {
+            u8 mWrapS : 2;
+            u8 mWrapT : 2;
+            u8 mMinFilter : 3;
+            u8 mMagFilter : 1;
+        };
+    };
     const TextureInfo* mTextureInfo;
 };
 static_assert(sizeof(TexMap) == 0x10);

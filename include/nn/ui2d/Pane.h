@@ -112,6 +112,7 @@ public:
     bool IsMaxPanelFlag() const { return detail::TestBit(mFlags, PaneFlag_MaxPaneFlag); }
 
     Pane* GetParent() const { return mParent; }
+    PaneList& GetChildList() { return mChildList; }
     const char* GetName() const { return mPanelName; }
 
     HorizontalPosition GetBasePositionH() const {
@@ -164,7 +165,7 @@ protected:
     virtual Material* FindMaterialByNameRecursive(const char*);
     virtual const Material* FindMaterialByNameRecursive(const char*) const;
 
-    const util::Float2& GetVertexPos() const;
+    util::Float2 GetVertexPos() const;
 
     void SetInfluencedAlpha(bool state) {
         detail::SetBit(&mFlags, PaneFlag_InfluencedAlpha, state);
