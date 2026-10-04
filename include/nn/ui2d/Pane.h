@@ -21,7 +21,7 @@ class PaneBase {
     NN_NO_COPY(PaneBase);
 
 public:
-    PaneBase();
+    PaneBase() = default;
     virtual ~PaneBase() = default;
 
     util::IntrusiveListNode m_Link;

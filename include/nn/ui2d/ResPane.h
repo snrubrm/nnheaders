@@ -27,6 +27,18 @@ static_assert(sizeof(ResPane) == 0x54);
 static_assert(offsetof(ResPane, mTranslation) == 0x2c);
 static_assert(offsetof(ResPane, mSize) == 0x4c);
 
+// Known override-data prefix used by Pane's resource constructor. Its full
+// resource extent is not established; no allocation uses sizeof this type.
+struct ResPaneBasicInfo {
+    char mUserData[8];
+    util::Float3 mTranslation;
+    util::Float3 mRotation;
+    util::Float2 mScale;
+    Size mSize;
+    u8 mAlpha;
+};
+static_assert(offsetof(ResPaneBasicInfo, mAlpha) == 0x30);
+
 // Fixed 'prt1' prefix. BuildPartsImpl (0xab68c0) consumes the count and scale;
 // 0x28-byte replacement entries and the layout-name string follow this header.
 struct ResParts : ResPane {
