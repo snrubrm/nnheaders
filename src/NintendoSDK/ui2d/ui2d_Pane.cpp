@@ -101,6 +101,26 @@ Pane::Pane(const ResPane* resource, const BuildArgSet& args)
     SetGlobalMatrixDirty(true);
 }
 
+// 0x7100ab865c
+// NON_MATCHING: list initialization and copied-field register scheduling.
+Pane::Pane(const Pane& other)
+    : mParent(nullptr), mPosition(other.mPosition), mRotation(other.mRotation),
+      mScale(other.mScale), mSize(other.mSize), mFlags(other.mFlags),
+      mAlpha(other.mAlpha), mGlobalAlpha(other.mGlobalAlpha),
+      mBasePosition(other.mBasePosition), mFlagEx(other.mFlagEx),
+      mUserMtx(nullptr), mExtUserDataList(other.mExtUserDataList), mAnimExtUserData(nullptr) {
+    std::memcpy(&mMtx, &other.mMtx, sizeof(mMtx));
+    SetName(other.mPanelName);
+    util::Strlcpy(mUserData, other.mUserData, sizeof(mUserData));
+    SetUserMatrix(false);
+    SetGlobalMatrixDirty(true);
+    if (const ResExtUserDataList* animated_data = other.mAnimExtUserData) {
+        mAnimExtUserData = static_cast<ResExtUserDataList*>(
+            Layout::AllocateMemory(animated_data->blockHeader.size, 4));
+        std::memcpy(mAnimExtUserData, animated_data, animated_data->blockHeader.size);
+    }
+}
+
 // 0x7100ab8840
 void Pane::Finalize(gfx::Device* device) {
     PaneList::iterator it = mChildList.begin();
