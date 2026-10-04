@@ -28,6 +28,12 @@ public:
     // Known fields end at +0xf8. BuildPaneObj allocates 0x100 bytes; the
     // original alignment or remaining extent is not established yet.
     PartsLayoutLink mPartsLayoutLink;
+
+protected:
+    Pane* FindPaneByNameRecursive(const char*) override;
+    const Pane* FindPaneByNameRecursive(const char*) const override;
+    Material* FindMaterialByNameRecursive(const char*) override;
+    const Material* FindMaterialByNameRecursive(const char*) const override;
 };
 }  // namespace ui2d
 }  // namespace nn
