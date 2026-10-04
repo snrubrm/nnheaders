@@ -23,6 +23,7 @@ namespace ui2d {
 class AnimResource;
 class DrawInfo;
 class Pane;
+class Parts;
 class BuildResultInformation;
 struct BuildArgSet;
 struct BuildResSet;
@@ -100,6 +101,7 @@ public:
     bool BuildWithName(BuildResultInformation*, gfx::Device*, ResourceAccessor*, ControlCreator*,
                        TextSearcher*, const BuildOption&, const char* name, bool is_utf8);
     const void* GetLayoutResourceData(const char* name) const;
+    Parts* FindPartsPaneByName(const char* name);
 
 protected:
     typedef util::IntrusiveList<AnimTransform,
