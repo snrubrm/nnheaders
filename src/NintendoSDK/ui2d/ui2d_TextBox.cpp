@@ -1,6 +1,7 @@
 #include <nn/ui2d/TextBox.h>
 
 #include <nn/font/font_DispStringBuffer.h>
+#include <nn/util.h>
 #include <nn/ui2d/Layout.h>
 #include <nn/ui2d/Material.h>
 
@@ -9,6 +10,47 @@
 #include <string>
 
 namespace nn::ui2d {
+
+// 0x7100abacd8
+bool TextBox::InitializeStringWithTextSearcherInfo(gfx::Device* device, const BuildArgSet&,
+                                                  const TextSearcher::TextInfo& info) {
+    if (!info.mText)
+        return false;
+    s32 length = info.mTextLength;
+    if (length == 0)
+        length = std::char_traits<u16>::length(info.mText);
+    if (info.mBufferLength != 0)
+        AllocateStringBuffer(device, info.mBufferLength);
+    else
+        AllocateStringBuffer(device, length);
+    if (mTextBuf)
+        SetString(info.mText, 0, length);
+    return true;
+}
+
+// 0x7100abad80
+// NON_MATCHING: UTF-8 loop counter initialization and return-block scheduling.
+bool TextBox::InitializeStringWithTextSearcherInfoUtf8(gfx::Device* device, const BuildArgSet&,
+                                                      const TextSearcher::TextInfoUtf8& info) {
+    if (!info.mText)
+        return false;
+    s32 length = info.mTextLength;
+    if (length == 0) {
+        const char* cursor = info.mText;
+        while (*cursor) {
+            char character[4];
+            util::PickOutCharacterFromUtf8String(character, &cursor);
+            ++length;
+        }
+    }
+    if (info.mBufferLength != 0)
+        AllocateStringBuffer(device, info.mBufferLength);
+    else
+        AllocateStringBuffer(device, length);
+    if (mTextBuf)
+        SetStringUtf8(info.mText, 0, length);
+    return true;
+}
 
 // 0x7100abae48
 // NON_MATCHING: shadow-vector copy registers and source-material load scheduling.

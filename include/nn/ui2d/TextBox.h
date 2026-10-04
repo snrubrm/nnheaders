@@ -8,6 +8,7 @@
 #include <nn/gfx/gfx_Device.h>
 #include <nn/types.h>
 #include <nn/ui2d/Pane.h>
+#include <nn/ui2d/TextSearcher.h>
 #include <nn/util/MathTypes.h>
 
 namespace nn::font {
@@ -87,8 +88,10 @@ public:
     virtual u16 SetStringUtf8(const char* string, u16 dst_index, u16 length);
     virtual void SetupTextWriter(font::TextWriterBase<u16>*) const;
     virtual void SetupTextWriterUtf8(font::TextWriterBase<char>*) const;
-    virtual void InitializeStringWithTextSearcherInfo(gfx::Device*, const BuildArgSet&, const void*);
-    virtual void InitializeStringWithTextSearcherInfoUtf8(gfx::Device*, const BuildArgSet&, const void*);
+    virtual bool InitializeStringWithTextSearcherInfo(gfx::Device*, const BuildArgSet&,
+                                                      const TextSearcher::TextInfo&);
+    virtual bool InitializeStringWithTextSearcherInfoUtf8(gfx::Device*, const BuildArgSet&,
+                                                          const TextSearcher::TextInfoUtf8&);
 
     u16 GetStringBufferLength() const;
     const font::Font* GetFont() const;
