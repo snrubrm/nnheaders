@@ -3,6 +3,8 @@
 #include <nn/ui2d/Layout.h>
 #include <nn/ui2d/Group.h>
 #include <nn/ui2d/Pane.h>
+#include <nn/ui2d/ResourceAccessor.h>
+#include <new>
 
 namespace nn::ui2d {
 
@@ -81,6 +83,37 @@ AnimTransformBasic::~AnimTransformBasic() {
         Layout::FreeMemory(_30);
     if (_28)
         Layout::FreeMemory(_28);
+}
+
+// 0x7100ab42f4
+void AnimTransformBasic::SetResource(gfx::Device* device, ResourceAccessor* accessor,
+                                     const ResAnimationBlock* block) {
+    SetResource(device, accessor, block, block->contentCount);
+}
+
+// 0x7100ab4304
+// NON_MATCHING: array initialization size calculation and offset-address scheduling differ.
+void AnimTransformBasic::SetResource(gfx::Device* device, ResourceAccessor* accessor,
+                                     const ResAnimationBlock* block, u16 count) {
+    mRes = block;
+    _28 = nullptr;
+    const u16 texture_count = block->textureCount;
+    if (texture_count != 0) {
+        void* memory = Layout::AllocateMemory(texture_count * sizeof(TextureInfo*), 4);
+        _28 = memory ? new (memory) TextureInfo*[texture_count]() : nullptr;
+        if (_28) {
+            const u32* offsets = reinterpret_cast<const u32*>(block + 1);
+            for (s32 i = 0; i < block->textureCount; ++i) {
+                const char* name = reinterpret_cast<const char*>(offsets) + offsets[i];
+                _28[i] = accessor->AcquireTexture(device, name);
+            }
+        }
+    }
+
+    void* memory = Layout::AllocateMemory(count * sizeof(Binding), 4);
+    _30 = memory ? new (memory) Binding[count]() : nullptr;
+    if (_30)
+        _3a = count;
 }
 
 // 0x7100ab4f18

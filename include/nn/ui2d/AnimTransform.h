@@ -16,6 +16,7 @@ class Group;
 class Material;
 class Pane;
 class ResourceAccessor;
+class TextureInfo;
 struct ResAnimationContent;
 struct ResExtUserData;
 
@@ -24,7 +25,13 @@ struct ResAnimationBlock {
     u8 _0[8];
     u16 frameSize;
     u8 loop;
+    u16 textureCount;
+    u16 contentCount;
+    u32 contentOffsetsOffset;
 };
+static_assert(sizeof(ResAnimationBlock) == 0x14);
+// Texture-name offsets immediately follow this fixed prefix. They are relative
+// to that trailing table; content offsets are instead relative to the block.
 
 // The tag block of an animation resource (name, group list, flags).
 struct ResAnimationTagBlock {
@@ -137,7 +144,7 @@ protected:
     };
     static_assert(sizeof(Binding) == 0x10);
 
-    /* 0x28 */ void* _28;  // allocations released by the destructor
+    /* 0x28 */ TextureInfo** _28;  // texture references acquired from the resource accessor
     /* 0x30 */ Binding* _30;
     /* 0x38 */ u16 mBindCount;
     /* 0x3a */ u16 _3a;
