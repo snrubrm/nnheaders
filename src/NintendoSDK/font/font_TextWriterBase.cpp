@@ -3,6 +3,7 @@
 #include <nn/font/font_PrintContext.h>
 
 #include <limits>
+#include <algorithm>
 
 namespace nn::font {
 
@@ -27,12 +28,48 @@ f32 TextWriterBase<CharType>::GetLineHeight() const {
     return height * mScaleY + mLineSpace;
 }
 
+// 0x7101329190
+// NON_MATCHING: null-string branch and line-bound update scheduling.
+template <>
+void TextWriterBase<u16>::CalculateStringRect(Rectangle* rect, const u16* string, s32 length) const {
+    if (!string) {
+        *rect = {};
+        return;
+    }
+
+    TextWriterBase writer(*this);
+    const u16* end = string + length;
+    *rect = {};
+    writer.SetCursorX(0.0f);
+    writer.SetCursorY(0.0f);
+    do {
+        Rectangle line{};
+        writer.CalculateLineRectImpl(&line, &string, length);
+        rect->left = std::min(rect->left, line.left);
+        rect->top = std::min(rect->top, line.top);
+        rect->right = std::max(rect->right, line.right);
+        rect->bottom = std::max(rect->bottom, line.bottom);
+        length = end - string;
+    } while (length > 0);
+}
+
 // 0x7101329150
 template <>
 f32 TextWriterBase<u16>::CalculateStringWidth(const u16* string, s32 length) const {
     Rectangle rect{};
     CalculateStringRect(&rect, string, length);
     return rect.right - rect.left;
+}
+
+// 0x71013292b8
+template <>
+const u16* TextWriterBase<u16>::FindPosOfWidthLimit(const u16* string, s32 length) const {
+    Rectangle rect{};
+    TextWriterBase writer(*this);
+    writer.SetCursorX(0.0f);
+    writer.SetCursorY(0.0f);
+    writer.CalculateLineRectImpl(&rect, &string, length);
+    return string;
 }
 
 template class TextWriterBase<char>;

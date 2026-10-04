@@ -25,12 +25,15 @@ public:
     s32 GetTabWidth() const { return mTabWidth; }
     f32 CalculateStringWidth(const CharType* string, s32 length) const;
     void CalculateStringRect(Rectangle*, const CharType* string, s32 length) const;
+    const CharType* FindPosOfWidthLimit(const CharType* string, s32 length) const;
 
     // inline-only in the original; name is a guess (TextBox::SetupTextWriter and
     // TextBoxEx::adjustText_ both set this width limit).
     void SetWidthLimit(f32 limit) { mWidthLimit = limit; }
 
 protected:
+    bool CalculateLineRectImpl(Rectangle*, const CharType** string, s32 length);
+
     static TagProcessorBase<CharType> sDefaultTagProcessor;
 
     /* 0x3c */ f32 mWidthLimit;
