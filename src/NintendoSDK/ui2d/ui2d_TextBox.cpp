@@ -157,6 +157,24 @@ Material* TextBox::GetMaterial(s32 index) const {
     return nullptr;
 }
 
+// 0x7100abc000
+void TextBox::FreeStringBuffer(gfx::Device* device) {
+    if (mTextBuf) {
+        mDispStringBuf->sub_7101324090(device);
+        mDispStringBuf->~DispStringBuffer();
+        Layout::FreeMemory(mDispStringBuf);
+        Layout::FreeMemory(mTextBuf);
+        mDispStringBuf = nullptr;
+        mTextBuf = nullptr;
+        mTextBufBytes = 0;
+        mTextLength = 0;
+    }
+    if (_158 && _158->_8) {
+        Layout::FreeMemory(_158->_8);
+        _158->_8 = nullptr;
+    }
+}
+
 // 0x7100abc06c
 u16 TextBox::SetString(const u16* string, u16 dst_index) {
     const s32 length = std::char_traits<u16>::length(string);

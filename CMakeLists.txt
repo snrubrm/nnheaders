@@ -292,6 +292,7 @@ add_library(NintendoSDK OBJECT
   include/vapours/results/nfp_results.hpp
   include/nv.h
 
+  src/NintendoSDK/font/font_DispStringBuffer.cpp
   src/NintendoSDK/font/font_CharWriter.cpp
   src/NintendoSDK/font/font_Font.cpp
   src/NintendoSDK/font/font_ResFont.cpp
