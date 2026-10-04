@@ -25,8 +25,9 @@ public:
 
     // Both constructors initialize this link; BuildPartsImpl links it into
     // the parent's parts-layout list and stores the created Layout at +0xf0.
+    // Known fields end at +0xf8. BuildPaneObj allocates 0x100 bytes; the
+    // original alignment or remaining extent is not established yet.
     PartsLayoutLink mPartsLayoutLink;
 };
-static_assert(sizeof(Parts) == 0xf8);
 }  // namespace ui2d
 }  // namespace nn
