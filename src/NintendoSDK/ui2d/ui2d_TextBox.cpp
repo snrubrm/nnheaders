@@ -29,7 +29,6 @@ bool TextBox::InitializeStringWithTextSearcherInfo(gfx::Device* device, const Bu
 }
 
 // 0x7100abad80
-// NON_MATCHING: UTF-8 loop counter initialization and return-block scheduling.
 bool TextBox::InitializeStringWithTextSearcherInfoUtf8(gfx::Device* device, const BuildArgSet&,
                                                       const TextSearcher::TextInfoUtf8& info) {
     if (!info.mText)
