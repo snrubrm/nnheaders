@@ -21,6 +21,26 @@ struct CharWidths {
 
 class TextureObject;
 
+// Reads characters of a string in the encoding chosen by the font (Font::GetCharStrmReader). The three words are the
+// stream position and the read function (a pointer to member function).
+class CharStrmReader {
+public:
+    typedef u32 (CharStrmReader::*ReadFunction)();
+
+    CharStrmReader(const void* stream, ReadFunction function) : mStream(stream), mReadFunction(function) {}
+
+    u32 Next() { return (this->*mReadFunction)(); }
+
+    u32 ReadNextCharUtf8();
+    u32 ReadNextCharUtf16();
+    u32 ReadNextCharCp1252();
+    u32 ReadNextCharSjis();
+
+    const void* mStream;
+    ReadFunction mReadFunction;
+};
+static_assert(sizeof(CharStrmReader) == 0x18);
+
 // A glyph as handed to the writer (ResFontBase::GetGlyphFromIndex fills it; offsets from there). Names without a
 // stated source follow the NintendoWare font library.
 struct Glyph {
@@ -52,6 +72,13 @@ public:
         Type_Invalid,
         Type_Resource,
         Type_Scalable,
+    };
+
+    // Values of GetCharacterCode: "unicode" is UTF-8 for char strings and UTF-16 for 16 bit strings.
+    enum CharacterCode {
+        CharacterCode_Unicode = 1,
+        CharacterCode_ShiftJis = 2,
+        CharacterCode_Cp1252 = 3,
     };
 
     // Texture formats of the glyph sheets (ScalableFont returns 8, ResFontBase the format of its sheets).
@@ -94,6 +121,9 @@ public:
     virtual bool IsColorBlackWhiteInterpolationEnabled() const = 0;
     virtual void SetColorBlackWhiteInterpolationEnabled(bool enabled) = 0;
     virtual bool IsBorderEffectEnabled() const = 0;
+
+    CharStrmReader GetCharStrmReader(char) const;
+    CharStrmReader GetCharStrmReader(u16) const;
 
 protected:
     // Both set by the constructor (one halfword store of 0x0101). GetKerning of both font classes returns 0 while

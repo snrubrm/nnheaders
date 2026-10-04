@@ -2,6 +2,14 @@
 
 namespace nn::font {
 
+// NON_MATCHING: same stores; the original writes the two text colors as separate 32 bit stores (a pair store with the
+// next word) and orders the zero stores differently
+// 0x7101323bf0
+CharWriter::CharWriter()
+    : mTextColors{{{0xff, 0xff, 0xff, 0xff}}, {{0xff, 0xff, 0xff, 0xff}}}, _8(0), mScaleX(1.0f), mScaleY(1.0f),
+      mCursorX(0.0f), mCursorY(0.0f), mCursorZ(0.0f), mFixedWidth(0.0f), mItalicRatio(0.0f), mFont(nullptr),
+      _30(nullptr), mIsWidthFixed(false), mAlpha(0xff) {}
+
 // 0x7101323c24
 CharWriter::~CharWriter() {}
 
