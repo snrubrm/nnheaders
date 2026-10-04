@@ -1,6 +1,8 @@
 #include <nn/ui2d/TextBox.h>
 
 #include <nn/font/font_DispStringBuffer.h>
+#include <nn/gfx/gfx_Buffer.h>
+#include <nn/gfx/gfx_BufferInfo.h>
 #include <nn/util.h>
 #include <nn/ui2d/Layout.h>
 #include <nn/ui2d/Material.h>
@@ -10,6 +12,16 @@
 #include <string>
 
 namespace nn::ui2d {
+
+// 0x7100abcb10
+size_t sub_7100ABCB10(gfx::Device* device, int gpu_access, size_t size) {
+    gfx::BufferInfo info;
+    info.SetDefault();
+    info.SetSize(size);
+    info.SetGpuAccessFlags(gpu_access);
+    const size_t alignment = gfx::TBuffer<gfx::ApiVariationNvn8>::GetBufferAlignment(device, info);
+    return (size + alignment - 1) & -alignment;
+}
 
 // 0x7100abacd8
 bool TextBox::InitializeStringWithTextSearcherInfo(gfx::Device* device, const BuildArgSet&,

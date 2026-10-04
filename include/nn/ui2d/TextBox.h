@@ -24,6 +24,9 @@ namespace nn::ui2d {
 class BuildResultInformation;
 struct ResTextBox;
 
+// Placeholder name: aligns a byte size for the requested GPU buffer access.
+size_t sub_7100ABCB10(gfx::Device* device, int gpu_access, size_t size);
+
 // Layout evidence: TextBox::TextBox (0x7100aba5b8) copies the members out of the ResTextBox, FreeStringBuffer /
 // SetString / SetFontSize / SetupTextWriter (0x7100abc000 / abc06c / abc34c / abc3d0) use the string, font and size
 // members, and the member set and order follow the NintendoWare layout library's TextBox. Names without a
