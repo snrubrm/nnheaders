@@ -197,6 +197,7 @@ add_library(NintendoSDK OBJECT
   include/nn/ui2d/Parts.h
   include/nn/ui2d/Picture.h
   include/nn/ui2d/ResExtUserData.h
+  include/nn/ui2d/ResPane.h
   include/nn/ui2d/TextBox.h
   include/nn/ui2d/TextureInfo.h
   include/nn/ui2d/Types.h
