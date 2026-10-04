@@ -1,6 +1,8 @@
 #include <nn/ui2d/Layout.h>
 
 #include <new>
+#include <nn/ui2d/BuildTypes.h>
+#include <nn/ui2d/ResourceAccessor.h>
 #include <nn/ui2d/TextBox.h>
 
 namespace nn::ui2d {
@@ -32,7 +34,30 @@ void Layout::SetTagProcessor(font::TagProcessorBase<u16>* tag_processor) {
 // NON_MATCHING: same stores; the original stores the list node link together with the vtable and the root pane
 // pointer together with the node's second link
 // 0x7100ab662c
-Layout::Layout() : mPane(nullptr), _20(nullptr), mName(nullptr), _40(0), _58(0) {}
+Layout::Layout() : mPane(nullptr), _20(nullptr), mName(nullptr), _40(0), mUserShaderCallback(nullptr) {}
+
+// 0x7100ab67e4
+bool Layout::BuildWithName(BuildResultInformation* result, gfx::Device* device,
+                           ResourceAccessor* resource_accessor, ControlCreator* control_creator,
+                           TextSearcher* text_searcher, const BuildOption& option,
+                           const char* name, bool is_utf8) {
+    const void* resource = resource_accessor->FindResourceByName(0x626c7974, name);
+    if (!resource)
+        return false;
+
+    // BuildImpl collects the remaining resource and pane arguments itself.
+    BuildArgSet args;
+    args.mPartsScale = {{1.0f, 1.0f}};
+    args.mRootSize = {{0.0f, 0.0f}};
+    args.mControlCreator = control_creator;
+    args.mTextSearcher = text_searcher;
+    args.mParentLayout = nullptr;
+    args.mRootLayout = this;
+    args.mBuildOption = option;
+    args.mIsUtf8 = is_utf8;
+    args.mUserShaderCallback = mUserShaderCallback;
+    return BuildImpl(result, device, resource, resource_accessor, args, nullptr);
+}
 
 // The original keeps the vtable store (a plain empty body drops it); `{ ; }` as in upstream's
 // GameDataFlagSelector::~GameDataFlagSelector (commit 96101229).

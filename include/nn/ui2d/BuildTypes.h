@@ -45,7 +45,7 @@ struct BuildArgSet {
     u16 _44;
     const ResPaneBasicInfo* mPaneOverride;
     Pane* mParentPane;
-    bool (*mUserShaderCallback)(UserShaderInformation*, const ResExtUserDataList*);
+    UserShaderCallback mUserShaderCallback;
     const ResExtUserDataList* mExtUserData;
     Layout::BuildOption mBuildOption;
     bool mIsUtf8;

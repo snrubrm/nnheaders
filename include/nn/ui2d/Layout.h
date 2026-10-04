@@ -27,6 +27,11 @@ class BuildResultInformation;
 struct BuildArgSet;
 struct BuildResSet;
 class ResourceAccessor;
+class ControlCreator;
+class TextSearcher;
+struct UserShaderInformation;
+struct ResExtUserDataList;
+using UserShaderCallback = bool (*)(UserShaderInformation*, const ResExtUserDataList*);
 
 // An entry of a layout's list of parts layouts (the layouts of the parts panes; Layout::Animate etc. forward to them).
 struct PartsLayoutLink {
@@ -92,6 +97,8 @@ public:
     Pane* GetPane() const { return mPane; }
 
     AnimTransform* CreateAnimTransformBasic();
+    bool BuildWithName(BuildResultInformation*, gfx::Device*, ResourceAccessor*, ControlCreator*,
+                       TextSearcher*, const BuildOption&, const char* name, bool is_utf8);
 
 protected:
     typedef util::IntrusiveList<AnimTransform,
@@ -109,7 +116,7 @@ protected:
     /* 0x38 */ u64 _38;
     /* 0x40 */ u64 _40;
     /* 0x48 */ PartsLayoutList mPartsLayoutList;
-    /* 0x58 */ u64 _58;
+    /* 0x58 */ UserShaderCallback mUserShaderCallback;
 };
 static_assert(sizeof(Layout) == 0x60);
 
