@@ -20,6 +20,7 @@ public:
     NN_RUNTIME_TYPEINFO(Pane)
 
     ~Picture() override;
+    void Finalize(gfx::Device*) override;
 
     u8 GetMaterialCount() const override;
     Material* GetMaterial(s32) const override;

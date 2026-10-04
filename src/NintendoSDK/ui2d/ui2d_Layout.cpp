@@ -193,4 +193,9 @@ void Layout::Draw(DrawInfo& draw_info, gfx::CommandBuffer& command_buffer) {
     draw_info.mLayout = nullptr;
 }
 
+// 0x7100ab7b28
+ShaderInfo* Layout::AcquireArchiveShader(gfx::Device* device, const char* name) const {
+    return mResourceAccessor->AcquireShader(device, name);
+}
+
 }  // namespace nn::ui2d

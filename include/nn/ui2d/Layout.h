@@ -24,6 +24,7 @@ class AnimResource;
 class DrawInfo;
 class Pane;
 class Parts;
+class ShaderInfo;
 class BuildResultInformation;
 struct BuildArgSet;
 struct BuildResSet;
@@ -103,6 +104,7 @@ public:
     const void* GetLayoutResourceData(const char* name) const;
     const void* GetAnimResourceData(const char* name) const;
     Parts* FindPartsPaneByName(const char* name);
+    ShaderInfo* AcquireArchiveShader(gfx::Device* device, const char* name) const;
 
 protected:
     typedef util::IntrusiveList<AnimTransform,
