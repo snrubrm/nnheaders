@@ -295,6 +295,7 @@ add_library(NintendoSDK OBJECT
 
   src/NintendoSDK/font/font_DispStringBuffer.cpp
   src/NintendoSDK/font/font_CharWriter.cpp
+  src/NintendoSDK/font/font_GlyphNode.cpp
   src/NintendoSDK/font/font_Font.cpp
   src/NintendoSDK/font/font_ResFont.cpp
   src/NintendoSDK/font/font_ResFontBase.cpp
