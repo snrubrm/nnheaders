@@ -76,6 +76,31 @@ void TextWriterBase<u16>::CalculateStringRect(Rectangle* rect, const u16* string
     } while (length > 0);
 }
 
+// 0x7101327e88
+// NON_MATCHING: null-string branch and line-bound update scheduling.
+template <>
+void TextWriterBase<char>::CalculateStringRect(Rectangle* rect, const char* string, s32 length) const {
+    if (!string) {
+        *rect = {};
+        return;
+    }
+
+    TextWriterBase writer(*this);
+    const char* end = string + length;
+    *rect = {};
+    writer.SetCursorX(0.0f);
+    writer.SetCursorY(0.0f);
+    do {
+        Rectangle line{};
+        writer.CalculateLineRectImpl(&line, &string, length);
+        rect->left = std::min(rect->left, line.left);
+        rect->top = std::min(rect->top, line.top);
+        rect->right = std::max(rect->right, line.right);
+        rect->bottom = std::max(rect->bottom, line.bottom);
+        length = end - string;
+    } while (length > 0);
+}
+
 // 0x7101329150
 template <>
 f32 TextWriterBase<u16>::CalculateStringWidth(const u16* string, s32 length) const {
