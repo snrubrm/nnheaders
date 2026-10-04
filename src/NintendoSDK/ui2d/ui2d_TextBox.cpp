@@ -287,6 +287,55 @@ void TextBox::SetFontSize(const Size& size) {
 // 0x7100abc3cc
 void TextBox::LoadMtx(DrawInfo&) {}
 
+// 0x7100abbe38
+// NON_MATCHING: per-character aggregate initialization uses different store grouping.
+void TextBox::AllocateStringBuffer(gfx::Device* device, u16 length, u16 string_length) {
+    if (length == 0 || string_length == 0)
+        return;
+    const u32 buffer_length = length + 1;
+    if (buffer_length <= mTextBufBytes && mDispStringBuf &&
+        string_length <= mDispStringBuf->mCapacity)
+        return;
+    FreeStringBuffer(device);
+    font::DispStringBuffer::InitializeArg size_arg;
+    size_arg.mCapacity = string_length;
+    const size_t buffer_size = sizeof(font::DispStringBuffer) +
+                               font::DispStringBuffer::sub_71013240A4(size_arg);
+    auto* text = static_cast<u16*>(Layout::AllocateMemory(
+        (mIsUtf8 ? sizeof(u32) : sizeof(u16)) * buffer_length, 4));
+    void* buffer = Layout::AllocateMemory(buffer_size, 4);
+    if (_158) {
+        auto* transforms = static_cast<PerCharacterTransform*>(
+            Layout::AllocateMemory(sizeof(PerCharacterTransform) * string_length, 4));
+        if (transforms) {
+            for (u32 i = 0; i < string_length; ++i)
+                new (transforms + i) PerCharacterTransform;
+        }
+        _158->_8 = transforms;
+    }
+    if (text && buffer && (!_158 || _158->_8)) {
+        mTextBuf = text;
+        mTextBufBytes = buffer_length;
+        mDispStringBuf = new (buffer) font::DispStringBuffer;
+        font::DispStringBuffer::InitializeArg arg;
+        arg._0 = reinterpret_cast<font::DispStringBuffer::UnkA0*>(mDispStringBuf + 1);
+        arg.mCapacity = string_length;
+        arg._14 = mBits._3;
+        arg._15 = mBits._5;
+        arg._16 = mBits._7;
+        mDispStringBuf->Initialize(device, arg);
+    } else {
+        if (text)
+            Layout::FreeMemory(text);
+        if (buffer)
+            Layout::FreeMemory(buffer);
+        if (_158 && _158->_8) {
+            Layout::FreeMemory(_158->_8);
+            _158->_8 = nullptr;
+        }
+    }
+}
+
 // 0x7100abbe28
 void TextBox::AllocateStringBuffer(gfx::Device* device, u16 length) {
     AllocateStringBuffer(device, length, length);

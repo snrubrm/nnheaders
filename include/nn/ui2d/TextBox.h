@@ -41,12 +41,22 @@ public:
         f32* _8;
     };
 
+    // Record fields follow UpdatePerCharacterTransform's rotation, translation and color targets.
+    // Names are descriptive guesses; AllocateStringBuffer constructs one per character.
+    struct PerCharacterTransform {
+        util::Float3 mRotationCos{{1.0f, 1.0f, 1.0f}};
+        util::Float3 mRotationSin{{0.0f, 0.0f, 0.0f}};
+        util::Float3 mTranslation{{0.0f, 0.0f, 0.0f}};
+        util::Unorm8x4 mColors[2]{{{255, 255, 255, 255}}, {{255, 255, 255, 255}}};
+    };
+    static_assert(sizeof(PerCharacterTransform) == 0x2c);
+
     // Per-character animation state, populated from the resource by the constructor and
     // read by UpdatePerCharacterTransform. Resource entries may extend past the first one.
     struct Unk158 {
         f32 _0;
         f32 _4;
-        void* _8;
+        PerCharacterTransform* _8;
         u8 _10;
         u8 _11;
         u8 _12;
