@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <nn/gfx/gfx_Device.h>
 #include <nn/types.h>
 #include <nn/ui2d/Types.h>
 
@@ -50,6 +51,7 @@ static_assert(sizeof(TexMap) == 0x10);
 class Material {
 public:
     Material();
+    Material(const Material&, gfx::Device*);
 
     void Initialize();
     void ReserveMem(s32, s32, s32, s32, bool, s32, bool, s32, bool, bool);

@@ -12,6 +12,7 @@
 
 namespace nn::font {
 class Font;
+class DispStringBuffer;
 template <typename CharType>
 class TagProcessorBase;
 template <typename CharType>
@@ -31,6 +32,31 @@ public:
     NN_RUNTIME_TYPEINFO(Pane)
 
     struct InitializeStringParam;
+
+    // The two 16-element float arrays are passed to TextWriterBase::Print by Calculate.
+    // Their role is not established; member and type names remain placeholders.
+    struct Unk140 {
+        f32* _0;
+        f32* _8;
+    };
+
+    // Per-character animation state, populated from the resource by the constructor and
+    // read by UpdatePerCharacterTransform. Resource entries may extend past the first one.
+    struct Unk158 {
+        f32 _0;
+        f32 _4;
+        void* _8;
+        u8 _10;
+        u8 _11;
+        u8 _12;
+        struct Entry {
+            const void* _0;
+            s32 _8;
+        };
+        Entry _18[1];
+    };
+    static_assert(sizeof(Unk140) == 0x10);
+    static_assert(sizeof(Unk158) == 0x28);
 
     TextBox(BuildResultInformation*, gfx::Device*, InitializeStringParam*, const ResTextBox*,
             const ResTextBox*, const BuildArgSet&);
@@ -111,16 +137,17 @@ public:
     /* 0x11c */ Bits mBits;
     /* 0x11d */ u8 _11d;
     /* 0x11e */ u8 mTextPosition;
+    /* 0x11f */ bool mIsUtf8;
     /* 0x120 */ f32 mItalicRatio;  // scaled together with mShadowItalicRatio by SetFontSize
     /* 0x124 */ util::Float2 mShadowOffset;
     /* 0x12c */ util::Float2 mShadowScale;
     /* 0x134 */ u32 mShadowTopColor;
     /* 0x138 */ u32 mShadowBottomColor;
     /* 0x13c */ f32 mShadowItalicRatio;
-    /* 0x140 */ void* _140;  // two arrays of 16 values (read from the resource when enabled)
+    /* 0x140 */ Unk140* _140;
     /* 0x148 */ Material* mMaterial;
-    /* 0x150 */ void* mDispStringBuf;
-    /* 0x158 */ void* _158;  // per-character transform data (resource driven)
+    /* 0x150 */ font::DispStringBuffer* mDispStringBuf;
+    /* 0x158 */ Unk158* _158;
 };
 static_assert(sizeof(TextBox) == 0x160);
 
