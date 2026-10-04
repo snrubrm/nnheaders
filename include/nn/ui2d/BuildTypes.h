@@ -12,6 +12,7 @@ class TextSearcher;
 struct ResTextureList;
 struct ResFontList;
 struct ResMaterialList;
+struct ResMaterial;
 struct ResPaneBasicInfo;
 struct ResExtUserDataList;
 struct UserShaderInformation;
@@ -28,6 +29,10 @@ struct BuildResSet {
     Layout* mLayout;
 };
 static_assert(sizeof(BuildResSet) == 0x28);
+
+namespace detail {
+const ResMaterial* GetResMaterial(const BuildResSet*, u16 index);
+}
 
 // BuildPartsImpl constructs this 0x30-byte record at 0xab6b14. Its 0x28-byte
 // resource entries select replacement pane data and extended user data.

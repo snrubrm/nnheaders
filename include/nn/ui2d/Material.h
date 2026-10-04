@@ -13,6 +13,8 @@ namespace nn {
 namespace ui2d {
 class AnimTransform;
 class BuildResultInformation;
+struct BuildArgSet;
+struct ResMaterial;
 struct UserShaderInformation;
 
 class TextureInfo;
@@ -52,6 +54,8 @@ class Material {
 public:
     Material();
     Material(const Material&, gfx::Device*);
+    Material(BuildResultInformation*, gfx::Device*, const ResMaterial*, const ResMaterial*,
+             const BuildArgSet&);
 
     void Initialize();
     void Finalize(gfx::Device*);

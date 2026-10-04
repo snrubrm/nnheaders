@@ -1,6 +1,16 @@
 #include <nn/ui2d/Material.h>
+#include <nn/ui2d/BuildTypes.h>
+#include <nn/util/util_BytePtr.h>
 
 namespace nn::ui2d {
+
+namespace detail {
+// 0x7100ac01fc
+const ResMaterial* GetResMaterial(const BuildResSet* resources, u16 index) {
+    const u32* offsets = util::ConstBytePtr(resources->mMaterialList, 0xc).Get<u32>();
+    return util::ConstBytePtr(resources->mMaterialList, offsets[index]).Get<ResMaterial>();
+}
+}  // namespace detail
 
 // 0x7100aba544
 TexMap::TexMap() : mTextureInfo(nullptr) {
