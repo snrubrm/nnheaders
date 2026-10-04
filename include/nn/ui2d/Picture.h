@@ -12,12 +12,18 @@
 
 namespace nn::ui2d {
 class TextureInfo;
+struct BuildResultInformation;
+struct ResPicture;
 
 // Layout evidence: Picture::Picture (0x7100ab9afc) stores the material at +0xe0, the four vertex colors at +0xe8 and
 // initialises the texture coordinate array at +0xf8; Picture::GetMaterialCount (0x7100ab9e40) tests +0xe0.
 class Picture : public Pane {
 public:
     NN_RUNTIME_TYPEINFO(Pane)
+
+    Picture(BuildResultInformation*, gfx::Device*, const ResPicture*, const ResPicture*,
+            const BuildArgSet&);
+    Picture(const Picture&, gfx::Device*);
 
     ~Picture() override;
     void Finalize(gfx::Device*) override;
