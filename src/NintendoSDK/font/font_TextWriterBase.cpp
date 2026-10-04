@@ -1,5 +1,6 @@
 #include <nn/font/font_TextWriterBase.h>
 #include <nn/font/font_TagProcessorBase.h>
+#include <nn/font/font_PrintContext.h>
 
 #include <limits>
 
@@ -24,6 +25,14 @@ f32 TextWriterBase<CharType>::GetLineHeight() const {
     if (mFont)
         height = mFont->GetLineFeed();
     return height * mScaleY + mLineSpace;
+}
+
+// 0x7101329150
+template <>
+f32 TextWriterBase<u16>::CalculateStringWidth(const u16* string, s32 length) const {
+    Rectangle rect{};
+    CalculateStringRect(&rect, string, length);
+    return rect.right - rect.left;
 }
 
 template class TextWriterBase<char>;
