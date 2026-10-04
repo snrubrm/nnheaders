@@ -35,7 +35,15 @@ class TextBox : public Pane {
 public:
     NN_RUNTIME_TYPEINFO(Pane)
 
-    struct InitializeStringParam;
+    // Filled by the resource constructor (0xaba5b8), consumed by InitializeString.
+    struct InitializeStringParam {
+        u32 mFlags;
+        const Layout* mRootLayout;
+        const void* mText;
+        size_t mBufferLength;
+        s32 mTextLength;
+    };
+    static_assert(sizeof(InitializeStringParam) == 0x28);
 
     // The two 16-element float arrays are passed to TextWriterBase::Print by Calculate.
     // Their role is not established; member and type names remain placeholders.

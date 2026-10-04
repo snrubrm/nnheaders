@@ -39,6 +39,11 @@ struct PartsLayoutLink {
 class Layout {
 public:
     struct PartsBuildDataSet;
+    // A one-byte build option; BuildPartsImpl tests whether parts need a root pane.
+    struct BuildOption {
+        u8 mBuildPartsRoot = 0;
+    };
+    static_assert(sizeof(BuildOption) == 1);
 
     typedef void* (*AllocateFunction)(size_t size, size_t alignment, void* user_data);
     typedef void (*FreeFunction)(void* ptr, void* user_data);

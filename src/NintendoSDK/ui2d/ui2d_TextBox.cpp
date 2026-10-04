@@ -4,10 +4,12 @@
 #include <nn/gfx/gfx_Buffer.h>
 #include <nn/gfx/gfx_BufferInfo.h>
 #include <nn/util.h>
+#include <nn/ui2d/BuildTypes.h>
 #include <nn/ui2d/Layout.h>
 #include <nn/ui2d/Material.h>
 
 #include <cstring>
+#include <algorithm>
 #include <new>
 #include <string>
 
@@ -21,6 +23,48 @@ size_t sub_7100ABCB10(gfx::Device* device, int gpu_access, size_t size) {
     info.SetGpuAccessFlags(gpu_access);
     const size_t alignment = gfx::TBuffer<gfx::ApiVariationNvn8>::GetBufferAlignment(device, info);
     return (size + alignment - 1) & -alignment;
+}
+
+// 0x7100abaae8
+// NON_MATCHING: initialization branch scheduling and common alignment helper inlining.
+void TextBox::InitializeString(BuildResultInformation* result, gfx::Device* device,
+                               const BuildArgSet& args, const InitializeStringParam& param) {
+    bool initialized = false;
+    if (args.mTextSearcher) {
+        if (args.mIsUtf8) {
+            TextSearcher::TextInfoUtf8 info;
+            if (param.mFlags & 2)
+                info._10 = param.mBufferLength;
+            args.mTextSearcher->SearchTextUtf8(&info, mTextId, args.mParentLayout, this,
+                                               param.mRootLayout);
+            initialized = InitializeStringWithTextSearcherInfoUtf8(device, args, info);
+        } else {
+            TextSearcher::TextInfo info;
+            if (param.mFlags & 2)
+                info._10 = param.mBufferLength;
+            args.mTextSearcher->SearchText(&info, mTextId, args.mParentLayout, this,
+                                           param.mRootLayout);
+            initialized = InitializeStringWithTextSearcherInfo(device, args, info);
+        }
+    }
+    if (!initialized)
+        AllocateStringBuffer(device, std::max<size_t>(param.mTextLength, param.mBufferLength));
+    if (param.mTextLength > 0 && !initialized && mTextBuf) {
+        if (args.mIsUtf8)
+            SetStringUtf8(static_cast<const char*>(param.mText), 0);
+        else
+            SetString(static_cast<const u16*>(param.mText), 0);
+    }
+
+    font::DispStringBuffer::InitializeArg buffer_args;
+    if (mDispStringBuf)
+        buffer_args.mCapacity = mDispStringBuf->mCapacity;
+    buffer_args._14 = mBits._3;
+    buffer_args._15 = mBits._5;
+    buffer_args._16 = mBits._7;
+    result->mTextBufferSize += sub_7100ABCB10(
+        device, gfx::GpuAccess_ConstantBuffer,
+        font::DispStringBuffer::sub_71013240B4(device, buffer_args));
 }
 
 // 0x7100abacd8
