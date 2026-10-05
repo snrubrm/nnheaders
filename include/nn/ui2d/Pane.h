@@ -170,6 +170,9 @@ public:
     }
 
     void SetAlpha(u8 alpha) { mAlpha = alpha; }
+    // inline-only in the original; name is a guess. The same alpha read occurs
+    // in Pane::GetColorElement and ScreenGameOver::sub_7100A0A914.
+    u8 GetAlpha() const { return mAlpha; }
 
     u8 GetGlobalAlpha() const { return mGlobalAlpha; }
 
