@@ -55,10 +55,15 @@ struct ResAnimationGroupRef {
 };
 static_assert(sizeof(ResAnimationGroupRef) == 0x24);
 
-// Accessors of an animation resource set (0x7100ab5ad0 sets the two block pointers; only the part used by the accessors
-// is known).
+// Accessors of an animation resource set; only the blocks used here are known.
 class AnimResource {
 public:
+    void Set(const void* resource);
+
+    // inline-only in the original; name is a guess. Layout::BindAnimationAuto and
+    // eui::LayoutEx::tryCreateAnimatorAuto read this block before SetResource.
+    const ResAnimationBlock* GetAnimationBlock() const { return mAnimationBlock; }
+
     const char* GetTagName() const;
     u16 GetGroupCount() const;
     const ResAnimationGroupRef* GetGroupArray() const;
@@ -67,7 +72,8 @@ public:
     const void* GetAnimationShareInfoArray() const;
 
 private:
-    /* 0x00 */ u8 _0[0x10];
+    /* 0x00 */ u8 _0[8];
+    /* 0x08 */ const ResAnimationBlock* mAnimationBlock;
     /* 0x10 */ const ResAnimationTagBlock* mTagBlock;
     /* 0x18 */ const ResAnimationShareBlock* mShareBlock;
 };
