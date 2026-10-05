@@ -52,7 +52,12 @@ private:
         return value;
     }
 
+public:
+    // Read directly by eui::MultiArcResourceAccessor::isArchiveAttached.
+    // Public access is inferred; the archive pointer and its producer are verified.
     /* 0x00 */ const void* mArchive;
+
+private:
     /* 0x08 */ const void* mFatHeader;
     /* 0x10 */ const void* mFntData;
     /* 0x18 */ const FatEntry* mFatEntries;
