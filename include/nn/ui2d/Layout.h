@@ -99,6 +99,9 @@ public:
     static void* g_pUserData;
 
     Pane* GetPane() const { return mPane; }
+    // inline-only in the original; name is a guess. DynamicCaptureUsePictureEx::Calculate
+    // and DynamicCaptureUseWindowEx::Calculate both pass this member by reference.
+    const Size& GetLayoutSize() const { return mLayoutSize; }
 
     AnimTransform* CreateAnimTransformBasic();
     bool BuildWithName(BuildResultInformation*, gfx::Device*, ResourceAccessor*, ControlCreator*,

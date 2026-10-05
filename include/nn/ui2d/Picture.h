@@ -37,6 +37,7 @@ public:
 
     u8 GetMaterialCount() const override;
     Material* GetMaterial(s32) const override;
+    void Calculate(DrawInfo&, CalculateContext&, bool) override;
 
 protected:
     /* 0xe0 */ Material* mMaterial;
