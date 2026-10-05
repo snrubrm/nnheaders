@@ -13,6 +13,7 @@ struct GlyphNode;
 
 class TextureCache {
 public:
+    void UpdateTextureCache();
     bool IsBorderEffectEnabled(u16 font_face) const;
     bool IsGlyphExistInFont(u32 code, u16 font_face);
     s32 CalculateKerning(u32 first, u32 second, u32 font_size, u16 font_face);
