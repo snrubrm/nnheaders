@@ -13,6 +13,8 @@ struct GlyphNode;
 
 class TextureCache {
 public:
+    struct InitializeArg;
+
     void UpdateTextureCache();
     bool IsBorderEffectEnabled(u16 font_face) const;
     bool IsGlyphExistInFont(u32 code, u16 font_face);
