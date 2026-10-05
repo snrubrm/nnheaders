@@ -11,9 +11,10 @@ class Font;
 namespace nn::ui2d {
 
 class TextureInfo;
+class ResourceTextureInfo;
 class ShaderInfo;
 
-// The prefix through shader acquisition is recovered from the base table (0x710252c8e8)
+// The prefix through shader loading is recovered from the base table (0x710252c8e8)
 // and eui::MultiArcResourceAccessor (0x71024c7ee0). Later virtuals remain unmodelled.
 class ResourceAccessor {
 public:
@@ -40,6 +41,11 @@ public:
     // Base slot 0x58 is pure; MultiArcResourceAccessor returns its embedded TextureInfo.
     virtual TextureInfo* AcquireTexture(gfx::Device* device, const char* name) = 0;
     virtual ShaderInfo* AcquireShader(gfx::Device* device, const char* name) = 0;
+    virtual bool LoadTexture(ResourceTextureInfo* texture, gfx::Device* device,
+                             const char* name) = 0;
+    // The original slot 14 loads a font; its source name is unknown.
+    virtual font::Font* sub_710132B174(gfx::Device* device, const char* name);
+    virtual bool LoadShader(ShaderInfo* shader, gfx::Device* device, const char* name) = 0;
 };
 static_assert(sizeof(ResourceAccessor) == 8);
 
