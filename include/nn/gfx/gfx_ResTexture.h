@@ -19,8 +19,8 @@ public:
     static const ResTexture* ToAccessor(const value_type*);
     static const ResTexture& ToAccessor(const value_type&);
 
-    TextureInfo* GetTextureInfo();
-    const TextureInfo* GetTextureInfo() const;
+    TextureInfo* GetTextureInfo() { return DataToAccessor(textureInfoData); }
+    const TextureInfo* GetTextureInfo() const { return DataToAccessor(textureInfoData); }
     detail::Caster<void> GetTexture() { return detail::Caster<void>(pTexture.Get()); }
     detail::Caster<const void> GetTexture() const { return detail::Caster<const void>(pTexture.Get()); }
     detail::Caster<void> GetTextureView() { return detail::Caster<void>(pTextureView.Get()); }

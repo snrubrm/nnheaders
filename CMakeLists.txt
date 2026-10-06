@@ -198,6 +198,7 @@ add_library(NintendoSDK OBJECT
   include/nn/ui2d/Parts.h
   include/nn/ui2d/Picture.h
   include/nn/ui2d/ResExtUserData.h
+  include/nn/ui2d/ResourceTextureInfo.h
   include/nn/ui2d/ResPane.h
   include/nn/ui2d/TextBox.h
   include/nn/ui2d/TextureInfo.h
@@ -318,6 +319,8 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/ui2d/ui2d_TexCoordArray.cpp
   src/NintendoSDK/ui2d/ui2d_TextBox.cpp
   src/NintendoSDK/ui2d/ui2d_ResourceAccessor.cpp
+  src/NintendoSDK/ui2d/ui2d_ShaderContainer.cpp
+  src/NintendoSDK/ui2d/ui2d_ResourceTextureInfo.cpp
   src/NintendoSDK/ui2d/ui2d_ControlSrc.cpp
   src/NintendoSDK/ui2d/ui2d_Util.cpp
 

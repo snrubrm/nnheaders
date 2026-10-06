@@ -12,7 +12,7 @@ namespace nn::ui2d {
 // Offset and size of a file inside the archive's data block.
 struct ArcFileInfo {
     u32 offset;
-    u32 size;
+    s32 size;
 };
 
 // Layout evidence: ArcExtractor::ArcExtractor / PrepareArchive (0x710132aac8 / 0x710132aae4). The archive's values are

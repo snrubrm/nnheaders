@@ -13,6 +13,7 @@ public:
     ShaderContainer() = default;
     ~ShaderContainer();
 
+    void Finalize(gfx::Device* device);
     ShaderInfo* FindShaderByName(const char* name) const;
     ShaderInfo* RegisterShader(const char* name, bool flag);
 

@@ -154,8 +154,8 @@ public:
 
     reference back();
     reference back() const;
-    reference front();
-    reference front() const;
+    reference front() { return *m_Root.GetNext(); }
+    reference front() const { return const_cast<reference>(*m_Root.GetNext()); }
 
     iterator begin() { return m_Root.GetNext(); }
     const_iterator begin() const { return m_Root.GetNext(); }
@@ -166,7 +166,13 @@ public:
     iterator iterator_to(reference value) { return iterator(&value); }
     const_iterator iterator_to(reference value) const { return iterator(&value); }
 
-    size_type size() const;
+    // Counts the nodes (the list stores no size); inlined at its call sites in the original.
+    size_type size() const {
+        size_type count = 0;
+        for (const_iterator it = begin(); it != end(); ++it)
+            ++count;
+        return count;
+    }
 
     bool empty() const { return !m_Root.IsLinked(); }
 
@@ -308,8 +314,8 @@ public:
     void push_front(reference value) { m_Implementation.push_front(ToNode(value)); }
     void pop_back();
     void pop_front();
-    reference front();
-    reference front() const;
+    reference front() { return ToReference(m_Implementation.front()); }
+    reference front() const { return const_cast<IntrusiveList*>(this)->front(); }
     reference back();
     reference back() const;
 
@@ -334,8 +340,8 @@ public:
         return m_Implementation.iterator_to(ToNode(value));
     }
 
-    size_type size() const;
-    bool empty() const;
+    size_type size() const { return m_Implementation.size(); }
+    bool empty() const { return m_Implementation.empty(); }
 
     iterator erase(const_iterator position) {
         detail::IntrusiveListImplementation::iterator result =
@@ -359,7 +365,7 @@ private:
     IntrusiveListNode& ToNode(reference ref) const { return NodeTraits::GetNode(ref); }
 
     const IntrusiveListNode& ToNode(const_reference) const;
-    reference ToReference(IntrusiveListNode&) const;
+    reference ToReference(IntrusiveListNode& node) const { return NodeTraits::GetItem(node); }
     const_reference ToReference(const IntrusiveListNode&) const;
 
     detail::IntrusiveListImplementation m_Implementation;

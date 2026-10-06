@@ -31,6 +31,7 @@ public:
     void Initialize(DeviceImpl<ApiVariationNvn8>*, const InfoType&,
                     MemoryPoolImpl<ApiVariationNvn8>*, ptrdiff_t, size_t);
     void Finalize(DeviceImpl<ApiVariationNvn8>*);
+    bool IsInitialized() const { return state != State_NotInitialized; }
 };
 
 template <>

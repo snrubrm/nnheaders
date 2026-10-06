@@ -21,7 +21,7 @@ public:
     void Initialize(TDevice<TTarget>*, const InfoType&, TMemoryPool<TTarget>*, ptrdiff_t, size_t);
 
     TTexture();
-    void Finalize(TDevice<TTarget>*);
+    void Finalize(TDevice<TTarget>* pDevice) { detail::TextureImpl<TTarget>::Finalize(pDevice); }
     void SetUserPtr(void*);
     void* GetUserPtr();
     const void* GetUserPtr() const;
@@ -36,7 +36,7 @@ public:
 
     TTextureView();
     void Initialize(TDevice<TTarget>*, const InfoType&);
-    void Finalize(TDevice<TTarget>*);
+    void Finalize(TDevice<TTarget>* pDevice) { detail::TextureViewImpl<TTarget>::Finalize(pDevice); }
     void SetUserPtr(void*);
     void* GetUserPtr();
     const void* GetUserPtr() const;

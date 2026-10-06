@@ -8,6 +8,8 @@
 #include <nn/font/font_Util.h>
 #include <nn/gfx/gfx_Device.h>
 #include <nn/gfx/gfx_DescriptorSlot.h>
+#include <nn/gfx/gfx_Texture.h>
+#include <nn/gfx/gfx_Types.h>
 #include <nn/types.h>
 
 namespace nn::ui2d {
@@ -23,15 +25,15 @@ struct TexSize {
     TexSize(const TexSize& other) : width(other.width), height(other.height) {}
 };
 
-// The object referenced by a TexMap (Material::GetTexMapArray()[i].GetTextureInfo()). Layout and vtable evidence:
-// the object embedded in uking::ui::UiTexSlots (vtable 0x2477bd8, 0x18 bytes; the ctor stores the descriptor slot
-// as -1 and the size as 0), eui::SetTextureInfoFromTexMap (0x7100befa74: invalidates +8, then copies +8 of the
-// source), eui::SetupTextureInfoByAglTextureData (0x7100bed0f8: stores two u16 at +0x10 / +0x12),
-// Picture::Append (calls virtual slot 4 = GetSize).
-//
-// The binary's RuntimeTypeInfo for this class has a parent (a root object at 0x25d8738 that is also the parent
-// of eui::TagProcessor); that root is not known, so the class is modelled as a root here.
-// Virtual slot names: GetRuntimeTypeInfo / GetSize have evidence, the rest are placeholders.
+// The root of the texture reference classes (the object a TexMap points to,
+// Material::GetTexMapArray()[i].GetTextureInfo()). Evidence: the type is the parameter of Picture::Append,
+// TexMap::TexMap, eui::SetTextureInfoFromTexMap and the return type of ResourceAccessor::AcquireTexture, while
+// the two concrete classes below are siblings in the binary's RuntimeTypeInfo chain (statics 0x25d8748 and
+// 0x25fca88, both with the parent static 0x25d8738 that this class models). The descriptor slot at +8 is shared by
+// both (eui::SetTextureInfoFromTexMap 0x7100befa74 invalidates it and copies the source's through this type).
+// Virtual slot names: GetRuntimeTypeInfo / Finalize / GetSize / IsValid / GetTextureView have evidence (the
+// ResourceTextureInfo CSV name, Picture::Append calling slot 4, the resource implementation), the rest are
+// placeholders.
 class TextureInfo {
 public:
     NN_RUNTIME_TYPEINFO_BASE();
@@ -39,26 +41,49 @@ public:
     TextureInfo() = default;
     virtual ~TextureInfo() = default;
 
-    virtual void m3(gfx::Device*) {}
-    virtual TexSize GetSize() const { return TexSize(mWidth, mHeight); }
-    virtual bool m5() const { return false; }
-    virtual bool IsValid() const { return mDescriptorSlot.IsValid(); }
-    virtual const void* m7() const { return nullptr; }
+    virtual void Finalize(gfx::Device* device) = 0;
+    virtual TexSize GetSize() const = 0;
+    virtual u32 m5() const = 0;
+    virtual bool IsValid() const = 0;
+    virtual const gfx::TextureView* GetTextureView() const = 0;
+    virtual gfx::TextureView* GetTextureView() = 0;
 
+    gfx::DescriptorSlot& GetDescriptorSlot() { return mDescriptorSlot; }
     const gfx::DescriptorSlot& GetDescriptorSlot() const { return mDescriptorSlot; }
     void SetDescriptorSlot(const gfx::DescriptorSlot& slot) { mDescriptorSlot = slot; }
     void InvalidateDescriptorSlot() { mDescriptorSlot.Invalidate(); }
 
+protected:
+    gfx::DescriptorSlot mDescriptorSlot;
+};
+static_assert(sizeof(TextureInfo) == 0x10);
+
+// A texture reference whose texture is owned elsewhere: it only holds a descriptor slot and a size. The object
+// embedded in uking::ui::UiTexSlots (vtable 0x2477bd8; the ctor stores the descriptor slot as -1 and the size as
+// 0), eui::SetupTextureInfoByAglTextureData (0x7100bed0f8) stores two u16 at +0x10 / +0x12 after a DynamicCast
+// to this class. The class name is a guess (the binary has no name for it).
+class ExternalTextureInfo : public TextureInfo {
+public:
+    NN_RUNTIME_TYPEINFO(TextureInfo)
+
+    ExternalTextureInfo() = default;
+    ~ExternalTextureInfo() override = default;
+
+    void Finalize(gfx::Device*) override {}
+    TexSize GetSize() const override { return mSize; }
+    u32 m5() const override { return 0; }
+    bool IsValid() const override { return mDescriptorSlot.IsValid(); }
+    const gfx::TextureView* GetTextureView() const override { return nullptr; }
+    gfx::TextureView* GetTextureView() override { return nullptr; }
+
     void SetSize(u16 width, u16 height) {
-        mWidth = width;
-        mHeight = height;
+        mSize.width = width;
+        mSize.height = height;
     }
 
 private:
-    gfx::DescriptorSlot mDescriptorSlot;
-    u16 mWidth = 0;
-    u16 mHeight = 0;
+    TexSize mSize{0, 0};
 };
-static_assert(sizeof(TextureInfo) == 0x18);
+static_assert(sizeof(ExternalTextureInfo) == 0x18);
 
 }  // namespace nn::ui2d
