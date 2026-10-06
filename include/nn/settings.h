@@ -19,7 +19,9 @@ enum Language {
     Language_Taiwanese,
     Language_BritishEnglish,
     Language_CanadianFrench,
-    Language_LatinAmericanSpanish
+    Language_LatinAmericanSpanish,
+    Language_SimplifiedChinese,
+    Language_TraditionalChinese,
 };
 
 struct LanguageCode {
