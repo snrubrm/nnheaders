@@ -9,6 +9,12 @@
 #include <nn/types.h>
 #include <nn/util/MathTypes.h>
 
+namespace nn {
+namespace font {
+class GpuBuffer;
+}
+}  // namespace nn
+
 namespace nn::ui2d {
 
 class GraphicsResource;
@@ -37,7 +43,12 @@ public:
     /* 0xb0 */ util::Float2 mLocationAdjustScale;
     /* 0xb8 */ GraphicsResource* mGraphicsResource;
     /* 0xc0 */ const Layout* mLayout;
-    /* 0xc8 */ u64 _c8[4];  // zero-initialised
+    // The two GPU buffers the layout draws from; eui::ConstantBuffer (0x7100bf4368) sets them, and
+    // Picture::DrawSelf (0x7100aba44c) reads a flag byte of the first. Names follow the NintendoWare layout
+    // library; which one is which is a guess.
+    /* 0xc8 */ font::GpuBuffer* mUi2dConstantBuffer;
+    /* 0xd0 */ font::GpuBuffer* mFontConstantBuffer;
+    /* 0xd8 */ u64 _d8[2];  // zero-initialised
     /* 0xe8 */ u8 _e8[3];
     /* 0xeb */ u8 _eb[7];  // zero-initialised flag bytes (Pane::LoadMtx clears the one at +0xee)
 };
