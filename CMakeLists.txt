@@ -190,6 +190,7 @@ add_library(NintendoSDK OBJECT
   include/nn/ui2d/AnimTransform.h
   include/nn/ui2d/ArcExtractor.h
   include/nn/ui2d/DrawInfo.h
+  include/nn/ui2d/GraphicsResource.h
   include/nn/ui2d/Group.h
   include/nn/ui2d/Layout.h
   include/nn/ui2d/Material.h
