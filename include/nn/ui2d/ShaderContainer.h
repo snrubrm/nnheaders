@@ -10,7 +10,7 @@ class ShaderInfo;
 // The container has a single intrusive-list root; entry layout is not recovered here.
 class ShaderContainer {
 public:
-    ShaderContainer();
+    ShaderContainer() = default;
     ~ShaderContainer();
 
     ShaderInfo* FindShaderByName(const char* name) const;
