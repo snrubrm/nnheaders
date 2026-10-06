@@ -98,9 +98,18 @@ public:
             ++(*this);
             return temporary;
         }
-        const_iterator& operator--();
-        const_iterator operator--(int);
-        bool operator==(const const_iterator&) const;
+        const_iterator& operator--() {
+            m_Node = m_Node->GetPrev();
+            return *this;
+        }
+
+        const_iterator operator--(int) {
+            const_iterator temporary(*this);
+            --(*this);
+            return temporary;
+        }
+
+        bool operator==(const const_iterator& ci) const { return m_Node == ci.m_Node; }
         bool operator!=(const const_iterator& ci) const { return m_Node != ci.m_Node; }
 
     private:
@@ -133,9 +142,18 @@ public:
             return temporary;
         }
 
-        iterator& operator--();
-        iterator operator--(int);
-        bool operator==(const iterator&) const;
+        iterator& operator--() {
+            m_Node = m_Node->GetPrev();
+            return *this;
+        }
+
+        iterator operator--(int) {
+            iterator temporary(*this);
+            --(*this);
+            return temporary;
+        }
+
+        bool operator==(const iterator& i) const { return m_Node == i.m_Node; }
 
         bool operator!=(const iterator& i) const { return m_Node != i.m_Node; }
 
@@ -247,9 +265,18 @@ public:
             ++m_Iterator;
             return temporary;
         }
-        const_iterator& operator--();
-        const_iterator operator--(int);
-        bool operator==(const const_iterator&) const;
+        const_iterator& operator--() {
+            --m_Iterator;
+            return *this;
+        }
+
+        const_iterator operator--(int) {
+            const_iterator temporary(*this);
+            --m_Iterator;
+            return temporary;
+        }
+
+        bool operator==(const const_iterator& ci) const { return m_Iterator == ci.m_Iterator; }
         bool operator!=(const const_iterator& ci) const { return m_Iterator != ci.m_Iterator; }
 
     private:
@@ -291,9 +318,18 @@ public:
             return temporary;
         }
 
-        iterator& operator--();
-        iterator operator--(int);
-        bool operator==(const iterator&) const;
+        iterator& operator--() {
+            --m_Iterator;
+            return *this;
+        }
+
+        iterator operator--(int) {
+            iterator temporary(*this);
+            --m_Iterator;
+            return temporary;
+        }
+
+        bool operator==(const iterator& i) const { return m_Iterator == i.m_Iterator; }
 
         bool operator!=(const iterator& i) const { return m_Iterator != i.m_Iterator; }
 
