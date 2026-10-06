@@ -8,6 +8,8 @@ namespace nn::g3d {
 class SkeletonObj {
 public:
     const ResSkeleton* GetRes() const { return m_Res; }
+    /// 0x7101337d1c (declared only)
+    void ClearLocalMtx();
 
 private:
     const ResSkeleton* m_Res;
