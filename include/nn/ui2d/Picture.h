@@ -38,6 +38,7 @@ public:
     u8 GetMaterialCount() const override;
     Material* GetMaterial(s32) const override;
     void Calculate(DrawInfo&, CalculateContext&, bool) override;
+    void DrawSelf(DrawInfo&, gfx::CommandBuffer&) override;  // 0x7100aba44c
 
 protected:
     /* 0xe0 */ Material* mMaterial;
