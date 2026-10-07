@@ -23,6 +23,7 @@ public:
     void DoFreePlayerHeap();
     void detail_SortPriorityList(bool);
     void PauseAllSound(s32, bool);
+    void PauseAllSound(bool pause, s32 fade_frames);
     void PauseAllSound(bool, s32, nn::atk::PauseMode);
     void SetVolume(f32 vol);
     void SetLowPassFilterFrequency(f32 filterFreq);

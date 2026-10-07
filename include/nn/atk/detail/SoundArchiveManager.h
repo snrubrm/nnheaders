@@ -33,7 +33,8 @@ public:
     nn::atk::detail::AddonSoundArchiveContainer* _18;
     u64* _20;
     nn::atk::SoundArchive* mSoundArchive;  // _28
-    u64 _30;
+    u32 mSoundPlayerCount;  // _30 (read through SoundArchivePlayer::GetSoundPlayerCount)
+    u32 _34;
     u64 _38;
     u64 _40;
 };

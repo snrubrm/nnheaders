@@ -13,6 +13,8 @@
 
 namespace nn {
 namespace atk {
+class SoundPlayer;
+
 class SoundArchivePlayer {
 public:
     SoundArchivePlayer();
@@ -23,6 +25,8 @@ public:
     void Finalize();
     void StopAllSound(s32, bool);
     void DisposeInstances();
+    SoundPlayer* GetSoundPlayer(u32 player_id);
+    u32 GetSoundPlayerCount() const { return mArchiveManager.mSoundPlayerCount; }
 
     nn::atk::detail::SoundArchiveManager mArchiveManager;          // _8
     nn::atk::detail::SequenceSoundRuntime mSeqSoundRuntime;        // _50
