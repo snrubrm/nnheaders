@@ -509,6 +509,9 @@ struct VibrationValue {
 void InitializeNpad();
 void SetSupportedNpadIdType(const u32*, u64);
 void SetSupportedNpadStyleSet(NpadStyleSet);
+void SetNpadJoyHoldType(NpadJoyHoldType);
+void SetNpadJoyAssignmentModeDual(const u32& id);
+void SendVibrationValue(const VibrationDeviceHandle& handle, const VibrationValue& value);
 NpadStyleSet GetNpadStyleSet(const u32& id);
 s32 ShowControllerSupport(ControllerSupportResultInfo*, const ControllerSupportArg&);
 
