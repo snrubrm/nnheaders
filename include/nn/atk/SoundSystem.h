@@ -24,6 +24,8 @@ public:
     static bool Initialize(const SoundSystemParam& param, size_t memory, size_t memory_size);
     /// 0x710133dc3c (declared only)
     static void Finalize();
+    /// 0x710133dd80 (declared only)
+    static bool IsInitialized();
     /// 0x710133dfb8 / 0x710133e02c / 0x710133e0b0 (declared only)
     static void ClearEffect(AuxBus bus);
     static void ClearEffect(AuxBus bus, OutputDevice device);
