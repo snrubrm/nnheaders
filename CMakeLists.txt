@@ -233,6 +233,7 @@ add_library(NintendoSDK OBJECT
   include/nn/atk/detail/driver/HardwareManager.h
   include/nn/atk/detail/Util.h
   include/nn/atk/OutputMode.h
+  include/nn/atk/SoundSystem.h
   include/nn/atk/SoundArchivePlayer.h
   include/nn/atk/SoundPlayer.h
   include/nn/atk/SoundDataManager.h
