@@ -205,6 +205,9 @@ add_library(NintendoSDK OBJECT
   include/nn/ui2d/Types.h
   include/nn/ui2d/Util.h
   include/nn/g3d/BindFuncTable.h
+  include/nn/g3d/AnimObj.h
+  include/nn/g3d/ModelAnimObj.h
+  include/nn/g3d/SkeletalAnimObj.h
   include/nn/g3d/ModelObj.h
   include/nn/g3d/ResMaterialAnim.h
   include/nn/g3d/ResShapeAnim.h
@@ -302,6 +305,7 @@ add_library(NintendoSDK OBJECT
   include/nv.h
 
   src/NintendoSDK/font/font_DispStringBuffer.cpp
+  src/NintendoSDK/g3d/g3d_ModelAnimObj.cpp
   src/NintendoSDK/font/font_CharWriter.cpp
   src/NintendoSDK/font/font_GlyphNode.cpp
   src/NintendoSDK/font/font_Font.cpp
