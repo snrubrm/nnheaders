@@ -306,6 +306,7 @@ add_library(NintendoSDK OBJECT
   include/nv.h
 
   src/NintendoSDK/font/font_DispStringBuffer.cpp
+  src/NintendoSDK/g3d/g3d_ResBoneAnim.cpp
   src/NintendoSDK/g3d/g3d_ModelAnimObj.cpp
   src/NintendoSDK/font/font_CharWriter.cpp
   src/NintendoSDK/font/font_GlyphNode.cpp

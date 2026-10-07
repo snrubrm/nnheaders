@@ -1,6 +1,7 @@
 #include <nn/g3d/ModelAnimObj.h>
 #include <nn/g3d/SkeletalAnimObj.h>
 #include <nn/g3d/ResSkeleton.h>
+#include <nn/g3d/ResBoneAnim.h>
 
 namespace nn::g3d {
 
@@ -61,6 +62,14 @@ void SkeletalAnimObj::sub_7101333EC0(const ResSkeleton* skeleton, s32 first_bone
     do {
         SetBindFlagImpl(bone, flag);
     } while (++bone < end);
+}
+
+void SkeletalAnimObj::ClearResult() {
+    const size_t count = mBindTable.mAnimCount;
+    mFlags |= 8;
+    auto* result = static_cast<BoneAnimResult*>(mResultBuffer);
+    for (size_t i = 0; i < count; ++i)
+        mBoneAnims[i].sub_7100AC6F68(&result[i], nullptr);
 }
 
 }  // namespace nn::g3d
