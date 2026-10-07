@@ -31,7 +31,11 @@ public:
 
 private:
     // Partial resource layout; unidentified intervals retain original offsets.
-    u8 _0[0x30];
+    u8 _0[0x20];
+    // Reset ac720c clears this original pointer; its owner is unidentified.
+    void* _20;
+    // Reset ac720c fills one u16 per bone animation with the invalid index.
+    u16* _28;
     ResBoneAnim* mBoneAnims;
     u8 _38[0x10];
     u32 mFlags;

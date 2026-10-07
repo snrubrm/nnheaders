@@ -212,6 +212,7 @@ add_library(NintendoSDK OBJECT
   include/nn/g3d/ResMaterialAnim.h
   include/nn/g3d/ResShapeAnim.h
   include/nn/g3d/ResLightAnim.h
+  include/nn/g3d/ResAnimCurve.h
   include/nn/g3d/ResSkeletalAnim.h
   include/nn/g3d/ResBoneAnim.h
   include/nn/g3d/ResSceneAnim.h
@@ -306,6 +307,8 @@ add_library(NintendoSDK OBJECT
   include/nv.h
 
   src/NintendoSDK/font/font_DispStringBuffer.cpp
+  src/NintendoSDK/g3d/g3d_ResAnimCurve.cpp
+  src/NintendoSDK/g3d/g3d_ResSkeletalAnim.cpp
   src/NintendoSDK/g3d/g3d_ResBoneAnim.cpp
   src/NintendoSDK/g3d/g3d_ModelAnimObj.cpp
   src/NintendoSDK/font/font_CharWriter.cpp
