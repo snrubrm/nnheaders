@@ -22,8 +22,10 @@ enum PixelFormat { RGBA32, RGB24 };
 enum ProcessStage { UNREGISTERED = 0, REGISTERED = 1, ANALYZED = 2 };
 
 struct Dimension {
-    f32 width;
-    f32 height;
+    // GetAnalyzedDimension returns the two integer dimensions in one register;
+    // ResourceJpg 9cd1ac consumes the low and high 32-bit halves as widths/heights.
+    s32 width;
+    s32 height;
 };
 
 class JpegDecoder {
@@ -32,6 +34,8 @@ public:
     virtual ~JpegDecoder();
 
     void SetImageData(void const* source, u64 size);
+    // Original imported symbol, called by ResourceJpg at 9cd178.
+    void SetResolutionDenominator(s32 denominator);
     nn::image::JpegStatus Analyze();
     nn::image::Dimension GetAnalyzedDimension() const;
     s64 GetAnalyzedWorkBufferSize() const;
