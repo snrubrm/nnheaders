@@ -9,6 +9,7 @@
 #include <nn/types.h>
 #include <nn/util.h>
 #include <nn/util/util_BinaryFormat.h>
+#include <nn/util/util_ResDic.h>
 
 namespace nn {
 
@@ -23,6 +24,14 @@ class ResMaterialAnim;
 class ResShapeAnim;
 class ResSceneAnim;
 typedef void* TextureRef;
+
+// Record name is a reconstruction guess. Original external-file lookup b3365c
+// and resource parser fdcae4 establish a 0x10-byte array record and data at +0.
+// The second half remains unidentified rather than assigning a size meaning.
+struct ResExternalFile {
+    void* data;
+    u8 _8[8];
+};
 
 class ResFile : public nn::util::BinaryFileHeader {
 public:
@@ -52,8 +61,8 @@ public:
     u64 mSceneAnimDictOffset;             // _80
     u64 mMemoryPool;                      // _88
     u64 mBufferSection;                   // _90
-    u64 mEmbeddedFilesOffset;             // _98
-    u64 mEmbeddedFilesDictOffset;         // _A0
+    ResExternalFile* mEmbeddedFilesOffset;  // _98, relocated original array
+    nn::util::ResDic* mEmbeddedFilesDictOffset;  // _A0, original dictionary
     u64 mPadding;                         // _A8
     u64 mStrTableOffset;                  // _B0
     u32 mStrTableSize;                    // _B8
