@@ -16,6 +16,9 @@ public:
 
     s32 GetNumShapes() const { return m_NumShapes; }
 
+    // inline-only in the original; name is a guess: +58 user pointer in ModelNW Bone/MaterialVisibilityCallback c04134/c04164.
+    void* GetUserPtr() { return m_UserData; }
+
     s32 get_8c() const { return _8c; }
 
 private:
