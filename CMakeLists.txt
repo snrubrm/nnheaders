@@ -213,6 +213,7 @@ add_library(NintendoSDK OBJECT
   include/nn/g3d/ResShapeAnim.h
   include/nn/g3d/ResLightAnim.h
   include/nn/g3d/ResSkeletalAnim.h
+  include/nn/g3d/ResBoneAnim.h
   include/nn/g3d/ResSceneAnim.h
   include/nn/g3d/ResFile.h
   include/nn/g3d/ResMaterial.h

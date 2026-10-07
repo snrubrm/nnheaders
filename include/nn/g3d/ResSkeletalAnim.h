@@ -6,6 +6,8 @@
 #pragma once
 
 #include <nn/types.h>
+#include <nn/nn_BitTypes.h>
+#include <nn/g3d/ResBoneAnim.h>
 
 namespace nn::g3d {
 class ResSkeletalAnim {
@@ -18,10 +20,23 @@ public:
     s32 GetFrameCount() const { return mFrameCount; }
     bool IsLooped() const { return (mFlags & 4) != 0; }
 
+    // Inline-only in the original; names are guesses following ResSkeleton's
+    // resource API. SDK Reset ac720c, SetResource 13332e0 and AS lookup
+    // 115d55c independently establish array +30 and count +58.
+    int GetBoneAnimCount() const { return mBoneAnimCount; }
+    const ResBoneAnim* GetBoneAnim(int index) const { return &mBoneAnims[index]; }
+    // Existing ResBone/ResSkeleton GetRotateMode API provides the name precedent;
+    // SkeltalAsset 125d49c consumes the original 0x7000 rotation-mode bits.
+    nn::Bit32 GetRotateMode() const { return mFlags & 0x7000; }
+
 private:
-    // Partial resource layout through the frame count; the remaining members are unmodeled.
-    u8 _0[0x48];
+    // Partial resource layout; unidentified intervals retain original offsets.
+    u8 _0[0x30];
+    ResBoneAnim* mBoneAnims;
+    u8 _38[0x10];
     u32 mFlags;
     s32 mFrameCount;
+    u8 _50[8];
+    u16 mBoneAnimCount;
 };
 }  // namespace nn::g3d

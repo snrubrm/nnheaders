@@ -179,8 +179,13 @@ typedef struct {
 } NVNmemoryPoolBuilder;
 
 typedef struct {
-    // TODO: reverse and define this as it looks like it's not an opaque type.
-    char dummy[1];
+    // MemoryPool initialize b2fe94 supplies this genuine 0x28-byte mapping
+    // record to MapVirtual: source pool, two offsets, size and storage class.
+    NVNmemoryPool* physicalPool;
+    ptrdiff_t physicalOffset;
+    ptrdiff_t virtualOffset;
+    size_t size;
+    NVNstorageClass storageClass;
 } NVNmappingRequest;
 
 typedef struct {
