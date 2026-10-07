@@ -242,7 +242,7 @@ private:
     ResExtUserDataList* mAnimExtUserData;
     char mPanelName[25];
     char mUserData[9];
-    u16 _DA;
-    u32 _DC;
+    // Window resource/copy constructors reuse the tail beginning at +0xda.
+    // The old _DA/_DC declarations occupied this base-class tail padding.
 };
 }  // namespace nn::ui2d

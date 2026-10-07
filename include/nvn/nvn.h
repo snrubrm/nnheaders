@@ -188,7 +188,8 @@ typedef struct {
 } NVNsamplerBuilder;
 
 typedef struct {
-    char reserved[0x30];
+    // Matches nvn::Sampler and original sampler initialization in agl b3bbac.
+    char reserved[0x60];
 } NVNsampler;
 
 typedef struct {
