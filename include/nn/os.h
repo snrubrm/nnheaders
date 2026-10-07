@@ -126,6 +126,7 @@ bool TimedWaitLightEvent(LightEventType*, nn::TimeSpan);
 void ClearLightEvent(LightEventType*);
 
 TimeSpan ConvertToTimeSpan(Tick ticks);
+Tick ConvertToTick(TimeSpan span);
 
 // SEMAPHORES
 void InitializeSemaphore(SemaphoreType* semaphore, s32 initial_count, s32 max_count);
