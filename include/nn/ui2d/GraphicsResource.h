@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <nn/gfx/gfx_Buffer.h>
+#include <nn/gfx/gfx_DescriptorSlot.h>
 #include <nn/gfx/gfx_MemoryPool.h>
 #include <nn/gfx/gfx_State.h>
 #include <nn/gfx/gfx_Types.h>
@@ -15,6 +16,13 @@ namespace nn::ui2d {
 class GraphicsResource {
 public:
     GraphicsResource();
+    // Original 0x7100ac1334 destroys all ten modeled gfx members and the object at +0x78.
+    ~GraphicsResource();
+
+    using SamplerDescriptorCallback = void (*)(gfx::DescriptorSlot*, const gfx::Sampler&, void*);
+    // Name is a reconstruction guess paired with RegisterCommonSamplerSlot (0x7100ac16c0). 0x7100ac18bc calls this callback
+    // with 0x78-byte samplers and 8-byte slots; ScreenMgr passes UnregisterSlotForSampler.
+    void UnregisterCommonSamplerSlot(SamplerDescriptorCallback callback, void* user_data);
 
     // 0x7100ac13a8
     void Finalize(gfx::Device* device);
