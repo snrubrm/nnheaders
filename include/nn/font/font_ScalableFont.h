@@ -56,6 +56,7 @@ public:
     bool IsColorBlackWhiteInterpolationEnabled() const override;
     void SetColorBlackWhiteInterpolationEnabled(bool enabled) override;
     bool IsBorderEffectEnabled() const override;
+    void RegisterAlternateCharGlyph() const;
 
 private:
     /* 0x10 */ TextureCache* mTextureCache;
