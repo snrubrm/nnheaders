@@ -31,10 +31,20 @@ struct BuildArgSet;
 struct BuildResSet;
 class ResourceAccessor;
 class ControlCreator;
+class ControlSrc;
 class TextSearcher;
 struct UserShaderInformation;
 struct ResExtUserDataList;
 using UserShaderCallback = bool (*)(UserShaderInformation*, const ResExtUserDataList*);
+
+// Layout::BuildImpl at 0x7100ab6d1c calls slot 2 with the device, layout and control source.
+// The eui control creator vtable at 0x71024c7310 has the destructor pair in slots 0 and 1.
+class ControlCreator {
+public:
+    virtual ~ControlCreator() = default;
+    virtual void CreateControl(gfx::Device* device, class Layout* layout,
+                               const ControlSrc& src) = 0;
+};
 
 // An entry of a layout's list of parts layouts (the layouts of the parts panes; Layout::Animate etc. forward to them).
 struct PartsLayoutLink {
