@@ -150,6 +150,12 @@ public:
         mPosition.y = position.y;
         SetGlobalMatrixDirty(true);
     }
+    // Inline-only; name is a guess. The Y store and dirty-bit update repeat in
+    // original 0x710109f058, 0x71010b2b30 and 0x71010b3920.
+    void SetPositionY(float y) {
+        mPosition.y = y;
+        SetGlobalMatrixDirty(true);
+    }
 
     const util::Float3& GetRotation() const { return mRotation; }
     void SetRotation(const util::Float3& rotation) {
