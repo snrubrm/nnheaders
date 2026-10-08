@@ -8,6 +8,7 @@
 #include <nn/font/font_Util.h>
 #include <nn/gfx/gfx_Device.h>
 #include <nn/types.h>
+#include <nn/util/util_BytePtr.h>
 #include <nn/util/util_IntrusiveList.h>
 
 namespace nn::ui2d {
@@ -17,8 +18,19 @@ class Material;
 class Pane;
 class ResourceAccessor;
 class TextureInfo;
-struct ResAnimationContent;
 struct ResExtUserData;
+
+// BindMaterial (0x7100ab4a50) bounds the name comparison to 28 bytes.
+// AnimatePaneImpl/AnimateExtUserDataImpl read the count and type at +0x1c/+0x1d.
+struct ResAnimationContent {
+    char name[0x1c];
+    u8 infoCount;
+    u8 type;
+    u8 _1e[2];
+};
+static_assert(sizeof(ResAnimationContent) == 0x20);
+static_assert(offsetof(ResAnimationContent, infoCount) == 0x1c);
+static_assert(offsetof(ResAnimationContent, type) == 0x1d);
 
 // Resource blocks (offsets read by the accessors below).
 struct ResAnimationBlock {
@@ -28,6 +40,15 @@ struct ResAnimationBlock {
     u16 textureCount;
     u16 contentCount;
     u32 contentOffsetsOffset;
+
+    // inline-only in the original; names are guesses. BindPane (0x7100ab4428),
+    // BindGroup (0x7100ab487c) and eui 0x7100aa205c resolve these two stages.
+    const u32* GetContentOffsets() const {
+        return util::ConstBytePtr(this, contentOffsetsOffset).Get<u32>();
+    }
+    const ResAnimationContent* GetContentAtOffset(u32 offset) const {
+        return util::ConstBytePtr(this, offset).Get<ResAnimationContent>();
+    }
 };
 static_assert(sizeof(ResAnimationBlock) == 0x14);
 // Texture-name offsets immediately follow this fixed prefix. They are relative
