@@ -5,8 +5,10 @@
 namespace nn::util::neon {
 
 struct MatrixRowMajor4x3fType {
-    f32 m[4][3];
+    // DrawInfo 0x7100ac06a4 and Matrix34 byte-copy consumers use three rows.
+    f32 m[3][4];
 };
+static_assert(sizeof(MatrixRowMajor4x3fType) == 48);
 
 struct MatrixColumnMajor4x3fType {
     f32 m[3][4];
