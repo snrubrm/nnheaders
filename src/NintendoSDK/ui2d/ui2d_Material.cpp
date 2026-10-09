@@ -2,10 +2,17 @@
 #include <nn/ui2d/AnimTransform.h>
 #include <nn/ui2d/BuildTypes.h>
 #include <nn/font/font_GpuBuffer.h>
+#include <nn/gfx/gfx_CommandBuffer.h>
+#include <nn/gfx/gfx_GpuAddress.h>
 #include <nn/ui2d/DrawInfo.h>
+#include <nn/ui2d/ShaderInfo.h>
 #include <nn/util/util_BytePtr.h>
 
 namespace nn::ui2d {
+
+// 0x7100ac35cc
+// NON_MATCHING: the compiler removes the unused native destructor vtable store.
+Material::~Material() {}
 
 namespace detail {
 // 0x7100ac01fc
@@ -75,6 +82,47 @@ void* Material::GetConstantBufferForPixelShader(const DrawInfo& info) const {
     if (!mapped)
         return nullptr;
     return util::BytePtr(mapped, mPixelShaderConstantBufferOffset).Get();
+}
+
+// 0x7100ac4e54
+void Material::sub_7100AC4E54(gfx::CommandBuffer* command_buffer, const DrawInfo& info) {
+    gfx::GpuAddress address;
+    info.mUi2dConstantBuffer->mBuffers[info.mUi2dConstantBuffer->mBufferIndex].GetGpuAddress(&address);
+    address.Offset(mVertexShaderConstantBufferOffset);
+    size_t size = 560;
+    if (mUserShaderConstantBufferInformation)
+        size += mUserShaderConstantBufferInformation->vertexExtraSize;
+    command_buffer->gfx::detail::CommandBufferImpl<gfx::DefaultApi>::SetConstantBuffer(
+        mShaderInfo->mVertexConstantBufferSlots[_4b], gfx::ShaderStage_Vertex, address, size);
+}
+
+// 0x7100ac4ee4
+void Material::sub_7100AC4EE4(gfx::CommandBuffer* command_buffer, const DrawInfo& info) {
+    if (!mUserShaderConstantBufferInformation || !mUserShaderConstantBufferInformation->geometryOffset)
+        return;
+    gfx::GpuAddress address;
+    info.mUi2dConstantBuffer->mBuffers[info.mUi2dConstantBuffer->mBufferIndex].GetGpuAddress(&address);
+    address.Offset(mUserShaderConstantBufferInformation->geometryOffset);
+    command_buffer->gfx::detail::CommandBufferImpl<gfx::DefaultApi>::SetConstantBuffer(
+        mShaderInfo->mGeometryConstantBufferSlots[_4b], gfx::ShaderStage_Geometry, address,
+        mUserShaderConstantBufferInformation->geometrySize);
+}
+
+// 0x7100ac4f74
+void Material::sub_7100AC4F74(gfx::CommandBuffer* command_buffer, const DrawInfo& info) {
+    gfx::GpuAddress address;
+    info.mUi2dConstantBuffer->mBuffers[info.mUi2dConstantBuffer->mBufferIndex].GetGpuAddress(&address);
+    address.Offset(mPixelShaderConstantBufferOffset);
+    size_t size = 144;
+    if (mUserShaderConstantBufferInformation)
+        size += mUserShaderConstantBufferInformation->pixelExtraSize;
+    command_buffer->gfx::detail::CommandBufferImpl<gfx::DefaultApi>::SetConstantBuffer(
+        mShaderInfo->mPixelConstantBufferSlots[_4b], gfx::ShaderStage_Pixel, address, size);
+}
+
+// 0x7100ac50cc
+void Material::sub_7100AC50CC(gfx::CommandBuffer* command_buffer) {
+    mShaderInfo->sub_7100AC5710(command_buffer, _4b);
 }
 
 }  // namespace nn::ui2d

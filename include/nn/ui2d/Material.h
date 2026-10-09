@@ -6,6 +6,7 @@
 #pragma once
 
 #include <nn/gfx/gfx_Device.h>
+#include <nn/gfx/gfx_Types.h>
 #include <nn/types.h>
 #include <nn/ui2d/Types.h>
 
@@ -19,6 +20,7 @@ struct ResMaterial;
 struct UserShaderInformation;
 
 class TextureInfo;
+class ShaderInfo;
 
 // One texture slot of a material: byte 0 holds the sampler settings (0x90 once a texture info has been set: clamp,
 // linear / linear), the texture info pointer is at +8 (TexMap::TexMap / TexMap::Set 0x7100aba554 / 0x7100aba568
@@ -64,6 +66,10 @@ public:
     void SetupUserShaderConstantBufferInformation(nn::ui2d::UserShaderInformation const&);
     void* GetConstantBufferForVertexShader(const DrawInfo&) const;
     void* GetConstantBufferForPixelShader(const DrawInfo&) const;
+    void sub_7100AC4E54(gfx::CommandBuffer*, const DrawInfo&);
+    void sub_7100AC4EE4(gfx::CommandBuffer*, const DrawInfo&);
+    void sub_7100AC4F74(gfx::CommandBuffer*, const DrawInfo&);
+    void sub_7100AC50CC(gfx::CommandBuffer*);
 
     virtual ~Material();
     virtual void BindAnimation(nn::ui2d::AnimTransform*);
@@ -92,6 +98,16 @@ public:
     }
 
 private:
+    // Native shader setup allocates sixteen bytes at 0x7100ac2d14; binding and
+    // allocation paths 0x7100ac4ad0..0x7100ac4f74 consume these four words.
+    struct UserShaderConstantBufferInformation {
+        u32 vertexExtraSize;
+        u32 pixelExtraSize;
+        u32 geometrySize;
+        u32 geometryOffset;
+    };
+    static_assert(sizeof(UserShaderConstantBufferInformation) == 0x10);
+
     // Allocation counts (the same bit layout is used for the capacity at +0x10 and the used counts at +0x14; the
     // order is the order of ReserveMem's parameters). Bit 16 of the capacity word is also cleared by ReserveMem.
     struct MemInfo {
@@ -112,11 +128,11 @@ private:
     /* 0x10 */ MemInfo mMemCap;
     /* 0x14 */ MemInfo mMemCount;
     /* 0x18 */ void* mMem;  // one allocation; starts with the TexMap array
-    /* 0x20 */ u8 _20[0x8];
+    /* 0x20 */ ShaderInfo* mShaderInfo;  // AcquireArchiveShader stores it at 0x7100ac3104 / 0x7100ac3198
     /* 0x28 */ const char* mName;  // copyCtor 0x7100ac33f4; Pane searches dereference it
     /* 0x30 */ u32 mVertexShaderConstantBufferOffset;
     /* 0x34 */ u32 mPixelShaderConstantBufferOffset;
-    /* 0x38 */ void* _38;
+    /* 0x38 */ UserShaderConstantBufferInformation* mUserShaderConstantBufferInformation;
     /* 0x40 */ void* _40;
     /* 0x48 */ u8 _48[2];
     /* 0x4a */ u8 mFlags;

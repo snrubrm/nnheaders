@@ -13,6 +13,7 @@ class GpuAddress : public detail::DataContainer<GpuAddressData> {
 public:
     // inline-only in the original: GraphicsResource binding and RectDrawer drawing zero both address words.
     GpuAddress() = default;
-    void Offset(ptrdiff_t);
+    // Inline-only: Material's three constant-buffer bindings add to the address word.
+    void Offset(ptrdiff_t offset) { value += offset; }
 };
 }  // namespace nn::gfx
