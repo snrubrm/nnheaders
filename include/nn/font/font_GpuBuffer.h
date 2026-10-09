@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <atomic>
 #include <nn/gfx/gfx_Buffer.h>
 #include <nn/gfx/gfx_Types.h>
 #include <nn/types.h>
@@ -38,7 +39,13 @@ private:
     /* 0x24 */ s32 mMappedIndex;
     /* 0x28 */ s32 mBufferIndex;
     /* 0x30 */ void* mMappedPtr;
-    /* 0x38 */ void* _38;
+    // Native allocation paths (0x7101324170 / 0x71013244d8) use a plain byte offset unless
+    // flag bit 0 selects the separately allocated eight-byte shared atomic offset.
+    union {
+        /* 0x38 */ u64 mOffset;
+        /* 0x38 */ std::atomic<u64>* mSharedOffset;
+        /* 0x38 */ void* _38;  // retained compatible placeholder for the shared storage pointer
+    };
 };
 static_assert(sizeof(GpuBuffer) == 0x40);
 

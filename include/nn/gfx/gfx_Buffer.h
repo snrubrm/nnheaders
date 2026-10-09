@@ -24,8 +24,9 @@ public:
     void Initialize(TDevice<TTarget>*, const InfoType&, TMemoryPool<TTarget>*, ptrdiff_t, size_t);
     // inline-only in the original: RectDrawer (0x71013250d0) and GraphicsResource (0x7100ac13a8) call the platform API.
     void Finalize(TDevice<TTarget>* device) { detail::BufferImpl<TTarget>::Finalize(device); }
-    void* Map() const;
-    void Unmap() const;
+    // inline-only in the original: RectDrawer Initialize and GpuBuffer Map / Unmap call these platform APIs.
+    void* Map() const { return detail::BufferImpl<TTarget>::Map(); }
+    void Unmap() const { detail::BufferImpl<TTarget>::Unmap(); }
     void FlushMappedRange(ptrdiff_t, size_t) const;
     void InvalidateMappedRange(ptrdiff_t, size_t) const;
     void GetGpuAddress(GpuAddress*) const;
