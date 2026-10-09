@@ -6,6 +6,7 @@
 #pragma once
 
 #include <nn/font/font_Util.h>
+#include <nn/gfx/gfx_Types.h>
 #include <nn/types.h>
 #include <nn/util/MathTypes.h>
 
@@ -35,6 +36,9 @@ public:
 
     // 0x7100ac0714 (name after the NintendoWare layout library; copies the matrix to +0x10)
     void SetProjMtx(const util::Matrix4x4fType& matrix);
+    void sub_7100AC0720(gfx::CommandBuffer* command_buffer);
+    void sub_7100AC0738(util::Matrix4x4fType* matrix) const;
+    void sub_7100AC074C(util::Matrix4x3fType* matrix);
 
     /* 0x08 */ u64 _8;
     /* 0x10 */ util::Matrix4x4fType mProjMtx;

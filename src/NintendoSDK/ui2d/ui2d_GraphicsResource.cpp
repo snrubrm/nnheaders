@@ -54,6 +54,7 @@ void GraphicsResource::UnregisterCommonSamplerSlot(SamplerDescriptorCallback cal
 }
 
 // 0x7100ac1b30
+// NON_MATCHING: the descriptor pointer and computed index receive exchanged registers.
 gfx::DescriptorSlot* GraphicsResource::sub_7100AC1B30(TexWrap wrap_s, TexWrap wrap_t,
                                                    TexFilter min_filter, TexFilter mag_filter) {
     return &_9b8[wrap_s * 12 + wrap_t * 4 + min_filter + mag_filter * 2];

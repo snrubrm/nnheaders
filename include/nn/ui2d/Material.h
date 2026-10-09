@@ -66,6 +66,7 @@ public:
     void SetupUserShaderConstantBufferInformation(nn::ui2d::UserShaderInformation const&);
     void* GetConstantBufferForVertexShader(const DrawInfo&) const;
     void* GetConstantBufferForPixelShader(const DrawInfo&) const;
+    void sub_7100AC4AD0(const DrawInfo&);
     void sub_7100AC4E54(gfx::CommandBuffer*, const DrawInfo&);
     void sub_7100AC4EE4(gfx::CommandBuffer*, const DrawInfo&);
     void sub_7100AC4F74(gfx::CommandBuffer*, const DrawInfo&);

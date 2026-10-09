@@ -5,6 +5,7 @@
 #include <nn/gfx/gfx_CommandBuffer.h>
 #include <nn/gfx/gfx_GpuAddress.h>
 #include <nn/ui2d/DrawInfo.h>
+#include <nn/ui2d/GraphicsResource.h>
 #include <nn/ui2d/ShaderInfo.h>
 #include <nn/util/util_BytePtr.h>
 
@@ -82,6 +83,54 @@ void* Material::GetConstantBufferForPixelShader(const DrawInfo& info) const {
     if (!mapped)
         return nullptr;
     return util::BytePtr(mapped, mPixelShaderConstantBufferOffset).Get();
+}
+
+// Shared allocation uses native acquire/release exclusive instructions at 0x7100ac4b1c,
+// 0x7100ac4b80 and 0x7100ac4bd0; the other union member is a plain byte offset.
+// 0x7100ac4ad0
+// NON_MATCHING: alignment and allocation result scheduling differ from native code.
+void Material::sub_7100AC4AD0(const DrawInfo& info) {
+    const size_t alignment = info.mGraphicsResource->_70;
+    size_t size = 560;
+    if (mUserShaderConstantBufferInformation)
+        size += mUserShaderConstantBufferInformation->vertexExtraSize;
+    size = (size + alignment - 1) & ~(alignment - 1);
+    if (info.mUi2dConstantBuffer->mFlags & 1) {
+        mVertexShaderConstantBufferOffset =
+            info.mUi2dConstantBuffer->mSharedOffset->fetch_add(size, std::memory_order_acq_rel);
+    } else {
+        u64 offset = info.mUi2dConstantBuffer->mOffset;
+        info.mUi2dConstantBuffer->mOffset += size;
+        mVertexShaderConstantBufferOffset = offset;
+    }
+
+    size = 144;
+    if (mMemCap._bit16)
+        size = 224;
+    else if (mUserShaderConstantBufferInformation)
+        size += mUserShaderConstantBufferInformation->pixelExtraSize;
+    size = (size + alignment - 1) & ~(alignment - 1);
+    if (info.mUi2dConstantBuffer->mFlags & 1) {
+        mPixelShaderConstantBufferOffset =
+            info.mUi2dConstantBuffer->mSharedOffset->fetch_add(size, std::memory_order_acq_rel);
+    } else {
+        u64 offset = info.mUi2dConstantBuffer->mOffset;
+        info.mUi2dConstantBuffer->mOffset += size;
+        mPixelShaderConstantBufferOffset = offset;
+    }
+
+    if (mUserShaderConstantBufferInformation && mUserShaderConstantBufferInformation->geometrySize) {
+        size = mUserShaderConstantBufferInformation->geometrySize;
+        size = (size + alignment - 1) & ~(alignment - 1);
+        if (info.mUi2dConstantBuffer->mFlags & 1) {
+            mUserShaderConstantBufferInformation->geometryOffset =
+                info.mUi2dConstantBuffer->mSharedOffset->fetch_add(size, std::memory_order_acq_rel);
+        } else {
+            u64 offset = info.mUi2dConstantBuffer->mOffset;
+            info.mUi2dConstantBuffer->mOffset += size;
+            mUserShaderConstantBufferInformation->geometryOffset = offset;
+        }
+    }
 }
 
 // 0x7100ac4e54
