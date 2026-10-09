@@ -184,6 +184,32 @@ void AnimTransformBasic::UnbindPane(const Pane* pane) {
     }
 }
 
+// 0x7100ab4f20
+void AnimTransformBasic::Animate() {
+    if (!mEnabled)
+        return;
+    const s32 count = mBindCount;
+    for (s32 i = 0; i < count; ++i) {
+        const Binding& binding = _30[i];
+        // The native content tag identifies the genuine object pointer held
+        // in the generic storage; animation APIs mutate that concrete target.
+        switch (binding.content->type) {
+        case 0:
+            AnimatePaneImpl(static_cast<Pane*>(const_cast<void*>(binding.target)),
+                            binding.content);
+            break;
+        case 1:
+            AnimateMaterialImpl(static_cast<Material*>(const_cast<void*>(binding.target)),
+                                binding.content);
+            break;
+        case 2:
+            AnimateExtUserDataImpl(static_cast<ResExtUserData*>(const_cast<void*>(binding.target)),
+                                   binding.content);
+            break;
+        }
+    }
+}
+
 // 0x7100ab5088
 void AnimTransformBasic::AnimateMaterial(Material* material) {
     if (!mEnabled)
