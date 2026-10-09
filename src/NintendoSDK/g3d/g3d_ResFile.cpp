@@ -4,6 +4,12 @@
 
 namespace nn::g3d {
 
+void ResFile::Unrelocate() {
+    if (IsRelocated())
+        GetRelocationTable()->Unrelocate();
+}
+
+
 // NON_MATCHING: Existing BindTexture return declarations produce different status-width arithmetic.
 s32 ResFile::BindTexture(TextureRef (*callback)(const char*, void*), void* userData) {
     s32 result = 0;

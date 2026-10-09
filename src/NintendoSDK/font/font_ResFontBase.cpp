@@ -1,7 +1,58 @@
 #include <nn/font/font_ResFont.h>
 #include <nn/util/util_BytePtr.h>
+#include <nn/gfx/gfx_MemoryPoolInfo.h>
+#include <nn/gfx/gfx_MemoryPool.h>
+#include <nn/gfx/gfx_Texture.h>
+#include <nn/gfx/gfx_TextureInfo.h>
 
 namespace nn::font {
+
+// NON_MATCHING: Native pool-offset arithmetic and backend object register allocation differ.
+void ResourceTextureObject::Initialize(gfx::Device* device, gfx::MemoryPool* pool,
+                                       s64 pool_offset, u64) {
+    auto* file = gfx::ResTextureFile::ResCast(const_cast<void*>(mData));
+    auto& container = file->ToData().textureContainerData;
+    if (pool) {
+        container.pCurrentMemoryPool.Set(pool);
+        container.memoryPoolOffsetBase = pool_offset +
+            util::ConstBytePtr(file).Distance(container.pTextureData.Get()) + sizeof(util::BinaryBlockHeader);
+    } else {
+        auto* block = container.pTextureData.Get();
+        gfx::MemoryPoolInfo info;
+        info.SetMemoryPoolProperty(0x21);
+        info.SetPoolMemory(util::BytePtr(block, sizeof(util::BinaryBlockHeader)).Get(),
+                           block->GetBlockSize() - sizeof(util::BinaryBlockHeader));
+        container.pTextureMemoryPool.Get()->Initialize(device, info);
+        container.pCurrentMemoryPool.Set(container.pTextureMemoryPool.Get());
+        container.memoryPoolOffsetBase = 0;
+    }
+
+    mResTexture = file->GetResTexture(0);
+    auto& textureData = mResTexture->ToData();
+    auto& textureContainer = *textureData.pResTextureContainerData.Get();
+    const auto* textureInfo = mResTexture->GetTextureInfo();
+    gfx::detail::TextureImpl<gfx::DefaultApi>* texture = mResTexture->GetTexture();
+    const ptrdiff_t imageOffset = textureContainer.memoryPoolOffsetBase +
+        util::ConstBytePtr(textureContainer.pTextureData.Get(), sizeof(util::BinaryBlockHeader))
+            .Distance(textureData.pMipPtrArray.Get()[0].Get());
+    texture->Initialize(device, *textureInfo, textureContainer.pCurrentMemoryPool.Get(),
+                        imageOffset, textureData.textureDataSize);
+
+    gfx::TextureViewInfo viewInfo;
+    viewInfo.SetDefault();
+    viewInfo.SetImageDimension(static_cast<gfx::ImageDimension>(textureData.imageDimension));
+    viewInfo.SetChannelMapping(static_cast<gfx::ChannelMapping>(textureData.channelMapping[0]),
+                               static_cast<gfx::ChannelMapping>(textureData.channelMapping[1]),
+                               static_cast<gfx::ChannelMapping>(textureData.channelMapping[2]),
+                               static_cast<gfx::ChannelMapping>(textureData.channelMapping[3]));
+    viewInfo.SetImageFormat(textureInfo->GetImageFormat());
+    viewInfo.SetTexturePtr(mResTexture->GetTexture());
+    viewInfo.EditSubresourceRange().EditArrayRange().SetArrayLength(textureInfo->GetArrayLength());
+    viewInfo.EditSubresourceRange().EditMipRange().SetMipCount(textureInfo->GetMipCount());
+    gfx::detail::TextureViewImpl<gfx::DefaultApi>* view = mResTexture->GetTextureView();
+    view->Initialize(device, viewInfo);
+}
+
 
 // NON_MATCHING: the compiler loads the sheet data before the resource base for the byte offset calculation.
 // 0x7101326d3c

@@ -34,7 +34,8 @@ struct ResTextureContainerData {
     char targetPlatform[4];
     uint32_t textureCount;
     nn::util::BinTPtr<nn::util::BinTPtr<ResTexture>> pTexturePtrArray;
-    nn::util::BinTPtr<void> pTextureData;
+    // Native font Initialize passes this BRTD block to BinaryBlockHeader::GetBlockSize.
+    nn::util::BinTPtr<nn::util::BinaryBlockHeader> pTextureData;
     nn::util::BinTPtr<nn::util::ResDic> pTextureDic;
     // ResourceTextureObject::Initialize 1326ec4 initializes the internal pool
     // through MemoryPoolImpl, or stores the supplied TMemoryPool's same base.
