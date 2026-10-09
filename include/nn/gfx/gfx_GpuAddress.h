@@ -11,7 +11,8 @@ struct GpuAddressData {
 
 class GpuAddress : public detail::DataContainer<GpuAddressData> {
 public:
-    GpuAddress();
+    // inline-only in the original: GraphicsResource binding and RectDrawer drawing zero both address words.
+    GpuAddress() = default;
     void Offset(ptrdiff_t);
 };
 }  // namespace nn::gfx

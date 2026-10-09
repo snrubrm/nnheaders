@@ -29,7 +29,10 @@ public:
     void Unmap() const { detail::BufferImpl<TTarget>::Unmap(); }
     void FlushMappedRange(ptrdiff_t, size_t) const;
     void InvalidateMappedRange(ptrdiff_t, size_t) const;
-    void GetGpuAddress(GpuAddress*) const;
+    // inline-only in the original: GraphicsResource binding and RectDrawer drawing call the platform API.
+    void GetGpuAddress(GpuAddress* address) const {
+        detail::BufferImpl<TTarget>::GetGpuAddress(address);
+    }
     void SetUserPtr(void*);
     void* GetUserPtr();
     const void* GetUserPtr() const;

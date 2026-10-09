@@ -39,7 +39,10 @@ public:
     void SetPipeline(const TPipeline<TTarget>*);
     void SetRenderTargets(int, const TColorTargetView<TTarget>* const*,
                           const TDepthStencilView<TTarget>*);
-    void SetVertexBuffer(int, const GpuAddress&, ptrdiff_t, size_t);
+    // inline-only in the original: GraphicsResource binding and RectDrawer drawing call the platform API.
+    void SetVertexBuffer(int index, const GpuAddress& address, ptrdiff_t offset, size_t size) {
+        detail::CommandBufferImpl<TTarget>::SetVertexBuffer(index, address, offset, size);
+    }
     void SetViewportScissorState(const TViewportScissorState<TTarget>*);
     void CopyBuffer(TBuffer<TTarget>*, ptrdiff_t, const TBuffer<TTarget>*, ptrdiff_t, size_t);
     void CopyImage(TTexture<TTarget>*, const TextureSubresource&, int, int, int,

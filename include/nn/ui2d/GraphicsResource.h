@@ -26,6 +26,9 @@ public:
 
     // 0x7100ac13a8
     void Finalize(gfx::Device* device);
+    // Native neighbours select a blend-state member and bind the common vertex buffer.
+    const gfx::BlendState* sub_7100AC1158(u32 index) const;
+    void sub_7100AC1244(gfx::CommandBuffer* command_buffer) const;
 
 public:
     void* _0 = nullptr;
