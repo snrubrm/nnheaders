@@ -25,7 +25,8 @@ public:
 
     ShaderInfo* GetShaderInfo() { return DataToAccessor(info); }
     const ShaderInfo* GetShaderInfo() const { return DataToAccessor(info); }
-    detail::Caster<void> GetShader();
+    // inline-only in the original: RectDrawer Initialize / Finalize load the resource-owned object at +0x68.
+    detail::Caster<void> GetShader() { return detail::Caster<void>(pObj.Get()); }
     detail::Caster<const void> GetShader() const;
     const nngfxToolShaderCompilerShaderReflection* GetShaderCompilerReflection() const;
 };
@@ -70,7 +71,10 @@ class ResShaderContainer : public nn::util::AccessorBase<ResShaderContainerData>
 public:
     static const int Signature = 0x63737267;  // ??
 
-    static ResShaderContainer* ToAccessor(value_type*);
+    // Native shader-resource access in RectDrawer Initialize / Finalize uses this without a call.
+    static ResShaderContainer* ToAccessor(value_type* data) {
+        return static_cast<ResShaderContainer*>(data);
+    }
     static ResShaderContainer& ToAccessor(value_type&);
 
     static const ResShaderContainer* ToAccessor(const value_type* pData) {
@@ -115,7 +119,11 @@ public:
     static bool IsValid(const void*);
     static ResShaderFile* ResCast(void*);
 
-    ResShaderContainer* GetShaderContainer();
+    // inline-only in the original: RectDrawer Initialize / Finalize get the BNSH file's first block.
+    ResShaderContainer* GetShaderContainer() {
+        return ResShaderContainer::ToAccessor(
+            static_cast<ResShaderContainerData*>(static_cast<void*>(fileHeader.GetFirstBlock())));
+    }
     const ResShaderContainer* GetShaderContainer() const {
         return ResShaderContainer::ToAccessor(
             reinterpret_cast<const ResShaderContainerData*>(fileHeader.GetFirstBlock()));

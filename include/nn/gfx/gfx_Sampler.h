@@ -14,7 +14,8 @@ public:
 
     TSampler();
     void Initialize(TDevice<TTarget>*, const InfoType&);
-    void Finalize(TDevice<TTarget>*);
+    // inline-only in the original: RectDrawer (0x71013250d0) and GraphicsResource (0x7100ac13a8) call the platform API.
+    void Finalize(TDevice<TTarget>* device) { detail::SamplerImpl<TTarget>::Finalize(device); }
     void SetUserPtr(void*);
     void* GetUserPtr();
     const void* GetUserPtr() const;

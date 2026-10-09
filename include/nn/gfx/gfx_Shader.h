@@ -15,7 +15,8 @@ public:
 
     TShader();
     ShaderInitializeResult Initialize(TDevice<TTarget>*, const InfoType&);
-    void Finalize(TDevice<TTarget>*);
+    // inline-only in the original: RectDrawer (0x71013250d0) and ShaderInfo (0x7100ac5578) call the platform API.
+    void Finalize(TDevice<TTarget>* device) { detail::ShaderImpl<TTarget>::Finalize(device); }
     int GetInterfaceSlot(ShaderStage, ShaderInterfaceType, const char*) const;
     void GetWorkGroupSize(int*, int*, int*) const;
     void SetUserPtr(void*);

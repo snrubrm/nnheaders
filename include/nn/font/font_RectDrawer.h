@@ -38,17 +38,19 @@ private:
     s32 mPixelUniformSlots[6];
     s32 mPixelInterpolationSlots[6];
     s32 mTextureSlots[6];
-    s32 mState;
+    // Draw checks this capacity against DispStringBuffer::mCharCount; Initialize sets the supplied capacity.
+    s32 mMaxCharCount;
     gfx::VertexState mVertexStates[6];
     gfx::Buffer mVertexBuffer;
     gfx::Buffer mIndexBuffer;
     gfx::MemoryPool mVertexMemoryPool;
-    gfx::Buffer mVertexConstantBuffer;
-    gfx::MemoryPool mVertexConstantMemoryPool;
-    u64 mVertexConstantBufferSize;
-    gfx::Buffer mPixelConstantBuffer;
-    gfx::MemoryPool mPixelConstantMemoryPool;
-    u64 mPixelConstantBufferSize;
+    // Initialize stores 1 and 0 in these buffers; drawing selects one for black-white interpolation.
+    gfx::Buffer mInterpolationEnabledBuffer;
+    gfx::MemoryPool mInterpolationEnabledMemoryPool;
+    u64 mInterpolationEnabledBufferSize;
+    gfx::Buffer mInterpolationDisabledBuffer;
+    gfx::MemoryPool mInterpolationDisabledMemoryPool;
+    u64 mInterpolationDisabledBufferSize;
     gfx::Sampler mSampler;
     gfx::DescriptorSlot mSamplerSlot;
     // Initialize stores its incoming work-memory pointer at +0x660; the constructor leaves it untouched.

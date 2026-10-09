@@ -18,7 +18,8 @@ public:
     TMemoryPool();
 
     void Initialize(TDevice<TTarget>*, const InfoType&);
-    void Finalize(TDevice<TTarget>*);
+    // inline-only in the original: RectDrawer (0x71013250d0) and GraphicsResource (0x7100ac13a8) call the platform API.
+    void Finalize(TDevice<TTarget>* device) { detail::MemoryPoolImpl<TTarget>::Finalize(device); }
     void* Map() const;
     void Unmap() const;
     void FlushMappedRange(ptrdiff_t, size_t) const;

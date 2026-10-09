@@ -63,7 +63,10 @@ public:
     void* GetMemory();
     const void* GetMemory() const;
     void Initialize(TDevice<TTarget>*, const InfoType&, const TShader<TTarget>*);
-    void Finalize(TDevice<TTarget>*);
+    // inline-only in the original: RectDrawer (0x71013250d0) and EmitterResource (0x7100adb790) call the platform API.
+    void Finalize(TDevice<TTarget>* device) {
+        detail::VertexStateImpl<TTarget>::Finalize(device);
+    }
 };
 
 template <class TTarget>
