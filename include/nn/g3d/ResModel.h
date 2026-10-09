@@ -7,12 +7,12 @@
 
 #include <nn/gfx/gfx_Types.h>
 #include <nn/types.h>
+#include <nn/g3d/TextureRef.h>
 
 namespace nn {
 namespace g3d {
 class ResMaterial;
 
-typedef void* TextureRef;
 
 class ResModel {
 public:
@@ -25,7 +25,13 @@ public:
     void Reset(u32);
     nn::g3d::ResMaterial* FindMaterial(char const* materialName) const;
 
-    u8 _0[0x70];
+    // BindTexture ac6308 reads material count 6c and B8-byte array at 40.
+    // Native ResFile arrays advance by 78 in ac57fc/ac58a0.
+    u8 _0[0x40];
+    ResMaterial* mMaterials;
+    u8 _48[0x6c - 0x48];
+    u16 mMaterialCount;
+    u8 _6e[0x78 - 0x6e];
 };
 }  // namespace g3d
 }  // namespace nn

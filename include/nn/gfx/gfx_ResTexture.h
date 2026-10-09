@@ -34,7 +34,10 @@ public:
     const ResUserData* GetUserData(int) const;
     const nn::util::ResDic* GetUserDataDic() const;
     void SetUserDescriptorSlot(const DescriptorSlot&);
-    void GetUserDescriptorSlot(DescriptorSlot*) const;
+    // AGL callback b33dbc and both force-binding adapters copy this slot.
+    void GetUserDescriptorSlot(DescriptorSlot* slot) const {
+        slot->ToData()->value = userDescriptorSlot.value;
+    }
 };
 
 class ResTextureFile : public nn::util::AccessorBase<ResTextureFileData> {

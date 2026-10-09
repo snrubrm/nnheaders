@@ -7,6 +7,7 @@
 
 #include <nn/gfx/gfx_Types.h>
 #include <nn/types.h>
+#include <nn/g3d/TextureRef.h>
 #include <nn/util.h>
 #include <nn/util/util_BinaryFormat.h>
 #include <nn/util/util_ResDic.h>
@@ -23,7 +24,6 @@ class ResModel;
 class ResMaterialAnim;
 class ResShapeAnim;
 class ResSceneAnim;
-typedef void* TextureRef;
 
 // Record name is a reconstruction guess. Original external-file lookup b3365c
 // and resource parser fdcae4 establish a 0x10-byte array record and data at +0.
