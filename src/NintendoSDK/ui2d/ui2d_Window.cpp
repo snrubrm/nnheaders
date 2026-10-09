@@ -1,4 +1,5 @@
 #include <nn/ui2d/Window.h>
+#include <nn/ui2d/Material.h>
 
 namespace nn::ui2d {
 
@@ -35,6 +36,29 @@ Material* Window::GetMaterial(s32 index) const {
         return mContentMaterial;
     if (index <= mFrameCount)
         return mFrames[u32(index - 1)].mMaterial;
+    return nullptr;
+}
+
+// 0x7100abd6b4
+const Material* Window::FindMaterialByName(const char* name, bool recursive) const {
+    return const_cast<Window*>(this)->FindMaterialByName(name, recursive);
+}
+
+// 0x7100abd5c0
+Material* Window::FindMaterialByName(const char* name, bool recursive) {
+    if (mContentMaterial && mContentMaterial->IsNameEqual(name))
+        return mContentMaterial;
+    for (s32 i = 0; i < mFrameCount; ++i) {
+        Material* material = mFrames[i].mMaterial;
+        if (material->IsNameEqual(name))
+            return material;
+    }
+    if (recursive) {
+        for (Pane& child : GetChildList()) {
+            if (Material* material = child.FindMaterialByName(name, true))
+                return material;
+        }
+    }
     return nullptr;
 }
 
