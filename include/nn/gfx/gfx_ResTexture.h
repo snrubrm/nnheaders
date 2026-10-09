@@ -27,7 +27,8 @@ public:
     detail::Caster<const void> GetTextureView() const {
         return detail::Caster<const void>(pTextureView.Get());
     }
-    const char* GetName() const;
+    // Native texture-name consumers b33a6c and b3378c use the BinString payload.
+    const char* GetName() const { return pName.Get()->GetData(); }
     size_t GetDataSize() const;
     ResUserData* GetUserData(int);
     const ResUserData* GetUserData(int) const;
@@ -60,9 +61,16 @@ public:
     static bool IsValid(const void*);
     static ResTextureFile* ResCast(void*);
 
-    ResTexture* GetResTexture(int);
-    const ResTexture* GetResTexture(int) const;
-    const nn::util::ResDic* GetTextureDic() const;
+    // Native g3d texture adapters b33d38/b33a6c and b33bd0/b33dbc.
+    ResTexture* GetResTexture(int index) {
+        return textureContainerData.pTexturePtrArray.Get()[index].Get();
+    }
+    const ResTexture* GetResTexture(int index) const {
+        return textureContainerData.pTexturePtrArray.Get()[index].Get();
+    }
+    const nn::util::ResDic* GetTextureDic() const {
+        return textureContainerData.pTextureDic.Get();
+    }
     nn::util::BinaryFileHeader* GetBinaryFileHeader();
     const nn::util::BinaryFileHeader* GetBinaryFileHeader() const;
 
