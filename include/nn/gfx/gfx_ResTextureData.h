@@ -1,6 +1,7 @@
 #pragma once
 
 #include <nn/gfx/gfx_DescriptorSlot.h>
+#include <nn/gfx/detail/gfx_MemoryPool-api.nvn.8.h>
 #include <nn/gfx/gfx_ResUserData.h>
 #include <nn/gfx/gfx_TextureInfoData.h>
 #include <nn/util/util_BinaryFormat.h>
@@ -35,8 +36,11 @@ struct ResTextureContainerData {
     nn::util::BinTPtr<nn::util::BinTPtr<ResTexture>> pTexturePtrArray;
     nn::util::BinTPtr<void> pTextureData;
     nn::util::BinTPtr<nn::util::ResDic> pTextureDic;
-    nn::util::BinTPtr<void> pTextureMemoryPool;
-    nn::util::BinTPtr<void> pCurrentMemoryPool;
+    // ResourceTextureObject::Initialize 1326ec4 initializes the internal pool
+    // through MemoryPoolImpl, or stores the supplied TMemoryPool's same base.
+    // UnloadTexture 1326e24 and ArcResource dtor 14084d0 finalize that real base.
+    nn::util::BinTPtr<detail::MemoryPoolImpl<ApiVariationNvn8>> pTextureMemoryPool;
+    nn::util::BinTPtr<detail::MemoryPoolImpl<ApiVariationNvn8>> pCurrentMemoryPool;
     uint32_t memoryPoolOffsetBase;
     char reserved[4];
 };
