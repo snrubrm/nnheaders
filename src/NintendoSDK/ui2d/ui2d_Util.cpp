@@ -1,9 +1,17 @@
 #include <nn/ui2d/Util.h>
 #include <nn/ui2d/AnimTransform.h>
+#include <nn/ui2d/ShaderInfo.h>
 #include <nn/util/util_BytePtr.h>
 #include <cstring>
 
 namespace nn::ui2d {
+
+void LoadArchiveShader(ShaderInfo* info, gfx::Device* device, void* shader_file,
+                       const void* archive_data, gfx::MemoryPool* memory_pool,
+                       s64 memory_pool_offset, u64 memory_pool_size) {
+    info->Initialize(device, shader_file, archive_data, memory_pool,
+                     memory_pool_offset, memory_pool_size);
+}
 
 // 0x7100abc950
 void BindAnimation(AnimTransform* transform, Group* group, bool enabled) {

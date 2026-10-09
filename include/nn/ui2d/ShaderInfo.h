@@ -13,6 +13,9 @@ namespace nn::ui2d {
 // ShaderContainer::RegisterShader returns entry +0x18; its next flag is at +0x58.
 class ShaderInfo {
 public:
+    void Initialize(gfx::Device* device, void* shader_file);
+    void Initialize(gfx::Device* device, void* shader_file, const void* archive_data,
+                    gfx::MemoryPool* memory_pool, ptrdiff_t memory_pool_offset, size_t memory_pool_size);
     void Finalize(gfx::Device* device, bool keep_shader_resource);
     void sub_7100AC5710(gfx::CommandBuffer* command_buffer, int variation);
 
