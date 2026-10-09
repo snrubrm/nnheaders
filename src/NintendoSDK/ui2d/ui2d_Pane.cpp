@@ -4,12 +4,26 @@
 #include <nn/ui2d/ResExtUserData.h>
 #include <nn/ui2d/BuildTypes.h>
 #include <nn/ui2d/DrawInfo.h>
+#include <nn/ui2d/GraphicsResource.h>
 #include <nn/ui2d/Layout.h>
 #include <nn/ui2d/Material.h>
 #include <nn/ui2d/Parts.h>
 #include <nn/util/util_StringUtil.h>
 
 namespace nn::ui2d {
+
+void Pane::CalculateContext::Set(const DrawInfo& draw_info, const Layout* layout) {
+    _0 = &draw_info.mGraphicsResource->mRectDrawer;
+    mViewMtx = &draw_info.mViewMtx;
+    mLocationAdjustScale = draw_info.mLocationAdjustScale;
+    mAlpha = 1.0f;
+    _1c = (draw_info._eb[6] & 1) != 0;
+    _1d = (draw_info._eb[6] & 2) != 0;
+    _1e = (draw_info._eb[6] & 4) != 0;
+    _1f = false;
+    mLayout = layout;
+}
+
 
 // 0x7100ab8314
 void Pane::SetName(const char* name) {

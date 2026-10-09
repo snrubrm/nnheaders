@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <nn/font/font_RectDrawer.h>
 #include <nn/gfx/gfx_Buffer.h>
 #include <nn/gfx/gfx_DescriptorSlot.h>
 #include <nn/gfx/gfx_MemoryPool.h>
@@ -11,8 +12,7 @@ namespace nn::ui2d {
 
 // The graphics objects shared by all layouts: common blend states and a pair of constant buffers
 // with their memory pools. The layout is recovered from the constructor (0x7100ac1290).
-// TODO: incomplete. The object at 0x78 (constructed by 0x7101324f5c: vertex states, buffers, memory
-// pools and samplers) is not modelled; the members are not written by any decompiled function yet.
+// RectDrawer at +0x78 is identified by its native constructor and RTTI at 0x710252c428.
 class GraphicsResource {
 public:
     GraphicsResource();
@@ -32,7 +32,7 @@ public:
     s32 _8 = 2;
     u8 _c[0x70 - 0xc];
     u64 _70 = 4;
-    u8 _78[0x6e0 - 0x78];
+    font::RectDrawer mRectDrawer;
     gfx::Buffer mBuffer0;
     gfx::MemoryPool mMemoryPool0;
     gfx::Buffer mBuffer1;

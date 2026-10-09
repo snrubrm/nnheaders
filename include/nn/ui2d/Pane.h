@@ -5,6 +5,8 @@
 
 #pragma once
 
+namespace nn::font { class RectDrawer; }
+
 #include <nn/font/font_Util.h>
 #include <nn/gfx/gfx_Device.h>
 #include <nn/types.h>
@@ -45,11 +47,11 @@ public:
     NN_RUNTIME_TYPEINFO_BASE();
 
     // Set's original body identifies the matrix, scale, alpha and layout fields.
-    // The drawing-object pointer's type and the final flag remain unknown.
+    // Set points to GraphicsResource's embedded RectDrawer; the final flag remains unknown.
     struct CalculateContext {
         void Set(const DrawInfo&, const Layout*);
 
-        void* _0 = nullptr;
+        font::RectDrawer* _0 = nullptr;
         const util::Matrix4x3fType* mViewMtx = nullptr;
         util::Float2 mLocationAdjustScale{};
         f32 mAlpha = 0.0f;
