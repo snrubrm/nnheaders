@@ -5,8 +5,10 @@
 #include <nn/gfx/gfx_Buffer.h>
 #include <nn/gfx/gfx_DescriptorSlot.h>
 #include <nn/gfx/gfx_MemoryPool.h>
+#include <nn/gfx/gfx_Sampler.h>
 #include <nn/gfx/gfx_State.h>
 #include <nn/gfx/gfx_Types.h>
+#include <nn/ui2d/Types.h>
 
 namespace nn::ui2d {
 
@@ -20,6 +22,8 @@ public:
     ~GraphicsResource();
 
     using SamplerDescriptorCallback = void (*)(gfx::DescriptorSlot*, const gfx::Sampler&, void*);
+    using SamplerRegistrationCallback = bool (*)(gfx::DescriptorSlot*, const gfx::Sampler&, void*);
+    void RegisterCommonSamplerSlot(SamplerRegistrationCallback callback, void* user_data);
     // Name is a reconstruction guess paired with RegisterCommonSamplerSlot (0x7100ac16c0). 0x7100ac18bc calls this callback
     // with 0x78-byte samplers and 8-byte slots; ScreenMgr passes UnregisterSlotForSampler.
     void UnregisterCommonSamplerSlot(SamplerDescriptorCallback callback, void* user_data);
@@ -29,6 +33,8 @@ public:
     // Native neighbours select a blend-state member and bind the common vertex buffer.
     const gfx::BlendState* sub_7100AC1158(u32 index) const;
     void sub_7100AC1244(gfx::CommandBuffer* command_buffer) const;
+    gfx::DescriptorSlot* sub_7100AC1B30(TexWrap wrap_s, TexWrap wrap_t, TexFilter min_filter,
+                                     TexFilter mag_filter);
 
 public:
     void* _0 = nullptr;
@@ -42,8 +48,9 @@ public:
     gfx::MemoryPool mMemoryPool0;
     gfx::Buffer mBuffer1;
     gfx::MemoryPool mMemoryPool1;
-    void* _9b0 = nullptr;
-    void* _9b8 = nullptr;
+    // Initialize allocates 36 samplers (0x10e0 bytes) and 36 descriptor slots (0x120 bytes).
+    gfx::Sampler* _9b0 = nullptr;
+    gfx::DescriptorSlot* _9b8 = nullptr;
     gfx::BlendState mBlendStates[6];
     bool _ab0 = false;
 };
