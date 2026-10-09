@@ -1,4 +1,5 @@
 #include <nn/ui2d/Parts.h>
+#include <nn/ui2d/Material.h>
 
 namespace nn::ui2d {
 
@@ -27,6 +28,17 @@ Pane* Parts::FindPaneByNameRecursive(const char* name) {
 // 0x7100ab99c0
 const Pane* Parts::FindPaneByNameRecursive(const char* name) const {
     return const_cast<Parts*>(this)->FindPaneByNameRecursive(name);
+}
+
+// 0x7100ab99cc
+Material* Parts::FindMaterialByNameRecursive(const char* name) {
+    const u32 count = GetMaterialCount();
+    for (u32 i = 0; i < count; ++i) {
+        Material* material = GetMaterial(i);
+        if (material && material->IsNameEqual(name))
+            return material;
+    }
+    return nullptr;
 }
 
 // 0x7100ab9a60

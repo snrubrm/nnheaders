@@ -163,6 +163,9 @@ public:
     virtual void AnimateExtUserDataImpl(ResExtUserData* data, const ResAnimationContent* content);
 
 protected:
+    // Native 0x7100ab457c returns false at capacity and true after binding.
+    bool BindMaterialImpl(Material* material, const ResAnimationContent* content);
+
     // SetResource allocates an array of 16-byte records. The target is a pane,
     // material or extended user-data entry; each bind stores it with its content.
     struct Binding {

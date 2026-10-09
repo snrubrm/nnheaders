@@ -1,12 +1,26 @@
 #include <nn/ui2d/AnimTransform.h>
 
 #include <nn/ui2d/Layout.h>
+#include <nn/ui2d/Material.h>
 #include <nn/ui2d/Group.h>
 #include <nn/ui2d/Pane.h>
 #include <nn/ui2d/ResourceAccessor.h>
 #include <new>
 
 namespace nn::ui2d {
+
+// 0x7100ab4a50
+void AnimTransformBasic::BindMaterial(Material* material) {
+    const ResAnimationBlock* block = mRes;
+    const u32* offsets = block->GetContentOffsets();
+    for (u32 i = 0; i < block->contentCount; ++i) {
+        const ResAnimationContent* content = block->GetContentAtOffset(offsets[i]);
+        if (content->type == 1 && material->IsNameEqual(content->name)) {
+            if (!BindMaterialImpl(material, content))
+                break;
+        }
+    }
+}
 
 // 0x7100ab5be4
 const char* AnimResource::GetTagName() const {
