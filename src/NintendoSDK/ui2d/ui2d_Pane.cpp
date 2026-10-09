@@ -5,6 +5,7 @@
 #include <nn/ui2d/BuildTypes.h>
 #include <nn/ui2d/DrawInfo.h>
 #include <nn/ui2d/Layout.h>
+#include <nn/ui2d/Material.h>
 #include <nn/ui2d/Parts.h>
 #include <nn/util/util_StringUtil.h>
 
@@ -192,6 +193,23 @@ const Pane* Pane::FindPaneByName(const char* name, bool recursive) const {
     return const_cast<Pane*>(this)->FindPaneByName(name, recursive);
 }
 
+// 0x7100ab8bf4
+Material* Pane::FindMaterialByName(const char* name, bool recursive) {
+    const s32 count = GetMaterialCount();
+    for (s32 i = 0; i < count; ++i) {
+        Material* material = GetMaterial(i);
+        if (material && material->IsNameEqual(name))
+            return material;
+    }
+    if (recursive) {
+        for (Pane& child : mChildList) {
+            if (Material* found = child.FindMaterialByNameRecursive(name))
+                return found;
+        }
+    }
+    return nullptr;
+}
+
 // 0x7100ab8ccc
 const Material* Pane::FindMaterialByName(const char* name, bool recursive) const {
     return const_cast<Pane*>(this)->FindMaterialByName(name, recursive);
@@ -276,6 +294,21 @@ Pane* Pane::FindPaneByNameRecursive(const char* name) {
 
 const Pane* Pane::FindPaneByNameRecursive(const char* name) const {
     return const_cast<Pane*>(this)->FindPaneByNameRecursive(name);
+}
+
+// 0x7100ab9764
+Material* Pane::FindMaterialByNameRecursive(const char* name) {
+    const s32 count = GetMaterialCount();
+    for (s32 i = 0; i < count; ++i) {
+        Material* material = GetMaterial(i);
+        if (material && material->IsNameEqual(name))
+            return material;
+    }
+    for (Pane& child : mChildList) {
+        if (Material* found = child.FindMaterialByNameRecursive(name))
+            return found;
+    }
+    return nullptr;
 }
 
 // 0x7100ab982c

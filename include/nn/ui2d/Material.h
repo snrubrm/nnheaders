@@ -76,6 +76,18 @@ public:
     s32 GetTexMapCount() const { return mMemCount.texMap; }
     TexMap* GetTexMapArray() const { return static_cast<TexMap*>(mMem); }
 
+    // inline-only in the original; name is a guess. The bounded comparison
+    // repeats in both Pane material searches and BindMaterial (0x7100ab4a50).
+    bool IsNameEqual(const char* name) const {
+        for (s32 i = 0; i < 28; ++i) {
+            if (mName[i] != name[i])
+                return false;
+            if (mName[i] == '\0')
+                return true;
+        }
+        return true;
+    }
+
 private:
     // Allocation counts (the same bit layout is used for the capacity at +0x10 and the used counts at +0x14; the
     // order is the order of ReserveMem's parameters). Bit 16 of the capacity word is also cleared by ReserveMem.
@@ -98,7 +110,7 @@ private:
     /* 0x14 */ MemInfo mMemCount;
     /* 0x18 */ void* mMem;  // one allocation; starts with the TexMap array
     /* 0x20 */ u8 _20[0x8];
-    /* 0x28 */ u8 _28[0x8];
+    /* 0x28 */ const char* mName;  // copyCtor 0x7100ac33f4; Pane searches dereference it
     /* 0x30 */ u8 _30[0x8];
     /* 0x38 */ void* _38;
     /* 0x40 */ void* _40;
