@@ -6,6 +6,7 @@
 namespace nn::font {
 
 class TextureObject;
+class GpuBuffer;
 
 // Partial layout: TextBox::AllocateStringBuffer allocates this 0xc0-byte object and extra GPU
 // storage. Copying a TextBox reads the capacity at +0x98; per-character updates read +0x9c.
@@ -29,6 +30,8 @@ public:
     void sub_7101324090(gfx::Device*);
     static size_t sub_71013240A4(const InitializeArg&);
     static size_t sub_71013240B4(gfx::Device*, const InitializeArg&);
+    void SetGpuBuffer(GpuBuffer* buffer);
+    void SetFontHeight(f32 height);
 
     // BuildConstantBuffer and the drawing helper keep byte offsets at 0/4, flags at8,
     // and up to eight texture/count/flag records at10. Names are inferred from those uses.

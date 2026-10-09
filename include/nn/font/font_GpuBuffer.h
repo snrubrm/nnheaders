@@ -22,6 +22,25 @@ namespace nn::font {
 // index at +0x24 to -1. Member names are guesses.
 class GpuBuffer {
 public:
+    struct InitializeArg {
+        /* 0x00 */ int gpuAccessFlags;
+        /* 0x08 */ size_t bufferSize;
+        /* 0x10 */ u32 bufferCount;
+        /* 0x18 */ gfx::MemoryPool* memoryPool;
+        /* 0x20 */ ptrdiff_t memoryPoolOffset;
+        /* 0x28 */ void* (*allocate)(size_t, size_t, void*);
+        /* 0x30 */ void* allocatorUserData;
+        /* 0x38 */ bool shared;
+        /* 0x39 */ bool external;
+    };
+    static_assert(sizeof(InitializeArg) == 0x40);
+
+    // Inlined in eui::ConstantBuffer's constructor; the offset union stays uninitialized.
+    GpuBuffer()
+        : mFlags(0), mBuffers(nullptr), mBufferSize(0), mBufferAlignment(1), mBufferCount(0),
+          mMappedIndex(-1), mBufferIndex(0), mMappedPtr(nullptr) {}
+
+    bool Initialize(gfx::Device* device, const InitializeArg& arg);
     void Map(s32 index);
     void Unmap();
 
@@ -33,9 +52,11 @@ private:
     // Material constant-buffer accessors 0x7100ac391c / 0x7100ac4ab0 read the mapped pointer.
     friend class nn::ui2d::Material;
 
-    /* 0x00 */ u8 mFlags;
+    /* 0x00 */ u32 mFlags;
     /* 0x08 */ gfx::Buffer* mBuffers;
-    /* 0x10 */ u8 _10[0x24 - 0x10];
+    /* 0x10 */ size_t mBufferSize;
+    /* 0x18 */ size_t mBufferAlignment;
+    /* 0x20 */ u32 mBufferCount;
     /* 0x24 */ s32 mMappedIndex;
     /* 0x28 */ s32 mBufferIndex;
     /* 0x30 */ void* mMappedPtr;

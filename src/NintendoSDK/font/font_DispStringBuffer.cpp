@@ -10,6 +10,14 @@ DispStringBuffer::DispStringBuffer() = default;
 // 0x7101324014
 DispStringBuffer::~DispStringBuffer() {}
 
+void DispStringBuffer::SetGpuBuffer(GpuBuffer* buffer) {
+    _b0 = buffer;
+}
+
+void DispStringBuffer::SetFontHeight(f32 height) {
+    mFontHeight = height;
+}
+
 // 0x7101324018
 bool DispStringBuffer::Initialize(gfx::Device*, const InitializeArg& arg) {
     if (mCapacity > 0)
