@@ -8,11 +8,16 @@
 #include <nn/types.h>
 #include <nn/nn_BitTypes.h>
 #include <nn/g3d/ResBoneAnim.h>
+#include <nn/util/util_BinTypes.h>
 
 namespace nn::g3d {
 class ResSkeletalAnim {
 public:
     void Reset();
+
+    // Inline-only, name follows ResBone. ModelResource initialize c0b058
+    // hashes this binary string; sword-blur 11d4780 independently formats it.
+    const char* GetName() const { return mName.Get()->GetData(); }
 
     // Inline-only in the original; names are reconstruction guesses. The signed
     // frame count at +0x4c and loop bit2 at +0x48 are read by both SkeltalAsset's
@@ -31,7 +36,9 @@ public:
 
 private:
     // Partial resource layout; unidentified intervals retain original offsets.
-    u8 _0[0x20];
+    u8 _0[0x10];
+    nn::util::BinPtrToString mName;
+    u8 _18[8];
     // Reset ac720c clears this original pointer; its owner is unidentified.
     void* _20;
     // Reset ac720c fills one u16 per bone animation with the invalid index.
