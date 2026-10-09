@@ -203,6 +203,18 @@ void Layout::Calculate(DrawInfo& draw_info, bool is_dirty) {
     CalculateImpl(draw_info, is_dirty);
 }
 
+// 0x7100ab7700
+// NON_MATCHING: the shared CalculateContext initializes fields absent from this SDK caller's stack setup.
+void Layout::CalculateImpl(DrawInfo& draw_info, bool is_dirty) {
+    if (!mPane)
+        return;
+    Pane::CalculateContext context;
+    context.Set(draw_info, this);
+    draw_info.mLayout = this;
+    mPane->Calculate(draw_info, context, is_dirty);
+    draw_info.mLayout = nullptr;
+}
+
 // 0x7100ab65f4
 void* Layout::AllocateMemory(size_t size, size_t alignment) {
     return g_pAllocateFunction(size, alignment, g_pUserData);
