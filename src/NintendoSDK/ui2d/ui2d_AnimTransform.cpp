@@ -131,6 +131,29 @@ void AnimTransformBasic::BindMaterial(Material* material) {
     }
 }
 
+// 0x7100ab5c84
+// NON_MATCHING: boolean count folding, header reloads and truncation scheduling.
+u16 AnimResource::CalculateAnimationCount(Group* group, bool recursive) const {
+    u16 count = 0;
+    for (PaneLink& link : group->mPaneLinkList) {
+        u32 pane_count = 0;
+        if (mAnimationBlock) {
+            // The native loop holds this entry's pane across virtual searches.
+            Pane* pane = link.pane;
+            const u32* offsets = mAnimationBlock->GetContentOffsets();
+            for (u16 i = 0; i < mAnimationBlock->contentCount; ++i) {
+                const ResAnimationContent* content = mAnimationBlock->GetContentAtOffset(offsets[i]);
+                if (content->type == 0)
+                    pane_count += pane->FindPaneByName(content->name, recursive) != nullptr;
+                else
+                    pane_count += pane->FindMaterialByName(content->name, recursive) != nullptr;
+            }
+        }
+        count += pane_count;
+    }
+    return count;
+}
+
 // 0x7100ab5be4
 const char* AnimResource::GetTagName() const {
     if (mTagBlock)

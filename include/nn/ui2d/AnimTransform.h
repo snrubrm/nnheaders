@@ -102,6 +102,8 @@ public:
     bool IsDescendingBind() const;
     u16 GetAnimationShareInfoCount() const;
     const void* GetAnimationShareInfoArray() const;
+    // Native 0x7100ab5c84 and caller 0x7100ab742c accumulate 16-bit capacities.
+    u16 CalculateAnimationCount(Group* group, bool recursive) const;
 
 private:
     /* 0x00 */ u8 _0[8];
