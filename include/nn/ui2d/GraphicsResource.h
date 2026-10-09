@@ -30,7 +30,9 @@ public:
 public:
     void* _0 = nullptr;
     s32 _8 = 2;
-    u8 _c[0x70 - 0xc];
+    u8 _c[4];
+    // Constructor clears exactly +0x10 through +0x6b, leaving +0x0c and alignment padding untouched.
+    u8 _10[0x5c]{};
     u64 _70 = 4;
     font::RectDrawer mRectDrawer;
     gfx::Buffer mBuffer0;

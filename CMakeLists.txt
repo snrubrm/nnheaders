@@ -325,6 +325,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/ui2d/ui2d_Allocator.cpp
   src/NintendoSDK/ui2d/ui2d_ArcExtractor.cpp
   src/NintendoSDK/ui2d/ui2d_DrawInfo.cpp
+  src/NintendoSDK/ui2d/ui2d_GraphicsResource.cpp
   src/NintendoSDK/ui2d/ui2d_Group.cpp
   src/NintendoSDK/ui2d/ui2d_Layout.cpp
   src/NintendoSDK/ui2d/ui2d_Material.cpp
