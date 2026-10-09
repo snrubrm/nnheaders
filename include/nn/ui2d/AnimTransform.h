@@ -20,6 +20,19 @@ class ResourceAccessor;
 class TextureInfo;
 struct ResExtUserData;
 
+// UI resource-file prefix read by AnimResource::Set (0x7100ab5ad0) and
+// Layout::BuildImpl (0x7100ab6bcc). headerSize locates the first block;
+// only these consumed fields are known, without a full file-header extent.
+struct ResBinaryFileHeader {
+    u32 signature;
+    u8 _4[2];
+    u16 headerSize;
+    u8 _8[8];
+    u16 blockCount;
+};
+static_assert(offsetof(ResBinaryFileHeader, headerSize) == 6);
+static_assert(offsetof(ResBinaryFileHeader, blockCount) == 0x10);
+
 // BindMaterial (0x7100ab4a50) bounds the name comparison to 28 bytes.
 // AnimatePaneImpl/AnimateExtUserDataImpl read the count and type at +0x1c/+0x1d.
 struct ResAnimationContent {
@@ -106,7 +119,7 @@ public:
     u16 CalculateAnimationCount(Group* group, bool recursive) const;
 
 private:
-    /* 0x00 */ u8 _0[8];
+    /* 0x00 */ const ResBinaryFileHeader* mFileHeader;
     /* 0x08 */ const ResAnimationBlock* mAnimationBlock;
     /* 0x10 */ const ResAnimationTagBlock* mTagBlock;
     /* 0x18 */ const ResAnimationShareBlock* mShareBlock;

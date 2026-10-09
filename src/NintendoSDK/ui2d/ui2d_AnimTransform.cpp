@@ -5,6 +5,9 @@
 #include <nn/ui2d/Group.h>
 #include <nn/ui2d/Pane.h>
 #include <nn/ui2d/ResourceAccessor.h>
+#include <nn/ui2d/ResExtUserData.h>
+#include <nn/util/util_BinTypes.h>
+#include <cstdio>
 #include <new>
 
 namespace nn::ui2d {
@@ -128,6 +131,41 @@ void AnimTransformBasic::BindMaterial(Material* material) {
             if (!BindMaterialImpl(material, content))
                 break;
         }
+    }
+}
+
+// 0x7100ab5ad0
+// NON_MATCHING: pointer clearing and selected block-address scheduling.
+void AnimResource::Set(const void* resource) {
+    mFileHeader = nullptr;
+    mAnimationBlock = nullptr;
+    mTagBlock = nullptr;
+    mShareBlock = nullptr;
+    const auto* header = static_cast<const ResBinaryFileHeader*>(resource);
+    if (header->signature != util::MakeSignature('F', 'L', 'A', 'N')) {
+        char message[256];
+        const u32 signature = header->signature;
+        // Native 0x7100ab5b44 formats this message and continues parsing.
+        std::snprintf(message, sizeof(message),
+                      "Signature check failed ('%c%c%c%c' must be '%c%c%c%c').",
+                      u8(signature >> 24), u8(signature >> 16),
+                      u8(signature >> 8), u8(signature), 'N', 'A', 'L', 'F');
+    }
+    mFileHeader = header;
+    const ResBlockHeader* block = util::ConstBytePtr(header, header->headerSize).Get<ResBlockHeader>();
+    for (s32 i = 0; i < header->blockCount; ++i) {
+        switch (block->kind) {
+        case util::MakeSignature('p', 'a', 't', '1'):
+            mTagBlock = util::ConstBytePtr(block).Get<ResAnimationTagBlock>();
+            break;
+        case util::MakeSignature('p', 'a', 'i', '1'):
+            mAnimationBlock = util::ConstBytePtr(block).Get<ResAnimationBlock>();
+            break;
+        case util::MakeSignature('p', 'a', 'h', '1'):
+            mShareBlock = util::ConstBytePtr(block).Get<ResAnimationShareBlock>();
+            break;
+        }
+        block = util::ConstBytePtr(block, block->size).Get<ResBlockHeader>();
     }
 }
 
