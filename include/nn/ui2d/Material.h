@@ -12,6 +12,7 @@
 namespace nn {
 namespace ui2d {
 class AnimTransform;
+class DrawInfo;
 class BuildResultInformation;
 struct BuildArgSet;
 struct ResMaterial;
@@ -61,6 +62,8 @@ public:
     void Finalize(gfx::Device*);
     void ReserveMem(s32, s32, s32, s32, bool, s32, bool, s32, bool, bool);
     void SetupUserShaderConstantBufferInformation(nn::ui2d::UserShaderInformation const&);
+    void* GetConstantBufferForVertexShader(const DrawInfo&) const;
+    void* GetConstantBufferForPixelShader(const DrawInfo&) const;
 
     virtual ~Material();
     virtual void BindAnimation(nn::ui2d::AnimTransform*);
@@ -111,7 +114,8 @@ private:
     /* 0x18 */ void* mMem;  // one allocation; starts with the TexMap array
     /* 0x20 */ u8 _20[0x8];
     /* 0x28 */ const char* mName;  // copyCtor 0x7100ac33f4; Pane searches dereference it
-    /* 0x30 */ u8 _30[0x8];
+    /* 0x30 */ u32 mVertexShaderConstantBufferOffset;
+    /* 0x34 */ u32 mPixelShaderConstantBufferOffset;
     /* 0x38 */ void* _38;
     /* 0x40 */ void* _40;
     /* 0x48 */ u8 _48[2];

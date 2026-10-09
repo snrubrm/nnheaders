@@ -1,6 +1,8 @@
 #include <nn/ui2d/Material.h>
 #include <nn/ui2d/AnimTransform.h>
 #include <nn/ui2d/BuildTypes.h>
+#include <nn/font/font_GpuBuffer.h>
+#include <nn/ui2d/DrawInfo.h>
 #include <nn/util/util_BytePtr.h>
 
 namespace nn::ui2d {
@@ -57,6 +59,22 @@ void Material::BindAnimation(AnimTransform* transform) {
 // 0x7100ac3738
 void Material::UnbindAnimation(AnimTransform* transform) {
     transform->UnbindMaterial(this);
+}
+
+// 0x7100ac391c
+void* Material::GetConstantBufferForVertexShader(const DrawInfo& info) const {
+    void* mapped = info.mUi2dConstantBuffer->mMappedPtr;
+    if (!mapped)
+        return nullptr;
+    return util::BytePtr(mapped, mVertexShaderConstantBufferOffset).Get();
+}
+
+// 0x7100ac4ab0
+void* Material::GetConstantBufferForPixelShader(const DrawInfo& info) const {
+    void* mapped = info.mUi2dConstantBuffer->mMappedPtr;
+    if (!mapped)
+        return nullptr;
+    return util::BytePtr(mapped, mPixelShaderConstantBufferOffset).Get();
 }
 
 }  // namespace nn::ui2d

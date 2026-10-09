@@ -9,6 +9,10 @@
 #include <nn/gfx/gfx_Types.h>
 #include <nn/types.h>
 
+namespace nn::ui2d {
+class Material;
+}
+
 namespace nn::font {
 
 // Partial layout (0x40 bytes): eui::ConstantBuffer embeds two of these at +0x120 / +0x160 and its map()
@@ -25,6 +29,9 @@ public:
     void SetBufferIndex(s32 index) { mBufferIndex = index; }
 
 private:
+    // Material constant-buffer accessors 0x7100ac391c / 0x7100ac4ab0 read the mapped pointer.
+    friend class nn::ui2d::Material;
+
     /* 0x00 */ u8 mFlags;
     /* 0x08 */ gfx::Buffer* mBuffers;
     /* 0x10 */ u8 _10[0x24 - 0x10];
