@@ -6,6 +6,7 @@
 #pragma once
 
 namespace nn::font { class RectDrawer; }
+namespace eui { class CapturePane; class DynamicCapturePane; }
 
 #include <nn/font/font_Util.h>
 #include <nn/gfx/gfx_Device.h>
@@ -216,6 +217,10 @@ protected:
 private:
     // Native BindGroup / ForceBindPane repeat this bounded pane-name comparison.
     friend class AnimTransformBasic;
+    // Native bf1348 and bf2bec copy the identity matrix into their Pane base
+    // at +70, then set the existing user-global-matrix flag at +58.
+    friend class eui::CapturePane;
+    friend class eui::DynamicCapturePane;
     // inline-only in the original; name is a guess.
     // The bounded comparison repeats in both Pane searches and Parts' recursive search.
     bool IsNameEqual(const char* name) const {
