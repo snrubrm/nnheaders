@@ -31,6 +31,7 @@ public:
 
 namespace nn::ui2d {
 class AnimTransform;
+class AnimTransformBasic;
 class Layout;
 class DrawInfo;
 class ResPane;
@@ -211,6 +212,8 @@ protected:
     void setMaxPanelFlag(bool state) { detail::SetBit(&mFlags, PaneFlag_MaxPaneFlag, state); }
 
 private:
+    // Native BindGroup / ForceBindPane repeat this bounded pane-name comparison.
+    friend class AnimTransformBasic;
     // inline-only in the original; name is a guess.
     // The bounded comparison repeats in both Pane searches and Parts' recursive search.
     bool IsNameEqual(const char* name) const {

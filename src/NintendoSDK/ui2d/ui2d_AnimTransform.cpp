@@ -9,6 +9,115 @@
 
 namespace nn::ui2d {
 
+// 0x7100ab4428
+void AnimTransformBasic::BindPane(Pane* pane, bool recursive) {
+    const ResAnimationBlock* block = mRes;
+    const u32* offsets = block->GetContentOffsets();
+    for (u16 i = 0; i < block->contentCount; ++i) {
+        const ResAnimationContent* content = block->GetContentAtOffset(offsets[i]);
+        switch (content->type) {
+        case 0:
+            if (Pane* found = pane->FindPaneByName(content->name, recursive)) {
+                if (mBindCount < _3a)
+                    _30[mBindCount++] = {found, content};
+            }
+            break;
+        case 1:
+            if (Material* found = pane->FindMaterialByName(content->name, recursive))
+                BindMaterialImpl(found, content);
+            break;
+        case 2:
+            if (Pane* found = pane->FindPaneByName(content->name, recursive)) {
+                const ResExtUserData* data = found->FindExtUserDataByName(content->GetExtUserDataName());
+                if (data && mBindCount < _3a)
+                    _30[mBindCount++] = {data, content};
+            }
+            break;
+        }
+    }
+}
+
+// 0x7100ab487c
+// NON_MATCHING: pane-name comparison byte loads are reversed.
+void AnimTransformBasic::BindGroup(Group* group) {
+    const ResAnimationBlock* block = mRes;
+    const u32* offsets = block->GetContentOffsets();
+    for (u16 i = 0; i < block->contentCount; ++i) {
+        const ResAnimationContent* content = block->GetContentAtOffset(offsets[i]);
+        switch (content->type) {
+        case 0:
+            for (PaneLink& link : group->mPaneLinkList) {
+                if (link.pane->IsNameEqual(content->name)) {
+                    if (mBindCount < _3a)
+                        _30[mBindCount++] = {link.pane, content};
+                    break;
+                }
+            }
+            break;
+        case 1:
+            for (PaneLink& link : group->mPaneLinkList) {
+                if (Material* found = link.pane->FindMaterialByName(content->name, false)) {
+                    BindMaterialImpl(found, content);
+                    break;
+                }
+            }
+            break;
+        case 2:
+            for (PaneLink& link : group->mPaneLinkList) {
+                if (link.pane->IsNameEqual(content->name)) {
+                    const ResExtUserData* data =
+                        link.pane->FindExtUserDataByName(content->GetExtUserDataName());
+                    if (data && mBindCount < _3a)
+                        _30[mBindCount++] = {data, content};
+                    break;
+                }
+            }
+            break;
+        }
+    }
+}
+
+// 0x7100ab4af4
+void AnimTransformBasic::ForceBindPane(Pane* pane, const Pane* source) {
+    const ResAnimationBlock* block = mRes;
+    const u32* offsets = block->GetContentOffsets();
+    for (u16 i = 0; i < block->contentCount; ++i) {
+        const ResAnimationContent* content = block->GetContentAtOffset(offsets[i]);
+        switch (content->type) {
+        case 0:
+            if (source->IsNameEqual(content->name)) {
+                if (mBindCount >= _3a)
+                    return;
+                _30[mBindCount++] = {pane, content};
+            }
+            break;
+        case 1: {
+            const u32 count = source->GetMaterialCount();
+            for (u32 j = 0; j < count; ++j) {
+                Material* material = source->GetMaterial(j);
+                if (material && material->IsNameEqual(content->name)) {
+                    if (Material* target = pane->GetMaterial(j)) {
+                        if (!BindMaterialImpl(target, content))
+                            return;
+                    }
+                }
+            }
+            break;
+        }
+        case 2:
+            if (source->IsNameEqual(content->name) && pane) {
+                const ResExtUserData* data = pane->FindExtUserDataByName(content->GetExtUserDataName());
+                if (data) {
+                    if (mBindCount >= _3a)
+                        return;
+                    _30[mBindCount++] = {data, content};
+                }
+            }
+            break;
+        }
+    }
+}
+
 // 0x7100ab4a50
 void AnimTransformBasic::BindMaterial(Material* material) {
     const ResAnimationBlock* block = mRes;

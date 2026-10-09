@@ -27,6 +27,17 @@ struct ResAnimationContent {
     u8 infoCount;
     u8 type;
     u8 _1e[2];
+
+    // inline-only in the original; name is a guess. BindPane (0x7100ab4504),
+    // BindGroup (0x7100ab49e4) and ForceBindPane (0x7100ab4b84) resolve this
+    // type-2 trailer: content-relative table offset, then table-relative name.
+    const char* GetExtUserDataName() const {
+        if (type != 2)
+            return nullptr;
+        const u32* table_offset = util::ConstBytePtr(this, 0x24).Get<u32>();
+        const u32* table = util::ConstBytePtr(this, *table_offset).Get<u32>();
+        return util::ConstBytePtr(table, *table).Get<char>();
+    }
 };
 static_assert(sizeof(ResAnimationContent) == 0x20);
 static_assert(offsetof(ResAnimationContent, infoCount) == 0x1c);
@@ -177,7 +188,7 @@ protected:
     /* 0x28 */ TextureInfo** _28;  // texture references acquired from the resource accessor
     /* 0x30 */ Binding* _30;
     /* 0x38 */ u16 mBindCount;
-    /* 0x3a */ u16 _3a;
+    /* 0x3a */ u16 _3a;  // SetResource's allocated binding capacity
 };
 static_assert(sizeof(AnimTransform) == 0x28);
 static_assert(sizeof(AnimTransformBasic) == 0x40);
