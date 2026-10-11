@@ -35,7 +35,9 @@ public:
     void TraceEmitterSetArray(detail::BinaryData*, detail::BufferSizeCalculator*);
     void InitializeEmitterGraphicsResource(EmitterResource*);
     void FinalizeEmitterResource(EmitterResource*);
-    void Unrelocate(void*);
+    // AE3F68 consumes a raw binary file header, independently produced by
+    // the Resource constructor AE2A5C and passed directly by 1271C50.
+    static void Unrelocate(void* data);
     void RegisterTextureViewToDescriptorPool(bool (*)(gfx::DescriptorSlot*, const gfx::TextureView&,
                                                       void*),
                                              void*);
