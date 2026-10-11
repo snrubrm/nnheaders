@@ -28,6 +28,10 @@ void AbortImpl(char const*, char const*, char const*, int, Result);
 void OnAssertionFailure(nn::diag::AssertionType, char const*, char const*, char const*, int);
 }  // namespace detail
 
+// Native imported signature; StackTraceBase 136846C and diagnostic callback 1367E90
+// each supply a 128-entry uintptr_t array and consume the signed count.
+s32 GetBacktrace(uintptr_t* addresses, s32 capacity);
+
 // MODULE / SYMBOL
 size_t GetSymbolName(char* name, size_t nameSize, uintptr_t addr);
 u64 GetRequiredBufferSizeForGetAllModuleInfo();
