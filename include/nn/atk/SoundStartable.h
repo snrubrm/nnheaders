@@ -31,6 +31,12 @@ public:
     Result StartSound(SoundHandle* handle, const char* label, const StartInfo* start_info);
     Result HoldSound(SoundHandle* handle, u32 sound_id, const StartInfo* start_info);
     Result HoldSound(SoundHandle* handle, const char* label, const StartInfo* start_info);
+    Result PrepareSound(SoundHandle* handle, u32 sound_id, const StartInfo* start_info);
+
+private:
+    // Native 133D144 forwards numeric IDs here with no archive name.
+    Result HoldSound(SoundHandle* handle, u32 sound_id, const char* name,
+                     const StartInfo* start_info);
 };
 
 }  // namespace nn::atk
