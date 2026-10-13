@@ -326,8 +326,8 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_CurveLfo.cpp
   src/NintendoSDK/atk/atk_CurveAdshr.cpp
   src/NintendoSDK/atk/atk_WaveFileReader.cpp
-    src/NintendoSDK/atk/atk_SoundStartable.cpp
-    src/NintendoSDK/atk/atk_SoundSystem.cpp
+  src/NintendoSDK/atk/atk_SoundStartable.cpp
+  src/NintendoSDK/atk/atk_SoundSystem.cpp
   src/NintendoSDK/g3d/g3d_ResFile.cpp
   src/NintendoSDK/g3d/g3d_ResShaderFile.cpp
   src/NintendoSDK/g3d/g3d_ResModel.cpp

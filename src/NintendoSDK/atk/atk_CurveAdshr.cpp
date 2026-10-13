@@ -3,7 +3,7 @@
 namespace nn::atk::detail {
 
 // Native external read-only sustain table, addressed through GOT25a4690.
-// The name is a placeholder; all128 signed-short entries precede sAttackTable.
+// The name is a placeholder; all 128 signed-short entries precede sAttackTable.
 extern const s16 sUnk_7101ECB2E8[128] = {
     -723, -722, -721, -651, -601, -562, -530, -503, -480, -460, -442, -425, -410, -396, -383, -371,
     -360, -349, -339, -330, -321, -313, -305, -297, -289, -282, -276, -269, -263, -257, -251, -245,
