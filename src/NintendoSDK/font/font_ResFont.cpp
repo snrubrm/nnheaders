@@ -12,4 +12,11 @@ ResFont::~ResFont() {
     ;
 }
 
+void ResFont::Finalize(gfx::Device* device) {
+    if (mResource) {
+        UnloadTexture(device);
+        RemoveResourceBuffer();
+    }
+}
+
 }  // namespace nn::font

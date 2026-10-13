@@ -166,6 +166,10 @@ public:
     static void* FindBlock(detail::BinaryFileHeader* header, u32 kind);
 
 protected:
+    // Finalize 1326054 passes only this/device; complete 1326E24 unloads the
+    // embedded texture rather than receiving a separate texture object.
+    void UnloadTexture(gfx::Device* device) const;
+
     // Offsets in the font data are relative to the file header; 0 means "none". (An if / else with the operands as
     // arguments, not a ternary: the null arm has to survive as a select, as in the original.)
     template <typename T>
@@ -203,6 +207,7 @@ public:
 
     ResFont();
     ~ResFont() override;
+    void Finalize(gfx::Device* device) override;
 };
 
 }  // namespace nn::font
