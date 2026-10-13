@@ -217,6 +217,7 @@ add_library(NintendoSDK OBJECT
   include/nn/g3d/ResBoneAnim.h
   include/nn/g3d/ResSceneAnim.h
   include/nn/g3d/ResFile.h
+  include/nn/g3d/ResShaderFile.h
   include/nn/g3d/TextureRef.h
   include/nn/g3d/ResMaterial.h
   include/nn/g3d/ResFogAnim.h
@@ -317,6 +318,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_SoundHeap.cpp
   src/NintendoSDK/atk/atk_SoundStartable.cpp
   src/NintendoSDK/g3d/g3d_ResFile.cpp
+  src/NintendoSDK/g3d/g3d_ResShaderFile.cpp
   src/NintendoSDK/g3d/g3d_ResModel.cpp
   src/NintendoSDK/g3d/g3d_ResMaterial.cpp
   src/NintendoSDK/g3d/g3d_ResMaterialAnim.cpp
