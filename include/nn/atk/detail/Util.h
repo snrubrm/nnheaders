@@ -1,12 +1,7 @@
 #pragma once
 
 #include <nn/types.h>
-
-namespace nn::atk {
-// The native utility and WaveFileReader use three 32-bit sample-format codes.
-// Original enumerator spellings remain unidentified.
-enum SampleFormat : int;
-}
+#include <nn/atk/SampleFormat.h>
 
 namespace nn::atk::detail {
 

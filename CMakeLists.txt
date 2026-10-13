@@ -242,6 +242,8 @@ add_library(NintendoSDK OBJECT
   include/nn/atk/detail/driver/SoundThread.h
   include/nn/atk/detail/driver/HardwareManager.h
   include/nn/atk/detail/Util.h
+  include/nn/atk/SampleFormat.h
+  include/nn/atk/detail/WaveFileReader.h
   include/nn/atk/OutputMode.h
   include/nn/atk/SoundSystem.h
   include/nn/atk/SoundArchivePlayer.h
@@ -319,6 +321,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_SoundArchivePlayer.cpp
   src/NintendoSDK/atk/atk_SoundHeap.cpp
   src/NintendoSDK/atk/atk_Util.cpp
+  src/NintendoSDK/atk/atk_WaveFileReader.cpp
   src/NintendoSDK/atk/atk_SoundStartable.cpp
   src/NintendoSDK/g3d/g3d_ResFile.cpp
   src/NintendoSDK/g3d/g3d_ResShaderFile.cpp
