@@ -1,8 +1,19 @@
 #pragma once
 
+#include <nn/types.h>
+
+namespace nn::atk {
+// The native utility and WaveFileReader use three 32-bit sample-format codes.
+// Original enumerator spellings remain unidentified.
+enum SampleFormat : int;
+}
+
 namespace nn::atk::detail {
 
 namespace Util {
+
+size_t GetByteBySample(size_t sampleCount, SampleFormat format);
+bool IsValidMemoryForDsp(const void* memory, size_t size);
 
 /// Lazily constructed global instance (a function-local static in the sound library).
 template <typename T>
