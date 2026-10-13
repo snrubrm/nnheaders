@@ -64,6 +64,16 @@ struct Size {
     f32 width;
     f32 height;
 };
+
+// SetupBlendStateInfo (AC0FD0) reads these four byte-sized resource codes.
+// Material::InitializeBlendInformation (AC31D0) selects adjacent 4-byte records.
+struct ResBlendMode {
+    u8 blendOp;
+    u8 srcFactor;
+    u8 dstFactor;
+    u8 logicOp;
+};
+static_assert(sizeof(ResBlendMode) == 4);
 }  // namespace nn::ui2d
 
 namespace nn::ui2d::detail {

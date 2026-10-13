@@ -9,6 +9,24 @@ GraphicsResource::GraphicsResource() = default;
 
 GraphicsResource::~GraphicsResource() = default;
 
+int GraphicsResource::GetPresetBlendStateId(const ResBlendMode* color, const ResBlendMode* alpha) {
+    const ResBlendMode* colorPresets;
+    const ResBlendMode* alphaPresets;
+    sub_7100AC0ECC(&colorPresets, &alphaPresets);
+    for (int i = 0; i < 6; ++i) {
+        if (colorPresets[i].blendOp == color->blendOp &&
+            colorPresets[i].srcFactor == color->srcFactor &&
+            colorPresets[i].dstFactor == color->dstFactor &&
+            colorPresets[i].logicOp == color->logicOp &&
+            alphaPresets[i].blendOp == alpha->blendOp &&
+            alphaPresets[i].srcFactor == alpha->srcFactor &&
+            alphaPresets[i].dstFactor == alpha->dstFactor &&
+            alphaPresets[i].logicOp == alpha->logicOp)
+            return i;
+    }
+    return 7;
+}
+
 const gfx::BlendState* GraphicsResource::sub_7100AC1158(u32 index) const {
     return &mBlendStates[index];
 }

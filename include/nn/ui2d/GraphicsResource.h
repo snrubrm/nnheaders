@@ -30,11 +30,17 @@ public:
 
     // 0x7100ac13a8
     void Finalize(gfx::Device* device);
+    static int GetPresetBlendStateId(const ResBlendMode* color, const ResBlendMode* alpha);
     // Native neighbours select a blend-state member and bind the common vertex buffer.
     const gfx::BlendState* sub_7100AC1158(u32 index) const;
     void sub_7100AC1244(gfx::CommandBuffer* command_buffer) const;
     gfx::DescriptorSlot* sub_7100AC1B30(TexWrap wrap_s, TexWrap wrap_t, TexFilter min_filter,
                                      TexFilter mag_filter);
+
+private:
+    // Native AC0ECC returns the two six-entry preset arrays. The original
+    // helper name is unidentified; no array initialization is reconstructed here.
+    static void sub_7100AC0ECC(const ResBlendMode** color, const ResBlendMode** alpha);
 
 public:
     void* _0 = nullptr;
