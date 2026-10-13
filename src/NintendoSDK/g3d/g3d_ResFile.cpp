@@ -4,6 +4,17 @@
 
 namespace nn::g3d {
 
+ResFile* ResFile::ResCast(void* data) {
+    auto* file = static_cast<ResFile*>(data);
+    if (file) {
+        if (!file->IsRelocated())
+            file->GetRelocationTable()->Relocate();
+        // The native cast retains this query even though its result is discarded.
+        file->IsEndianReverse();
+    }
+    return file;
+}
+
 void ResFile::Unrelocate() {
     if (IsRelocated())
         GetRelocationTable()->Unrelocate();
