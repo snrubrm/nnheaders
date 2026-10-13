@@ -1,6 +1,7 @@
 #pragma once
 
 #include <nn/atk/OutputMode.h>
+#include <nn/atk/AuxBus.h>
 #include <nn/audio.h>
 #include <nn/atk/detail/Util.h>
 #include <nn/types.h>
@@ -29,6 +30,7 @@ public:
     // Native 1344670 returns the renderer channel count (2 or 6). The private
     // configuration flag it reads remains outside this partial representation.
     int GetChannelCountMax() const;
+    bool IsFinishedClearEffect(AuxBus bus, OutputDevice device, int index) const;
     /// 0x71013450b8 (declared only)
     void SetOutputMode(OutputMode mode, OutputDevice device);
     OutputMode GetOutputMode() const { return mOutputMode; }
