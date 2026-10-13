@@ -26,6 +26,7 @@ public:
     static void Finalize();
     /// 0x710133dd80 (declared only)
     static bool IsInitialized();
+    static int GetRendererChannelCountMax();
     /// 0x710133dfb8 / 0x710133e02c / 0x710133e0b0 (declared only)
     static void ClearEffect(AuxBus bus);
     static void ClearEffect(AuxBus bus, OutputDevice device);

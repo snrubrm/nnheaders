@@ -26,6 +26,9 @@ public:
     nn::audio::AudioRendererConfig* GetAudioRendererConfig() { return &mAudioRendererConfig; }
 
     void SetMasterVolume(f32 volume, s32 frames);
+    // Native 1344670 returns the renderer channel count (2 or 6). The private
+    // configuration flag it reads remains outside this partial representation.
+    int GetChannelCountMax() const;
     /// 0x71013450b8 (declared only)
     void SetOutputMode(OutputMode mode, OutputDevice device);
     OutputMode GetOutputMode() const { return mOutputMode; }
