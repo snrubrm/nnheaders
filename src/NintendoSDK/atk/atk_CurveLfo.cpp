@@ -13,10 +13,10 @@ CurveFunction sCurveTable[128];
 f32 sub_7101353C08(f32 phase) {
     return nn::util::SinTable(static_cast<nn::util::AngleIndex>(phase * 4294967296.0f));
 }
-// Native slope/offset bases are 20 bytes apart; the second table ends at the
-// independently referenced MemoryFileStream RTTI name at 1ecb610.
-const f32 sUnk_7101ECB5E8[5] = {4.0f, -4.0f, -4.0f, 4.0f, 4.0f};
-const f32 sUnk_7101ECB5FC[5] = {0.0f, 2.0f, 2.0f, -4.0f, 0.0f};
+// Update normalizes phase to [0, 1), proving only these four used entries.
+// The neighboring unused float at each native table boundary remains unmodeled.
+const f32 sUnk_7101ECB5E8[4] = {4.0f, -4.0f, -4.0f, 4.0f};
+const f32 sUnk_7101ECB5FC[4] = {0.0f, 2.0f, 2.0f, -4.0f};
 
 f32 sub_7101353C44(f32 phase) {
     const u32 index = u32(phase * 4.0f);
