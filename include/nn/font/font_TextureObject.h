@@ -56,6 +56,18 @@ protected:
 };
 static_assert(sizeof(TextureObject) == 0x28);
 
+// TextureCache constructor AB0D24 constructs this final 0x28-byte member
+// at +1B90; independent EUI BE5328 allocates the complete 0x1BB8-byte cache.
+// Its complete native table contains the shared base lifetime and these two getters.
+class PlacementTextureObject : public TextureObject {
+public:
+    // NON_MATCHING: native deleting lifetime retains Set; this TU inlines and removes it.
+    ~PlacementTextureObject() override = default;
+    const gfx::TextureView* GetTextureView() const override;
+    gfx::TextureView* GetTextureView() override;
+};
+static_assert(sizeof(PlacementTextureObject) == 0x28);
+
 // A texture object over a texture resource (the font's glyph sheets).
 class ResourceTextureObject : public TextureObject {
 public:
