@@ -19,6 +19,7 @@ public:
     // the hold-time conversion and sustain byte. Names follow SetDecay/Release.
     void SetHold(int hold);
     void SetSustain(int sustain);
+    void Update(int milliseconds);
 
 private:
     u32 mState;
