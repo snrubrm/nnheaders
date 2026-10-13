@@ -14,6 +14,11 @@ public:
     f32 GetValue() const;
     void SetDecay(int decay);
     void SetRelease(int release);
+    void SetAttack(int attack);
+    // Native 135396c/13539f8 and independent sequence/wave consumers establish
+    // the hold-time conversion and sustain byte. Names follow SetDecay/Release.
+    void SetHold(int hold);
+    void SetSustain(int sustain);
 
 private:
     u32 mState;
