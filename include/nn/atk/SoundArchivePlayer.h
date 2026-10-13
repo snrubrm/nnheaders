@@ -51,10 +51,15 @@ public:
     u32 GetSoundPlayerCount() const { return mArchiveManager.mSoundPlayerCount; }
     const SoundArchive* GetSoundArchive() const;
 
-    /// 0x133af1c / 0x133af24 / 0x133af34 (the first and the last are static)
+    // Complete AAL BA05EC and SEAD BB93BC callers select the one-/two-argument
+    // wrappers; complete 133ADC0 consumes the size and signed count.
+    static size_t GetRequiredMemSize(const SoundArchive* archive);
     static size_t GetRequiredMemSize(const SoundArchive* archive, size_t unknown);
+    static size_t GetRequiredMemSize(const SoundArchive* archive, size_t unknown, s32 count);
+    /// 0x133af24 / 0x133af34 (the last is static)
     u32 GetRequiredStreamBufferSize(const SoundArchive* archive) const;
-    static size_t GetRequiredStreamCacheSize(const SoundArchive* archive, u32 unknown);
+    // AAL BA05EC passes a size_t cache size; complete 1350678 retains x1.
+    static size_t GetRequiredStreamCacheSize(const SoundArchive* archive, size_t unknown);
 
     Result detail_SetupSound(SoundHandle* handle, u32 sound_id, bool hold, const char* label,
                              const StartInfo* start_info) override;
