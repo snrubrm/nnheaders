@@ -17,6 +17,20 @@ Result SoundStartable::HoldSound(SoundHandle* handle, u32 sound_id, const StartI
     return HoldSound(handle, sound_id, nullptr, start_info);
 }
 
+Result SoundStartable::StartSound(SoundHandle* handle, const char* label, const StartInfo* start_info) {
+    const u32 sound_id = detail_GetItemId(label, nullptr);
+    if (sound_id == u32(-1))
+        return result::detail::ConstructResult(2);
+    return StartSound(handle, sound_id, start_info);
+}
+
+Result SoundStartable::HoldSound(SoundHandle* handle, const char* label, const StartInfo* start_info) {
+    const u32 sound_id = detail_GetItemId(label, nullptr);
+    if (sound_id == u32(-1))
+        return result::detail::ConstructResult(2);
+    return HoldSound(handle, sound_id, nullptr, start_info);
+}
+
 Result SoundStartable::PrepareSound(SoundHandle* handle, u32 sound_id, const StartInfo* start_info) {
     return detail_SetupSound(handle, sound_id, false, nullptr, start_info);
 }
