@@ -9,6 +9,7 @@ namespace Util {
 
 size_t GetByteBySample(size_t sampleCount, SampleFormat format);
 bool IsValidMemoryForDsp(const void* memory, size_t size);
+u32 sub_71013548CC();
 
 /// Lazily constructed global instance (a function-local static in the sound library).
 template <typename T>

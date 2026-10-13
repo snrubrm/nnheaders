@@ -24,7 +24,9 @@ struct SinCosSample {
     float sinDelta;
 };
 
-extern SinCosSample SinCosSampleTable[4];
+// SinTable/CosTable use an eight-bit sample index. This is an SDK import;
+// leave its full extent unspecified rather than declaring a four-entry table.
+extern SinCosSample SinCosSampleTable[];
 
 /* todo: implement for shape functions
 inline float ModPi(float x) {
