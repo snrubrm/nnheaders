@@ -22,6 +22,8 @@ class ExternalSoundPlayer;
 
 class BasicSound {
 public:
+    struct AmbientInfo;
+
     BasicSound();
     virtual ~BasicSound();
 

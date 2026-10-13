@@ -9,6 +9,7 @@
 #include <nn/atk/SoundDataManager.h>
 #include <nn/atk/SoundStartable.h>
 #include <nn/atk/detail/SoundArchiveManager.h>
+#include <nn/atk/detail/BasicSound.h>
 
 namespace nn {
 namespace atk {
@@ -69,6 +70,12 @@ public:
         mArchiveManager.ChangeTargetArchive(name);
         return mArchiveManager.mTargetSoundArchive->GetItemId(label);
     }
+
+    // Complete 133B488 passes ambient_info to GetAmbientPriority and the sound
+    // runtimes. The second optional context remains opaque.
+    Result sub_710133B488(SoundHandle* handle, u32 sound_id,
+                         detail::BasicSound::AmbientInfo* ambient_info, void* context, bool hold,
+                         const char* label, const StartInfo* start_info);
 
     nn::atk::detail::SoundArchiveManager mArchiveManager;  // _8
     u8 _48[0x2a0 - 0x48];

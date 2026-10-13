@@ -23,4 +23,9 @@ size_t SoundArchivePlayer::GetRequiredStreamCacheSize(const SoundArchive* archiv
     return detail::StreamSoundRuntime::GetRequiredStreamCacheSize(archive, unknown);
 }
 
+Result SoundArchivePlayer::detail_SetupSound(SoundHandle* handle, u32 sound_id, bool hold,
+                                            const char* label, const StartInfo* start_info) {
+    return sub_710133B488(handle, sound_id, nullptr, nullptr, hold, label, start_info);
+}
+
 }  // namespace nn::atk
