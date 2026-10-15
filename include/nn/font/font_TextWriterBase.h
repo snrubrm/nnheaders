@@ -7,6 +7,10 @@
 
 #include <nn/font/font_CharWriter.h>
 
+namespace eui {
+class TagProcessor;
+}
+
 namespace nn::font {
 
 template <typename CharType>
@@ -17,6 +21,9 @@ class Rectangle;
 // GetLineHeight (0x7101329104), TextBox::SetupTextWriter, the tab / line processing in TagProcessorBase.
 template <typename CharType>
 class TextWriterBase : public CharWriter {
+    // Ruby printing temporarily replaces the existing processor, then restores it.
+    friend class eui::TagProcessor;
+
 public:
     TextWriterBase();
     ~TextWriterBase();
