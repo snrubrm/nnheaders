@@ -90,8 +90,8 @@ static_assert(offsetof(BuildArgSet, mIsUtf8) == 0x69);
 // aligned GPU byte sizes to these two counters. Names are descriptive guesses.
 class BuildResultInformation {
 public:
-    size_t mMaterialBufferSize = 0;
-    size_t mTextBufferSize = 0;
+    size_t mMaterialBufferSize;
+    size_t mTextBufferSize;
 };
 static_assert(sizeof(BuildResultInformation) == 0x10);
 
