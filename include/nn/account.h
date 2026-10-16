@@ -58,6 +58,11 @@ public:
     Result GetResult();
     Result Cancel();
     Result GetSystemEvent(nn::os::SystemEvent*);
+
+private:
+    // 0x20 bytes: nn::nex::JobAcquireNsaIdToken constructs one at +0xa8 (0x7100ce5954) with
+    // its next member at +0xc8; PosTrackerUploader 0x7100a8d2fc keeps one at sp+0x30.
+    std::aligned_storage_t<0x20, 8> m_Storage;
 };
 }  // namespace account
 }  // namespace nn

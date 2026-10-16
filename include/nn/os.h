@@ -67,9 +67,30 @@ struct SystemEventType {
     };
     u8 state;
 };
-struct SystemEvent {
+void WaitSystemEvent(SystemEventType* event);
+void DestroySystemEvent(SystemEventType* event);
+
+// Inline in the original: PosTrackerUploader 0x7100a8d2fc clears the state byte (+0x28) on
+// construction, calls WaitSystemEvent through Wait() and DestroySystemEvent from the destructor
+// only when the state is not State_NotInitialized.
+class SystemEvent {
+public:
+    SystemEvent() { m_SystemEventType.state = SystemEventType::State_NotInitialized; }
+    ~SystemEvent() {
+        if (m_SystemEventType.state == SystemEventType::State_NotInitialized)
+            return;
+        DestroySystemEvent(&m_SystemEventType);
+    }
+    SystemEvent(const SystemEvent&) = delete;
+    SystemEvent& operator=(const SystemEvent&) = delete;
+
+    void Wait() { WaitSystemEvent(&m_SystemEventType); }
+    SystemEventType* GetBase() { return &m_SystemEventType; }
+
+private:
     SystemEventType m_SystemEventType;
 };
+static_assert(sizeof(SystemEvent) == 0x30);
 
 // ARG
 void SetHostArgc(s32);

@@ -9,6 +9,7 @@
 #include <nn/gfx/gfx_Types.h>
 #include <nn/types.h>
 #include <nn/ui2d/Types.h>
+#include <nn/util/MathTypes.h>
 
 namespace nn {
 namespace ui2d {
@@ -83,6 +84,10 @@ public:
     // TextBox::Finalize skip destruction when bit 0 at +0x4a is set.
     bool IsUserAllocated() const { return detail::TestBit(mFlags, 0); }
 
+    // Inline-only in the original. The two material colours (black at +0x8, white at +0xc);
+    // eui::MassDrawPane::DrawSelf 0x7100bdfcac reads bytes +0xc..+0xe of the white colour.
+    const util::Unorm8x4& GetColor(int idx) const { return mColors[idx]; }
+
     s32 GetTexMapCount() const { return mMemCount.texMap; }
     TexMap* GetTexMapArray() const { return static_cast<TexMap*>(mMem); }
 
@@ -125,7 +130,7 @@ private:
         u32 _padding : 15;
     };
 
-    /* 0x08 */ u8 _8[0x8];
+    /* 0x08 */ util::Unorm8x4 mColors[2];
     /* 0x10 */ MemInfo mMemCap;
     /* 0x14 */ MemInfo mMemCount;
     /* 0x18 */ void* mMem;  // one allocation; starts with the TexMap array
