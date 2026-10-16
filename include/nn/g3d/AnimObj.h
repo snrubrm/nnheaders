@@ -9,6 +9,9 @@ public:
     using PlayPolicy = float (*)(float, float, float, void*);
     static float PlayLoop(float frame, float start, float end, void* user_data);
 
+    // Inlined by BoneBlendState 0x7101257934: the play policy maps the frame.
+    void SetFrame(float frame) { mFrame = mPlayPolicy(frame, mStartFrame, mEndFrame, mUserData); }
+
 private:
     float mFrame;
     float mStartFrame;
