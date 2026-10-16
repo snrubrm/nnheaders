@@ -31,7 +31,7 @@ public:
     // C6F58C read the resource model name from this binary string.
     const char* GetName() const { return pName.Get()->GetData(); }
 
-    // Emitted out of line in the game (0x7101141290 / 0x710114116c) with ResDic::FindIndex inlined.
+    // Emitted out of line in the game (FindMaterialIndex 0x7101141290) with ResDic::FindIndex inlined.
     int FindMaterialIndex(const char* name) const {
         const util::ResDic* dict = pMaterialDic.Get();
         if (dict == nullptr)

@@ -46,9 +46,16 @@ public:
     void Cleanup(gfx::Device*);
     void Reset();
 
+    // Emitted out of line in the game (0x710114116c) with ResDic::FindIndex inlined; the tera callers pass a ResFile.
+    int FindModelIndex(const char* name) const {
+        if (mModelDict == nullptr)
+            return util::ResDic::Npos;
+        return mModelDict->FindIndex(name);
+    }
+
     u64 mFileNameLength;                  // _20
     nn::g3d::ResModel* mModels;           // _28
-    u64 mModelDictOffset;                 // _30
+    nn::util::ResDic* mModelDict;         // _30
     u64 mSkeleAnimOffset;                 // _38
     u64 mSkeleAnimDictOffset;             // _40
     nn::g3d::ResMaterialAnim* mMatAnims;  // _48
