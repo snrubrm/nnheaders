@@ -31,7 +31,9 @@ public:
     gfx::DescriptorSlot* mTextureDescriptorSlots;  // 98
     u8 _a0[8];
     u8 mTextureCount;  // a8
-    u8 _a9[0xb4 - 0xa9];
+    // Graphics 0x7100f2e0f4 bounds agl::g3d::MaterialObj::GetResTexture's index with this byte.
+    u8 _a9;
+    u8 _aa[0xb4 - 0xaa];
 };
 }  // namespace g3d
 }  // namespace nn

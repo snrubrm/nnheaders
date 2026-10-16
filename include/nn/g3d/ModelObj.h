@@ -4,10 +4,22 @@
 
 namespace nn::g3d {
 
-class MaterialObj;
+class ResMaterial;
 class ResModel;
 class ShapeObj;
 class SkeletonObj;
+
+// Graphics 0x7100f2e0f4 walks ModelObj's material array with a 0x80-byte stride and reads the
+// resource material through +0; agl::g3d::MaterialObj::GetResTexture 0x7100b33fbc reads +0x50.
+class MaterialObj {
+public:
+    const ResMaterial* GetResource() const { return m_pRes; }
+
+private:
+    const ResMaterial* m_pRes;
+    u8 _8[0x80 - 0x8];
+};
+static_assert(sizeof(MaterialObj) == 0x80);
 
 // TODO
 class ModelObj {
@@ -15,6 +27,9 @@ public:
     SkeletonObj* GetSkeleton() const { return m_Skeleton; }
 
     s32 GetNumShapes() const { return m_NumShapes; }
+    // Graphics 0x7100f2e0f4: the material count (+0x32) and array (+0x48).
+    s32 GetNumMaterials() const { return m_NumMaterials; }
+    MaterialObj* GetMaterial(int index) { return &m_Materials[index]; }
 
     // inline-only in the original; name is a guess: +58 user pointer in ModelNW Bone/MaterialVisibilityCallback c04134/c04164.
     void* GetUserPtr() { return m_UserData; }
