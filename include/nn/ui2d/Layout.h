@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <nn/font/font_PrintContext.h>
 #include <nn/font/font_Util.h>
 #include <nn/gfx/gfx_Device.h>
 #include <nn/gfx/gfx_Types.h>
@@ -112,6 +113,9 @@ public:
     // inline-only in the original; name is a guess. DynamicCaptureUsePictureEx::Calculate
     // and DynamicCaptureUseWindowEx::Calculate both pass this member by reference.
     const Size& GetLayoutSize() const { return mLayoutSize; }
+    // 0x7100ab7970: returns the layout size as a rectangle centred on the origin (y up).
+    // Called by uking::ui::ScreenBase::updateButton_ 0x71010a9da0.
+    const font::Rectangle GetLayoutRect() const;
 
     AnimTransform* CreateAnimTransformBasic();
     bool BuildWithName(BuildResultInformation*, gfx::Device*, ResourceAccessor*, ControlCreator*,

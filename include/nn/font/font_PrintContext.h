@@ -30,6 +30,13 @@ struct PrintContext {
 // Rectangle of a text (CalculateRect writes the four edges and normalises them).
 class Rectangle {
 public:
+    Rectangle() : left(0), top(0), right(0), bottom(0) {}
+    Rectangle(f32 l, f32 t, f32 r, f32 b) : left(l), top(t), right(r), bottom(b) {}
+    // User-provided: ui2d::Layout::GetLayoutRect 0x7100ab7970 returns the rectangle through x8
+    // (indirect result), so the type is not trivially copyable.
+    Rectangle(const Rectangle& other)
+        : left(other.left), top(other.top), right(other.right), bottom(other.bottom) {}
+
     f32 left;
     f32 top;
     f32 right;

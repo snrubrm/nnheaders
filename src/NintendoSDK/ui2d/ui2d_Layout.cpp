@@ -243,4 +243,9 @@ ShaderInfo* Layout::AcquireArchiveShader(gfx::Device* device, const char* name) 
     return mResourceAccessor->AcquireShader(device, name);
 }
 
+const font::Rectangle Layout::GetLayoutRect() const {
+    return font::Rectangle(-mLayoutSize.width / 2, mLayoutSize.height / 2, mLayoutSize.width / 2,
+                           -mLayoutSize.height / 2);
+}
+
 }  // namespace nn::ui2d
