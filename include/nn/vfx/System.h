@@ -21,6 +21,9 @@ public:
     virtual ~System();
     virtual void Initialize(nn::vfx::Heap*, nn::vfx::Heap*, nn::vfx::Config const&);
 
+    // 0x7100accbac: kills the emitters of all 64 emitter sets and clears the two list heads.
+    void KillAllEmitterSet();
+
     u8 _0[0x1700];
 };
 }  // namespace vfx

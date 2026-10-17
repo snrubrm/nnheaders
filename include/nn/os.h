@@ -68,6 +68,8 @@ struct SystemEventType {
     u8 state;
 };
 void WaitSystemEvent(SystemEventType* event);
+// 0x71011fb5ac calls this through the import table on the AudioMgr event at +0x240.
+bool TryWaitSystemEvent(SystemEventType* event);
 void DestroySystemEvent(SystemEventType* event);
 
 // Inline in the original: PosTrackerUploader 0x7100a8d2fc clears the state byte (+0x28) on
@@ -85,6 +87,7 @@ public:
     SystemEvent& operator=(const SystemEvent&) = delete;
 
     void Wait() { WaitSystemEvent(&m_SystemEventType); }
+    bool TryWait() { return TryWaitSystemEvent(&m_SystemEventType); }
     SystemEventType* GetBase() { return &m_SystemEventType; }
 
 private:

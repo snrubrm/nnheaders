@@ -5,6 +5,14 @@
 namespace nn {
 namespace atk {
 
+enum StreamRegionCallbackResult : int;
+
+/// The parameter of the stream region callback. The game callbacks (0x7101002374) read the
+/// region index in the first word; no other field is observable.
+struct StreamRegionCallbackParam {
+    s32 mRegion;
+};
+
 class SoundArchive {
 public:
     struct SequenceSoundInfo;
