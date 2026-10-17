@@ -23,8 +23,16 @@ public:
     void Reset();
     void Reset(u32);
 
+    // Inline-only in the original; names are ours. The tera shader binding functions
+    // store 0x1705 at +8 and 0 at +0xc after FindMaterial (0x71011413b4 and siblings).
+    void set_8(u32 value) { m_8 = value; }
+    void set_c(u16 value) { m_c = value; }
+
     // Native BindTexture ac895c and AGL bindings b33f24/b33f50.
-    u8 _0[0x30];
+    u8 _0[0x8];
+    u32 m_8;
+    u16 m_c;
+    u8 _e[0x30 - 0xe];
     const gfx::TextureView** mTextureViews;  // 30
     nn::util::BinPtrToString* mTextureNames;  // 38
     u8 _40[0x98 - 0x40];
