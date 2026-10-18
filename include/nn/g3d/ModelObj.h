@@ -1,6 +1,8 @@
 #pragma once
 
 #include <nn/types.h>
+#include <nn/gfx/gfx_DescriptorSlot.h>
+#include <nn/gfx/gfx_Types.h>
 
 namespace nn::g3d {
 
@@ -17,7 +19,20 @@ public:
 
 private:
     const ResMaterial* m_pRes;
-    u8 _8[0x80 - 0x8];
+    u8 _8[0x50 - 0x8];
+
+public:
+    // AGL MaterialObj bindings 0x7100b33fbc/0x7100b33fd8 read the view array at
+    // +0x50 and 0x7100b34024 writes the view and descriptor slot arrays; the
+    // change callback at +0x78 is called with the material and index.
+    const gfx::TextureView** mTextureViews;  // 50
+    gfx::DescriptorSlot* mTextureDescriptorSlots;  // 58
+
+private:
+    u8 _60[0x78 - 0x60];
+
+public:
+    void (*mTextureChangeCallback)(MaterialObj*, s32);  // 78
 };
 static_assert(sizeof(MaterialObj) == 0x80);
 
