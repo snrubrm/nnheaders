@@ -207,6 +207,9 @@ public:
 
     ResFont();
     ~ResFont() override;
+    // Named nonvirtual API; native validation returns false and successful setup returns true.
+    bool SetResource(gfx::Device* device, void* resource, gfx::MemoryPool* pool,
+                     s64 pool_offset, u64 pool_size);
     void Finalize(gfx::Device* device) override;
 };
 

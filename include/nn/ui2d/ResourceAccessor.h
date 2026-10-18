@@ -23,11 +23,16 @@ public:
     ResourceAccessor();
     virtual ~ResourceAccessor();
 
+    // Screen passes its bool registration callback to slot +0x18; the named
+    // font registration APIs use the same callback contract.
+    using TextureViewRegistrationCallback = bool (*)(gfx::DescriptorSlot*, const gfx::TextureView&,
+                                                     void*);
+    // Unregistration retains its separate void callback contract.
     using TextureViewDescriptorCallback = void (*)(gfx::DescriptorSlot*, const gfx::TextureView&,
                                                    void*);
 
     // Names of these two descriptor operations follow the original named unregister override.
-    virtual void RegisterTextureViewToDescriptorPool(TextureViewDescriptorCallback, void*) = 0;
+    virtual void RegisterTextureViewToDescriptorPool(TextureViewRegistrationCallback, void*) = 0;
     virtual void UnregisterTextureViewFromDescriptorPool(TextureViewDescriptorCallback, void*) = 0;
     virtual void Finalize(gfx::Device* device);
 
