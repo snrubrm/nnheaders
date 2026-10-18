@@ -154,6 +154,12 @@ public:
         mPosition.y = position.y;
         SetGlobalMatrixDirty(true);
     }
+    // inline-only in the original; name is a guess. CenteringPanePair BED4F4
+    // repeats the x-only position store and actual dirty-bit update twice.
+    void SetPositionX(float x) {
+        mPosition.x = x;
+        SetGlobalMatrixDirty(true);
+    }
     // Inline-only; name is a guess. The Y store and dirty-bit update repeat in
     // original 0x710109f058, 0x71010b2b30 and 0x71010b3920.
     void SetPositionY(float y) {
