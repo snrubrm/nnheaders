@@ -1,6 +1,8 @@
 #pragma once
 
 #include <nn/g3d/ModelAnimObj.h>
+#include <nn/gfx/gfx_DescriptorSlot.h>
+#include <nn/gfx/gfx_Types.h>
 
 namespace nn::g3d {
 
@@ -13,6 +15,13 @@ class MaterialAnimObj : public ModelAnimObj {
 public:
     MaterialAnimObj();
     ~MaterialAnimObj() override;
+
+    // AGL MaterialAnimObj::SetResTexture 0x7100b33ff4 loads both array bases
+    // and stores the ResTexture view and descriptor slot through them, exactly
+    // like the runtime ResMaterial arrays at +0x30/+0x98.
+    u8 _68[0x90 - 0x68];
+    const gfx::TextureView** mTextureViews;  // 90
+    gfx::DescriptorSlot* mTextureDescriptorSlots;  // 98
 };
 
 }  // namespace nn::g3d
