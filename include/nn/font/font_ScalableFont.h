@@ -21,7 +21,8 @@ public:
         /* 0x00 */ TextureCache* pTextureCache;
         /* 0x08 */ s32 fontSize;  // 40
         /* 0x0c */ u16 _c;
-        /* 0x0e */ u16 _e;
+        /* 0x0e */ u8 _e;
+        /* 0x0f */ u8 _f;
         /* 0x10 */ u32 alternateChar;  // '?'
     };
 
