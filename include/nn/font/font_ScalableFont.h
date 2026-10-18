@@ -28,6 +28,8 @@ public:
     ScalableFont();
     ~ScalableFont() override;
 
+    void Initialize(const InitializeArg& arg);
+
     s32 GetWidth() const override;
     s32 GetHeight() const override;
     s32 GetAscent() const override;
