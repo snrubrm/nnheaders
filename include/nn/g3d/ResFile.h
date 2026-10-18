@@ -45,6 +45,12 @@ public:
     void Setup(gfx::Device*, gfx::MemoryPool*, s64, u64);
     void Cleanup(gfx::Device*);
     void Reset();
+    // Original model lookup at 0x71011d55f4: ModelResource supplies its ResFile,
+    // and the result is an entry of mModels selected through mModelDict.
+    // Original method name is unknown. Nonconst receiver qualification is a
+    // source-contract inference retained from the prior declaration assumption;
+    // the native implementation only reads the resource.
+    ResModel* sub_71011D55F4(const char* name);
 
     // Emitted out of line in the game (0x710114116c) with ResDic::FindIndex inlined; the tera callers pass a ResFile.
     int FindModelIndex(const char* name) const {

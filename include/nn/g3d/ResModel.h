@@ -14,6 +14,7 @@
 namespace nn {
 namespace g3d {
 class ResMaterial;
+class ResSkeleton;
 
 
 class ResModel {
@@ -50,7 +51,11 @@ public:
     // Native ResFile arrays advance by 78 in AC57FC/AC58A0.
     u8 _0[0x10];
     nn::util::BinPtrToString pName;
-    u8 _18[0x30 - 0x18];
+    u8 _18[0x20 - 0x18];
+    // Model initialization 132e0dc passes this resource to the named
+    // SkeletonObj::Initialize 1337c1c, which stores it as its ResSkeleton.
+    nn::util::BinTPtr<ResSkeleton> pSkeleton;
+    u8 _28[0x30 - 0x28];
     nn::util::BinTPtr<nn::util::ResDic> pShapeDic;
     u8 _38[0x40 - 0x38];
     ResMaterial* mMaterials;
