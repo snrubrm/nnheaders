@@ -50,6 +50,30 @@ public:
 };
 static_assert(sizeof(MaterialObj) == 0x80);
 
+// Prefix used by the AGL ShapeObj::Map binding 0x7100b34184. The total extent
+// and the remaining state are not modelled.
+class ShapeObj {
+public:
+    void* m_pRes;  // 0
+    u8 _8_flags;  // 8
+
+private:
+    u8 _9[0xd - 0x9];
+
+public:
+    u8 m_d;  // d
+    u8 _e;
+    u8 m_f;  // f
+
+private:
+    u8 _10[0x20 - 0x10];
+
+public:
+    gfx::Buffer* mBuffers;  // 20
+};
+static_assert(offsetof(ShapeObj, _8_flags) == 0x8);
+static_assert(offsetof(ShapeObj, mBuffers) == 0x20);
+
 // TODO
 class ModelObj {
 public:
