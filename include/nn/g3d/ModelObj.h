@@ -19,7 +19,20 @@ public:
 
 private:
     const ResMaterial* m_pRes;
-    u8 _8[0x50 - 0x8];
+
+public:
+    // AGL bindings 0x7100b340ec/0x7100b34114 read the flag byte at +8, the
+    // 0x48-byte GPU buffer array at +0x40 and the mapped size at +0x60.
+    u8 mFlags;  // 8
+
+private:
+    u8 _9[0x40 - 0x9];
+
+public:
+    gfx::Buffer* mBuffers;  // 40
+
+private:
+    u8 _48[0x50 - 0x48];
 
 public:
     // AGL MaterialObj bindings 0x7100b33fbc/0x7100b33fd8 read the view array at
@@ -27,9 +40,10 @@ public:
     // change callback at +0x78 is called with the material and index.
     const gfx::TextureView** mTextureViews;  // 50
     gfx::DescriptorSlot* mTextureDescriptorSlots;  // 58
+    size_t mBufferSize;  // 60
 
 private:
-    u8 _60[0x78 - 0x60];
+    u8 _68[0x78 - 0x68];
 
 public:
     void (*mTextureChangeCallback)(MaterialObj*, s32);  // 78
