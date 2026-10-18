@@ -26,6 +26,10 @@ class ModelObj {
 public:
     SkeletonObj* GetSkeleton() const { return m_Skeleton; }
 
+    // Inline-only in the original; name is a guess. ModelNW::getName
+    // 0x7100c06bc0 and ModelRig 0x7100c8338c read this actual resource.
+    const ResModel* GetResource() const { return m_ResModel; }
+
     s32 GetNumShapes() const { return m_NumShapes; }
     // Graphics 0x7100f2e0f4: the material count (+0x32) and array (+0x48).
     s32 GetNumMaterials() const { return m_NumMaterials; }
