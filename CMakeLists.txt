@@ -210,6 +210,7 @@ add_library(NintendoSDK OBJECT
   include/nn/g3d/BindFuncTable.h
   include/nn/g3d/AnimObj.h
   include/nn/g3d/ModelAnimObj.h
+  include/nn/g3d/MaterialAnimObj.h
   include/nn/g3d/SkeletalAnimObj.h
   include/nn/g3d/ModelObj.h
   include/nn/g3d/ResMaterialAnim.h
