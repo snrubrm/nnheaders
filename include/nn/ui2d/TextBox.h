@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <nn/font/font_PrintContext.h>
 #include <nn/gfx/gfx_Device.h>
 #include <nn/types.h>
 #include <nn/ui2d/Pane.h>
@@ -124,8 +125,10 @@ public:
         if (changed)
             mTagProcessor = tag_processor;
     }
-    // The text rectangle (0x7100abb2f0).
-    void GetTextDrawRect() const;
+    // The text rectangle (0x7100abb2f0). Returns through the indirect-result
+    // location, like Layout::GetLayoutRect; the existing nontrivial Rectangle
+    // copy constructor supplies that ABI.
+    font::Rectangle GetTextDrawRect() const;
 
     // Horizontal text position (HorizontalPosition_*; the low two bits of mTextPosition).
     HorizontalPosition GetTextPositionH() const {
