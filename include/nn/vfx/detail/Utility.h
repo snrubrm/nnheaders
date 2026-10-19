@@ -1,9 +1,43 @@
 #pragma once
 
+#include <nn/types.h>
+
+namespace nn::vfx {
+class Heap;
+}
+
 namespace nn::vfx::detail {
 
 void OutputError(const char* format, ...);
 void OutputWarning(const char* format, ...);
 void OutputLog(const char* format, ...);
+
+// The two heaps behind the vfx allocator wrappers. The static heap serves the
+// long-lived allocations and tracks their total size; the dynamic heap serves
+// the per-frame ones. SetStaticHeap 0x7100acac84 / GetStaticHeap 0x7100acacc0 /
+// SetDynamicHeap 0x7100acad58 / GetDynamicHeap 0x7100acad68 read the same two
+// file-scope pointers that the wrappers below use.
+void SetStaticHeap(Heap* heap);
+Heap* GetStaticHeap();
+void SetDynamicHeap(Heap* heap);
+Heap* GetDynamicHeap();
+
+// 0x7100acacd0: rounds the size up to 0x20 and charges it to the static total.
+void* AllocFromStaticHeap(size_t size, size_t alignment);
+// 0x7100acad78: rounds the size up to 0x100 and allocates from the dynamic heap.
+void* AllocFromDynamicHeap(size_t size, size_t alignment);
+// 0x7100acad28: frees through the static heap.
+void FreeFromStaticHeap(void* ptr);
+// 0x7100acadcc: frees at once, or parks the pointer on the delay-free list.
+void FreeFromDynamicHeap(void* ptr, bool immediate);
+// 0x7100acad48: the total charged to the static heap so far.
+u64 GetAllocatedSizeFromStaticHeap();
+
+// 0x7100acae48: allocates the delay-free list for `count` pointers.
+void InitializeDelayFreeList(s32 count);
+// 0x7100acaed4: frees the parked pointers and the list itself.
+void FinalizeDelayFreeList();
+// 0x7100acaf84: frees the parked pointers, keeping the list.
+void FlushDelayFreeList();
 
 }  // namespace nn::vfx::detail
