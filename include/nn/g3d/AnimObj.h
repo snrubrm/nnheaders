@@ -9,6 +9,14 @@ class AnimFrameCache;
 class AnimFrameCtrl {
 public:
     using PlayPolicy = float (*)(float, float, float, void*);
+
+    // 0x710132b6d0 inlines this as the AnimObj's default controller.
+    AnimFrameCtrl()
+        : mFrame(0.0f), mStartFrame(0.0f), mEndFrame(0.0f), mStep(1.0f),
+          mPlayPolicy(&PlayOneTime), mUserData(nullptr)
+    {
+    }
+
     static float PlayLoop(float frame, float start, float end, void* user_data);
     // The other play policy: the frame is clamped to [start, end] and does not loop.
     static float PlayOneTime(float frame, float start, float end, void* user_data);
@@ -43,6 +51,10 @@ public:
     virtual ~AnimObj();
     virtual void ClearResult() = 0;
     virtual void Calculate() = 0;
+
+    // 0x710132b6d0: points mFrameCtrl at the default controller, whose frame and
+    // bounds are zero, step 1.0 and play policy PlayOneTime.
+    AnimObj();
 
     // 0x710132b708: resets the default frame controller. The play policy is
     // PlayLoop when `flag` is set and PlayOneTime otherwise.

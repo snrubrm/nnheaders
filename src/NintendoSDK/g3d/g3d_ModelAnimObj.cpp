@@ -18,6 +18,12 @@ float AnimFrameCtrl::PlayOneTime(float frame, float start, float end, void*) {
     return end;
 }
 
+// 0x710132b6d0
+AnimObj::AnimObj() {
+    mBuffer = nullptr;
+    mFrameCtrl = &mDefaultFrameCtrl;
+}
+
 void AnimObj::ResetFrameCtrl(int frame, bool flag) {
     mDefaultFrameCtrl.mFrame = 0.0f;
     mDefaultFrameCtrl.mStartFrame = 0.0f;
