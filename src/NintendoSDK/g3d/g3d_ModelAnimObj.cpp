@@ -5,6 +5,22 @@
 
 namespace nn::g3d {
 
+float AnimFrameCtrl::PlayOneTime(float frame, float start, float end, void*) {
+    const float clamped = frame < start ? start : frame;
+    if (!(frame >= end))
+        return clamped;
+    return end;
+}
+
+void AnimObj::ResetFrameCtrl(int frame, bool flag) {
+    mDefaultFrameCtrl.mFrame = 0.0f;
+    mDefaultFrameCtrl.mStartFrame = 0.0f;
+    mDefaultFrameCtrl.mEndFrame = static_cast<float>(frame);
+    mDefaultFrameCtrl.mPlayPolicy = flag ? &AnimFrameCtrl::PlayLoop : &AnimFrameCtrl::PlayOneTime;
+    mDefaultFrameCtrl.mStep = 1.0f;
+    mDefaultFrameCtrl.mUserData = nullptr;
+}
+
 float AnimFrameCtrl::PlayLoop(float frame, float start, float end, void*) {
     float direction;
     float origin;

@@ -8,11 +8,15 @@ class AnimFrameCtrl {
 public:
     using PlayPolicy = float (*)(float, float, float, void*);
     static float PlayLoop(float frame, float start, float end, void* user_data);
+    // The other play policy: the frame is clamped to [start, end] and does not loop.
+    static float PlayOneTime(float frame, float start, float end, void* user_data);
 
     // Inlined by BoneBlendState 0x7101257934: the play policy maps the frame.
     void SetFrame(float frame) { mFrame = mPlayPolicy(frame, mStartFrame, mEndFrame, mUserData); }
 
 private:
+    friend class AnimObj;
+
     float mFrame;
     float mStartFrame;
     float mEndFrame;
@@ -37,6 +41,10 @@ public:
     virtual ~AnimObj();
     virtual void ClearResult() = 0;
     virtual void Calculate() = 0;
+
+    // 0x710132b708: resets the default frame controller. The play policy is
+    // PlayLoop when `flag` is set and PlayOneTime otherwise.
+    void ResetFrameCtrl(int frame, bool flag);
 
 protected:
     AnimFrameCtrl* mFrameCtrl;
