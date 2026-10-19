@@ -5,6 +5,12 @@
 
 namespace nn::g3d {
 
+void AnimContext::Initialize(AnimFrameCache* cache, int count) {
+    _0 = cache;
+    _8 = (cache == nullptr) ? 0 : count;
+    _c = 0;
+}
+
 float AnimFrameCtrl::PlayOneTime(float frame, float start, float end, void*) {
     const float clamped = frame < start ? start : frame;
     if (!(frame >= end))

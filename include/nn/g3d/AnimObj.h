@@ -4,6 +4,8 @@
 
 namespace nn::g3d {
 
+class AnimFrameCache;
+
 class AnimFrameCtrl {
 public:
     using PlayPolicy = float (*)(float, float, float, void*);
@@ -54,7 +56,22 @@ protected:
     void* mBuffer;
 };
 
+// The class name comes from the original symbol. Only the first 0x10 bytes
+// are recovered: Initialize (0x710132b6bc) stores the frame cache pointer at
+// +0, the entry count at +8 and a zero word at +0xc. The extent of the
+// original class is not known.
+class AnimContext {
+public:
+    void Initialize(AnimFrameCache* cache, int count);
+
+private:
+    AnimFrameCache* _0;
+    s32 _8;
+    s32 _c;
+};
+
 static_assert(sizeof(AnimFrameCtrl) == 0x20);
 static_assert(sizeof(AnimObj) == 0x58);
+static_assert(sizeof(AnimContext) == 0x10);
 
 }  // namespace nn::g3d
