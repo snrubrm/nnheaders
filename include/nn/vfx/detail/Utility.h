@@ -1,5 +1,6 @@
 #pragma once
 
+#include <nn/os/os_MutexTypes.h>
 #include <nn/types.h>
 
 namespace nn::vfx {
@@ -11,6 +12,39 @@ namespace nn::vfx::detail {
 void OutputError(const char* format, ...);
 void OutputWarning(const char* format, ...);
 void OutputLog(const char* format, ...);
+
+// 0x7100acac80: the destructor finalizes the wrapped OS mutex.
+class Mutex {
+public:
+    ~Mutex();
+
+private:
+    os::MutexType m_Mutex;
+};
+
+enum class RuntimeWarningId;
+
+// 0x7100acb04c: the release build does not report runtime warnings.
+void Warning(void* handle, RuntimeWarningId id);
+
+// 0x7100acb00c: stores the flag behind OutputLog/OutputWarning.
+void SetSuppressOutputLog(bool suppress);
+
+// The sampler table is indexed by three bytes of the resource record; each entry is 0xa8 bytes.
+struct ResTextureSampler {
+    u8 _0[8];
+    u8 _8;
+    u8 _9;
+    u8 _a;
+    u8 _b[0xa8 - 0xb];
+};
+static_assert(sizeof(ResTextureSampler) == 0xa8);
+
+class TextureSampler {
+public:
+    // 0x7100ad3578: index = _9 + (_8 << 2) + (_a << 4).
+    static ResTextureSampler* GetSamplerFromTable(ResTextureSampler* sampler);
+};
 
 // The two heaps behind the vfx allocator wrappers. The static heap serves the
 // long-lived allocations and tracks their total size; the dynamic heap serves

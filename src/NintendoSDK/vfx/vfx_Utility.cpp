@@ -16,6 +16,24 @@ os::MutexType sDelayFreeMutex;
 s32 sDelayFreeCount;
 s32 sDelayFreeCapacity;
 void** sDelayFreeList;
+bool sSuppressOutputLog;
+
+Mutex::~Mutex() {
+    os::FinalizeMutex(&m_Mutex);
+}
+
+void Warning(void* handle, RuntimeWarningId id) {}
+
+void SetSuppressOutputLog(bool suppress) {
+    sSuppressOutputLog = suppress;
+}
+
+ResTextureSampler* sSamplerTable;
+
+ResTextureSampler* TextureSampler::GetSamplerFromTable(ResTextureSampler* sampler) {
+    const u32 index = (sampler->_8 << 2) + sampler->_9 + (sampler->_a << 4);
+    return &sSamplerTable[index];
+}
 
 // The release implementation prepares variable arguments without emitting output.
 void OutputError(const char* format, ...) {
