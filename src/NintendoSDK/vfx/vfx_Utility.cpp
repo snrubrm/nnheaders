@@ -29,10 +29,19 @@ void SetSuppressOutputLog(bool suppress) {
 }
 
 ResTextureSampler* sSamplerTable;
+s32 sSamplerCount;
 
 ResTextureSampler* TextureSampler::GetSamplerFromTable(ResTextureSampler* sampler) {
     const u32 index = (sampler->_8 << 2) + sampler->_9 + (sampler->_a << 4);
     return &sSamplerTable[index];
+}
+
+void TextureSampler::FinalizeSamplerTable(gfx::TDevice<gfx::ApiVariationNvn8>* device, Heap* heap) {
+    for (s32 i = 0; i < sSamplerCount; ++i)
+        sSamplerTable[i].mSampler.Finalize(device);
+    heap->Free(sSamplerTable);
+    sSamplerCount = 0;
+    sSamplerTable = nullptr;
 }
 
 // The release implementation prepares variable arguments without emitting output.

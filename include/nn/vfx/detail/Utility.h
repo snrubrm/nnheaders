@@ -1,5 +1,8 @@
 #pragma once
 
+#include <nn/gfx/gfx_Common.h>
+#include <nn/gfx/gfx_Device.h>
+#include <nn/gfx/gfx_Sampler.h>
 #include <nn/os/os_MutexTypes.h>
 #include <nn/types.h>
 
@@ -30,13 +33,15 @@ void Warning(void* handle, RuntimeWarningId id);
 // 0x7100acb00c: stores the flag behind OutputLog/OutputWarning.
 void SetSuppressOutputLog(bool suppress);
 
-// The sampler table is indexed by three bytes of the resource record; each entry is 0xa8 bytes.
+// The sampler table is indexed by three bytes of the resource record; each entry is 0xa8 bytes
+// and holds a gfx sampler at +0x30.
 struct ResTextureSampler {
     u8 _0[8];
     u8 _8;
     u8 _9;
     u8 _a;
-    u8 _b[0xa8 - 0xb];
+    u8 _b[0x30 - 0xb];
+    gfx::TSampler<gfx::ApiVariationNvn8> mSampler;
 };
 static_assert(sizeof(ResTextureSampler) == 0xa8);
 
@@ -44,6 +49,8 @@ class TextureSampler {
 public:
     // 0x7100ad3578: index = _9 + (_8 << 2) + (_a << 4).
     static ResTextureSampler* GetSamplerFromTable(ResTextureSampler* sampler);
+    // 0x7100ad34dc: finalizes the 32 table entries and frees the table.
+    static void FinalizeSamplerTable(gfx::TDevice<gfx::ApiVariationNvn8>* device, Heap* heap);
 };
 
 // The two heaps behind the vfx allocator wrappers. The static heap serves the
