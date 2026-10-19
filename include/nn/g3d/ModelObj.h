@@ -70,9 +70,14 @@ private:
 
 public:
     gfx::Buffer* mBuffers;  // 20
+
+private:
+    // ModelRenderUnitNW::getShape 0x7100c09d28 indexes this array with a 0x68-byte stride.
+    u8 _28[0x68 - 0x28];
 };
 static_assert(offsetof(ShapeObj, _8_flags) == 0x8);
 static_assert(offsetof(ShapeObj, mBuffers) == 0x20);
+static_assert(sizeof(ShapeObj) == 0x68);
 
 // TODO
 class ModelObj {
@@ -84,6 +89,9 @@ public:
     const ResModel* GetResource() const { return m_ResModel; }
 
     s32 GetNumShapes() const { return m_NumShapes; }
+    // ModelRenderUnitNW::getShape 0x7100c09d28 indexes the 0x68-byte shape array.
+    ShapeObj* GetShape(int index) { return &m_Shapes[index]; }
+    const ShapeObj* GetShape(int index) const { return &m_Shapes[index]; }
     // Graphics 0x7100f2e0f4: the material count (+0x32) and array (+0x48).
     s32 GetNumMaterials() const { return m_NumMaterials; }
     MaterialObj* GetMaterial(int index) { return &m_Materials[index]; }
