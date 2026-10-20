@@ -2,6 +2,8 @@
 
 namespace nn::font {
 
+GlyphTreeMap::GlyphTreeMap() : _0(), mNodes(), _10(), mCount(0) {}
+
 // 0x7100ab1a84
 void TextureCache::RegisterTextureViewToDescriptorPool(
     bool (*register_function)(gfx::DescriptorSlot*, const gfx::TextureView&, void*), void* user_data) {
