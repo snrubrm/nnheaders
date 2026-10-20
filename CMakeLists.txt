@@ -335,6 +335,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/g3d/g3d_ResFile.cpp
   src/NintendoSDK/g3d/g3d_ResShaderFile.cpp
   src/NintendoSDK/g3d/g3d_ResModel.cpp
+  src/NintendoSDK/g3d/g3d_ResSkeleton.cpp
   src/NintendoSDK/g3d/g3d_ResMaterial.cpp
   src/NintendoSDK/g3d/g3d_ResMaterialAnim.cpp
   src/NintendoSDK/font/font_CharWriter.cpp

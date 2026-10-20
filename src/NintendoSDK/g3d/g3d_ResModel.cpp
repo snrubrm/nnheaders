@@ -14,6 +14,10 @@ u64 ResModel::BindTexture(TextureRef (*callback)(const char*, void*), void* user
     return result;
 }
 
+void ResModel::Reset() {
+    Reset(0);
+}
+
 void ResModel::ReleaseTexture() {
     const int count = mMaterialCount;
     for (int i = 0; i < count; ++i)
