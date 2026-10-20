@@ -1,9 +1,14 @@
+#include <nn/g3d/MaterialAnimObj.h>
 #include <nn/g3d/ModelAnimObj.h>
 #include <nn/g3d/SkeletalAnimObj.h>
 #include <nn/g3d/ResSkeleton.h>
 #include <nn/g3d/ResBoneAnim.h>
 
 namespace nn::g3d {
+
+AnimObj::~AnimObj() = default;
+
+void MaterialAnimObj::ClearResult() {}
 
 void AnimContext::Initialize(AnimFrameCache* cache, int count) {
     _0 = cache;

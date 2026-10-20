@@ -16,6 +16,9 @@ public:
     MaterialAnimObj();
     ~MaterialAnimObj() override;
 
+    // 0x710132d1ec: the release build does nothing.
+    void ClearResult() override;
+
     // AGL MaterialAnimObj::SetResTexture 0x7100b33ff4 loads both array bases
     // and stores the ResTexture view and descriptor slot through them, exactly
     // like the runtime ResMaterial arrays at +0x30/+0x98.
