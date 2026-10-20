@@ -30,9 +30,10 @@ public:
     // Native texture-name consumers b33a6c and b3378c use the BinString payload.
     const char* GetName() const { return pName.Get()->GetData(); }
     size_t GetDataSize() const;
-    ResUserData* GetUserData(int);
-    const ResUserData* GetUserData(int) const;
-    const nn::util::ResDic* GetUserDataDic() const;
+    // Native texture lookup 11417E8 uses the dictionary index directly.
+    ResUserData* GetUserData(int index) { return pUserDataArray.Get() + index; }
+    const ResUserData* GetUserData(int index) const { return pUserDataArray.Get() + index; }
+    const nn::util::ResDic* GetUserDataDic() const { return pUserDataDic.Get(); }
     void SetUserDescriptorSlot(const DescriptorSlot&);
     // AGL callback b33dbc and both force-binding adapters copy this slot.
     void GetUserDescriptorSlot(DescriptorSlot* slot) const {
