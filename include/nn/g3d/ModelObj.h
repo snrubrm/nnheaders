@@ -1,6 +1,7 @@
 #pragma once
 
 #include <nn/types.h>
+#include <nn/util/MathTypes.h>
 #include <nn/gfx/gfx_DescriptorSlot.h>
 #include <nn/gfx/gfx_Types.h>
 
@@ -83,6 +84,10 @@ static_assert(sizeof(ShapeObj) == 0x68);
 class ModelObj {
 public:
     SkeletonObj* GetSkeleton() const { return m_Skeleton; }
+
+    // 0x710132eaf4 / 0x710132eafc: forward to the skeleton object.
+    void CalculateWorld(const nn::util::neon::MatrixRowMajor4x3fType& mtx);
+    void CalculateSkeleton(int index);
 
     // Inline-only in the original; name is a guess. ModelNW::getName
     // 0x7100c06bc0 and ModelRig 0x7100c8338c read this actual resource.
