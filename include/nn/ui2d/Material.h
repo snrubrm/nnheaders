@@ -87,6 +87,10 @@ public:
     // Inline-only in the original. The two material colours (black at +0x8, white at +0xc);
     // eui::MassDrawPane::DrawSelf 0x7100bdfcac reads bytes +0xc..+0xe of the white colour.
     const util::Unorm8x4& GetColor(int idx) const { return mColors[idx]; }
+    // Inline-only in the original; name is a guess following GetColor. Horse UI helpers
+    // 0x7100a50c28 / 0x7100a50dc4 / 0x7100a50f5c / 0x7100a510f4
+    // store the converted RGBA value directly into one of these two colours.
+    void SetColor(int idx, const util::Unorm8x4& color) { mColors[idx] = color; }
 
     s32 GetTexMapCount() const { return mMemCount.texMap; }
     TexMap* GetTexMapArray() const { return static_cast<TexMap*>(mMem); }
