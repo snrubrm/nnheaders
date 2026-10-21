@@ -22,6 +22,7 @@ void ScalableFont::InitializeArg::SetDefault() {
     fontSize = 40;
     _c = 0;
     _e = 0;
+    _f = 0;
     alternateChar = '?';
 }
 
