@@ -61,6 +61,14 @@ public:
     bool IsExistChildEmitter(int) const;
     bool IsNeedFade(int) const;
     void OutputResourceInfo() const;
+
+    // Inline-only in the original; name is a guess. xlink2::PtclResourceAccessorELink::
+    // searchEmitterSetID 0x7100bbc130 skips a resource slot when the byte +0x9 is clear.
+    bool IsAvailableMaybe() const { return _9; }
+
+private:
+    u8 _8;
+    bool _9;
 };
 
 }  // namespace vfx
