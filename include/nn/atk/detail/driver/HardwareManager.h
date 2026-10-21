@@ -34,6 +34,9 @@ public:
     /// 0x71013450b8 (declared only)
     void SetOutputMode(OutputMode mode, OutputDevice device);
     OutputMode GetOutputMode() const { return mOutputMode; }
+    // Inline-only, name guessed: aal::FinalOutputMeasure::updateActivation 0x7100baa290 compares +0x648
+    // with 48000.
+    u32 GetRendererSampleRate() const { return mRendererSampleRate; }
 
 private:
     bool mIsInitialized;
@@ -46,6 +49,8 @@ private:
     f32 mMasterVolumeTarget;
     s32 mMasterVolumeFrames;
     s32 mMasterVolumeCurrentFrame;
+    u8 _ec[0x648 - 0xec];
+    u32 mRendererSampleRate;
 };
 
 }  // namespace nn::atk::detail::driver

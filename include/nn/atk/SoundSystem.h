@@ -31,6 +31,8 @@ public:
     static void ClearEffect(AuxBus bus);
     static void ClearEffect(AuxBus bus, OutputDevice device);
     static bool IsClearEffectFinished(AuxBus bus, OutputDevice device);
+    /// 0x710133e218 (declared only)
+    static size_t GetCircularBufferSinkBufferSize();
     /// 0x710133e0e0 (declared only): aal::System::calc passes its frame count when it is positive.
     static void VoiceCommandProcess(u32 frame_count);
 };
