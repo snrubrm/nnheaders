@@ -163,6 +163,7 @@ add_library(NintendoSDK OBJECT
   include/nn/nifm.h
   include/nn/prepo.h
   include/nn/vfx/Config.h
+  include/nn/vfx/EmitterSet.h
   include/nn/vfx/System.h
   include/nn/vfx/Heap.h
   include/nn/vfx/detail/CalculateAllocSizeHeap.h
