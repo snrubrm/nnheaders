@@ -109,7 +109,8 @@ public:
     virtual u16 SetString(const u16* string, u16 dst_index, u16 length);
     virtual u16 SetStringUtf8(const char* string, u16 dst_index, u16 length);
     virtual void SetupTextWriter(font::TextWriterBase<u16>*) const;
-    virtual void SetupTextWriterUtf8(font::TextWriterBase<char>*) const;
+    // Not const, unlike SetupTextWriter: the CSV symbol 0x7100abc4d8 is _ZN.
+    virtual void SetupTextWriterUtf8(font::TextWriterBase<char>*);
     virtual bool InitializeStringWithTextSearcherInfo(gfx::Device*, const BuildArgSet&,
                                                       const TextSearcher::TextInfo&);
     virtual bool InitializeStringWithTextSearcherInfoUtf8(gfx::Device*, const BuildArgSet&,
