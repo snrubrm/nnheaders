@@ -4,6 +4,7 @@
 #include <nn/util/MathTypes.h>
 #include <nn/gfx/gfx_DescriptorSlot.h>
 #include <nn/gfx/gfx_Types.h>
+#include <nn/g3d/ResShape.h>
 
 namespace nn::g3d {
 
@@ -55,7 +56,9 @@ static_assert(sizeof(MaterialObj) == 0x80);
 // and the remaining state are not modelled.
 class ShapeObj {
 public:
-    void* m_pRes;  // 0
+    const ResShape* GetResource() const { return m_pRes; }
+
+    const ResShape* m_pRes;  // 0
     u8 _8_flags;  // 8
 
 private:
