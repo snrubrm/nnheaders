@@ -39,8 +39,22 @@ public:
     virtual detail::fnd::FileStream* OpenExtStream(void* buffer, size_t buffer_size, const char* ext_path,
                                                    const char* name, size_t size) const = 0;
 
+    /// The player limits of the archive (aal::StreamingViewer::initialize 0x7100b7d730 reads the stream counts).
+    struct SoundArchivePlayerInfo {
+        s32 sequenceSoundCount;
+        s32 sequenceTrackCount;
+        s32 streamSoundCount;
+        s32 streamTrackCount;
+        s32 streamChannelCount;
+        s32 waveSoundCount;
+        s32 waveTrackCount;
+        s32 streamBufferTimes;
+        bool isAdvancedWaveSoundEnabled;
+    };
+
     bool IsAvailable() const;
     u32 GetSoundCount() const;
+    bool ReadSoundArchivePlayerInfo(SoundArchivePlayerInfo* info) const;
     const char* GetItemLabel(u32 item_id) const;
     u32 GetItemId(const char* label) const;
 
