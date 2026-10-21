@@ -31,6 +31,7 @@ public:
 
     // Inline-only; names are ours. gsys::ModelRenderUnitNW::getMeshNum 0x7100c0a8d0 reads the byte at
     // +0x67 and getSubMeshNum 0x7100c0a8f0 indexes the mesh array at +0x20.
+    u16 get_60() const { return m_60; }
     u8 GetMeshCount() const { return m_MeshCount; }
     const ResMesh* GetMesh(int index) const { return &m_pMeshArray[index]; }
 
@@ -40,7 +41,9 @@ public:
     ResMesh* m_pMeshArray;
     u8 _28[0x5e - 0x28];
     u16 m_5e;
-    u8 _60[0x67 - 0x60];
+    // See gsys::ModelRenderUnitNW::isVisible (material visibility bit index).
+    u16 m_60;
+    u8 _62[0x67 - 0x62];
     u8 m_MeshCount;
     u8 _68[0x70 - 0x68];
 };

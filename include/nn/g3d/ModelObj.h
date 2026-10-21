@@ -109,14 +109,19 @@ public:
 
     s32 get_8c() const { return _8c; }
 
+    // Inline-only; names are ours. gsys::ModelRenderUnitNW::isVisible 0x7100c09d74 tests bit
+    // (ResShape +0x5e) of the word array at +0x10, then bit (ResShape +0x60) of the array at +0x8.
+    bool IsBoneVisible(int index) const { return m_pBoneVisArray[index >> 5] & (1 << (index & 0x1f)); }
+    bool IsMatVisible(int index) const { return m_pMatVisArray[index >> 5] & (1 << (index & 0x1f)); }
+
 private:
     struct InitializeArgument;
 
     bool Initialize(const InitializeArgument& arg, void* buffer, size_t bufferSize);
 
     const ResModel* m_ResModel;
-    void* _8;
-    void* _10;
+    u32* m_pMatVisArray;
+    u32* m_pBoneVisArray;
     u8 _18;
     u8 _19;
     u16 _1a;
