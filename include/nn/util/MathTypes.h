@@ -1,12 +1,19 @@
 #pragma once
 
 #include <nn/types.h>
+#include <math/seadMathBase.h>
 
 namespace nn::util::neon {
 
-struct MatrixRowMajor4x3fType {
+// The native DrawInfo constructor 0x7100ac06a4 initialises the view matrix at +0x50 with the same
+// three 16-byte identity rows as a sead::BaseMtx34<float>, SetupDrawInfoPerspective 0x7100bee700
+// copies a sead::Matrix34f's rows into it, and Unk_71024f3a60::doInitialize 0x7100f0a7f0 passes
+// &DrawInfo::mViewMtx straight to sead::Matrix34CalcCommon<float>::inverse, which takes a
+// sead::BaseMtx34<float>&. The SDK's row-major 4x3 matrix is therefore sead's 3x4 matrix; deriving
+// from it keeps the nn::util::neon::MatrixRowMajor4x3fType mangled names and the 3x4 float layout
+// while allowing the implicit reference conversion the original source relies on.
+struct MatrixRowMajor4x3fType : sead::BaseMtx34<f32> {
     // DrawInfo 0x7100ac06a4 and Matrix34 byte-copy consumers use three rows.
-    f32 m[3][4];
 };
 static_assert(sizeof(MatrixRowMajor4x3fType) == 48);
 

@@ -378,7 +378,9 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/nvn/nvn_Impl.cpp
 )
 
-target_include_directories(NintendoSDK PUBLIC include/)
+# nn::util's 3x4 matrix is sead's BaseMtx34 (see include/nn/util/MathTypes.h); sead depends on this
+# target's headers, so the include path is added directly instead of linking the sead target.
+target_include_directories(NintendoSDK PUBLIC include/ ../sead/include)
 target_include_directories(NintendoSDK PRIVATE src/NintendoSDK/)
 target_compile_options(NintendoSDK PRIVATE -fno-strict-aliasing)
 target_compile_options(NintendoSDK PRIVATE -fno-exceptions)
