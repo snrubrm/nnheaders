@@ -145,4 +145,19 @@ bool DummyRenderStateSetCallback(RenderStateSetArg&) {
     return true;
 }
 
+// 0x7100ad57b8 / 0x7100ad57a8
+struct CurlNoiseTexture {
+    u8 _0[0x258];
+    size_t mAllocatedSize;
+};
+CurlNoiseTexture sCurlNoiseTexture;
+
+void* GetCurlNoiseTexture() {
+    return &sCurlNoiseTexture;
+}
+
+size_t GetCurlNoiseTextureAllocatedSize() {
+    return sCurlNoiseTexture.mAllocatedSize;
+}
+
 }  // namespace nn::vfx::detail

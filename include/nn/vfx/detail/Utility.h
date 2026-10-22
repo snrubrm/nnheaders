@@ -20,6 +20,10 @@ void OutputLog(const char* format, ...);
 // 0x7100ae5a24: the default render-state-set callback accepts every state set.
 bool DummyRenderStateSetCallback(RenderStateSetArg& arg);
 
+// 0x7100ad57b8 / 0x7100ad57a8: the static curl-noise texture and its allocated size.
+void* GetCurlNoiseTexture();
+size_t GetCurlNoiseTextureAllocatedSize();
+
 // 0x7100acac80: the destructor finalizes the wrapped OS mutex.
 class Mutex {
 public:
