@@ -3,6 +3,9 @@
 
 namespace nn::atk {
 
+// 0x7102662aa8: the flag IsInitialized returns and Finalize clears, both through the GOT.
+bool sIsInitialized = false;
+
 int SoundSystem::GetRendererChannelCountMax() {
     return detail::Util::Singleton<detail::driver::HardwareManager>::GetInstance().GetChannelCountMax();
 }
@@ -10,6 +13,11 @@ int SoundSystem::GetRendererChannelCountMax() {
 bool SoundSystem::IsClearEffectFinished(AuxBus bus, OutputDevice device) {
     return detail::Util::Singleton<detail::driver::HardwareManager>::GetInstance().IsFinishedClearEffect(
         bus, device, 0);
+}
+
+// 0x710133dd80
+bool SoundSystem::IsInitialized() {
+    return sIsInitialized;
 }
 
 }  // namespace nn::atk

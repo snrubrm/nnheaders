@@ -1,4 +1,5 @@
 #include <nn/font/font_CharWriter.h>
+#include <nn/font/font_DispStringBuffer.h>
 
 namespace nn::font {
 
@@ -8,10 +9,15 @@ namespace nn::font {
 CharWriter::CharWriter()
     : mTextColors{{{0xff, 0xff, 0xff, 0xff}}, {{0xff, 0xff, 0xff, 0xff}}}, _8(0), mScaleX(1.0f), mScaleY(1.0f),
       mCursorX(0.0f), mCursorY(0.0f), mCursorZ(0.0f), mFixedWidth(0.0f), mItalicRatio(0.0f), mFont(nullptr),
-      _30(nullptr), mIsWidthFixed(false), mAlpha(0xff) {}
+      mDispStringBuffer(nullptr), mIsWidthFixed(false), mAlpha(0xff) {}
 
 // 0x7101323c24
 CharWriter::~CharWriter() {}
+
+// 0x7101323fdc: drops the glyphs accumulated in the writer's DispStringBuffer.
+void CharWriter::StartPrint() {
+    mDispStringBuffer->mCharCount = 0;
+}
 
 // 0x7101323fe8
 void CharWriter::EndPrint() const {}

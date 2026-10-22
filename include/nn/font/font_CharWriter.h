@@ -10,6 +10,8 @@
 
 namespace nn::font {
 
+class DispStringBuffer;
+
 // Layout evidence: CharWriter::CharWriter (0x7101323bf0), SetFontSize / GetFontWidth / GetFontHeight /
 // GetFontAscent (0x7101323c28 ..) and TextBox::SetupTextWriter. Names follow the NintendoWare font library.
 class CharWriter {
@@ -22,6 +24,9 @@ public:
     f32 GetFontHeight() const;
     f32 GetFontAscent() const;
     f32 PrintGlyph(const Glyph& glyph);
+
+    // 0x7101323fdc: resets the glyph count of the string buffer this writer prints into.
+    void StartPrint();
 
     // 0x7101323fe8: nothing in the retail build.
     void EndPrint() const;
@@ -84,7 +89,9 @@ protected:
     /* 0x20 */ f32 mFixedWidth;
     /* 0x24 */ f32 mItalicRatio;
     /* 0x28 */ const Font* mFont;
-    /* 0x30 */ void* _30;
+    // The glyph buffer PrintGlyph(f32, const Glyph&) appends to: its capacity is at +0x98, its
+    // count at +0x9c and its 0x38-byte records at +0xa0, which is DispStringBuffer.
+    /* 0x30 */ DispStringBuffer* mDispStringBuffer;
     /* 0x38 */ bool mIsWidthFixed;
     /* 0x39 */ u8 mAlpha;
 };
