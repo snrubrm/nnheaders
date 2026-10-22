@@ -60,7 +60,12 @@ struct Glyph {
     u16 texFormat;
     u8 sheetIndex;
     u8 _1e;
-    const TextureObject* pTextureObject;
+    // Same storage: ResFontBase writes the pointer, CharWriter::PrintGlyph reads the word and sets bit 0
+    // from the font's border-effect flag before copying it to the glyph record.
+    union {
+        const TextureObject* pTextureObject;
+        u64 textureObject;
+    };
     u16 _28;
 };
 static_assert(sizeof(Glyph) == 0x30);
@@ -127,9 +132,9 @@ public:
     CharStrmReader GetCharStrmReader(char) const;
     CharStrmReader GetCharStrmReader(u16) const;
 
-protected:
     // Both set by the constructor (one halfword store of 0x0101). GetKerning of both font classes returns 0 while
-    // `mKerningEnabled` is off.
+    // `mKerningEnabled` is off. CharWriter::PrintGlyph reads _9 through the Font pointer.
+public:
     bool mKerningEnabled;
     bool _9;
 };

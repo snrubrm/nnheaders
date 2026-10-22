@@ -24,6 +24,8 @@ public:
     f32 GetFontHeight() const;
     f32 GetFontAscent() const;
     f32 PrintGlyph(const Glyph& glyph);
+    // 0x7101323dc8: appends one glyph to the string buffer at the given x position.
+    void PrintGlyph(f32 x, const Glyph& glyph);
 
     // 0x7101323fdc: resets the glyph count of the string buffer this writer prints into.
     void StartPrint();
@@ -74,9 +76,6 @@ public:
     const Font* GetFont() const { return mFont; }
     bool IsWidthFixed() const { return mIsWidthFixed; }
     f32 GetFixedWidth() const { return mFixedWidth; }
-
-private:
-    void sub_7101323DC8(const Glyph* glyph, f32 glyph_x);
 
 protected:
     /* 0x00 */ util::Unorm8x4 mTextColors[2];  // top, bottom
