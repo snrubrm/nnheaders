@@ -8,6 +8,9 @@ namespace nn::g3d {
 
 AnimObj::~AnimObj() = default;
 
+// 0x710132d1e8
+MaterialAnimObj::~MaterialAnimObj() = default;
+
 void MaterialAnimObj::ClearResult() {}
 
 void AnimContext::Initialize(AnimFrameCache* cache, int count) {

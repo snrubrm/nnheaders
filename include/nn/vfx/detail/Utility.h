@@ -8,6 +8,7 @@
 
 namespace nn::vfx {
 class Heap;
+struct RenderStateSetArg;
 }
 
 namespace nn::vfx::detail {
@@ -15,6 +16,9 @@ namespace nn::vfx::detail {
 void OutputError(const char* format, ...);
 void OutputWarning(const char* format, ...);
 void OutputLog(const char* format, ...);
+
+// 0x7100ae5a24: the default render-state-set callback accepts every state set.
+bool DummyRenderStateSetCallback(RenderStateSetArg& arg);
 
 // 0x7100acac80: the destructor finalizes the wrapped OS mutex.
 class Mutex {

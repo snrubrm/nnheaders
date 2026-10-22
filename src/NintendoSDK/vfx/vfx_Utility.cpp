@@ -140,4 +140,9 @@ void FlushDelayFreeList() {
     sDelayFreeCount = 0;
 }
 
+// 0x7100ae5a24
+bool DummyRenderStateSetCallback(RenderStateSetArg&) {
+    return true;
+}
+
 }  // namespace nn::vfx::detail

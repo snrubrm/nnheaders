@@ -13,6 +13,9 @@ CharWriter::CharWriter()
 // 0x7101323c24
 CharWriter::~CharWriter() {}
 
+// 0x7101323fe8
+void CharWriter::EndPrint() const {}
+
 // 0x7101323c88
 f32 CharWriter::GetFontWidth() const {
     return mFont->GetWidth() * mScaleX;

@@ -23,6 +23,9 @@ public:
     f32 GetFontAscent() const;
     f32 PrintGlyph(const Glyph& glyph);
 
+    // 0x7101323fe8: nothing in the retail build.
+    void EndPrint() const;
+
     void SetScale(f32 x, f32 y) {
         mScaleX = x;
         mScaleY = y;
