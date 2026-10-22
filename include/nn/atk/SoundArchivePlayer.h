@@ -10,6 +10,7 @@
 #include <nn/atk/SoundStartable.h>
 #include <nn/atk/detail/SoundArchiveManager.h>
 #include <nn/atk/detail/BasicSound.h>
+#include <nn/atk/detail/StreamSoundRuntime.h>
 
 namespace nn {
 namespace atk {
@@ -57,8 +58,9 @@ public:
     static size_t GetRequiredMemSize(const SoundArchive* archive);
     static size_t GetRequiredMemSize(const SoundArchive* archive, size_t unknown);
     static size_t GetRequiredMemSize(const SoundArchive* archive, size_t unknown, s32 count);
-    /// 0x133af24 / 0x133af34 (the last is static)
+    /// 0x133af24 / 0x133af2c (the second is const but forwards statically)
     u32 GetRequiredStreamBufferSize(const SoundArchive* archive) const;
+    u32 GetRequiredStreamBufferTimes(const SoundArchive* archive) const;
     // AAL BA05EC passes a size_t cache size; complete 1350678 retains x1.
     static size_t GetRequiredStreamCacheSize(const SoundArchive* archive, size_t unknown);
 
@@ -78,7 +80,10 @@ public:
                          const char* label, const StartInfo* start_info);
 
     nn::atk::detail::SoundArchiveManager mArchiveManager;  // _8
-    u8 _48[0x2a0 - 0x48];
+    u8 _48[0x1d8 - 0x48];
+    // GetRequiredStreamBufferSize 0x710133af24 passes this to the runtime.
+    detail::StreamSoundRuntime mStreamSoundRuntime;
+    u8 _288[0x2a0 - 0x288];
     u8 mMemoryPool[8];  // _2a0 (nn::audio::MemoryPoolType)
     u8 _2a8[0x2c0 - 0x2a8];
 };

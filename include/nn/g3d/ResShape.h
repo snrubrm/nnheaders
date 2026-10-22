@@ -32,6 +32,8 @@ public:
     // Inline-only; names are ours. gsys::ModelRenderUnitNW::getMeshNum 0x7100c0a8d0 reads the byte at
     // +0x67 and getSubMeshNum 0x7100c0a8f0 indexes the mesh array at +0x20.
     u16 get_60() const { return m_60; }
+    // gsys::G3dResShapeEx::setResShape 0x7100c6f580 stores its address at +0x50.
+    void set_50(void* value) { m_50 = value; }
     u8 GetMeshCount() const { return m_MeshCount; }
     const ResMesh* GetMesh(int index) const { return &m_pMeshArray[index]; }
 
@@ -39,7 +41,9 @@ public:
     nn::util::BinPtrToString pName;
     u8 _18[0x20 - 0x18];
     ResMesh* m_pMeshArray;
-    u8 _28[0x5e - 0x28];
+    u8 _28[0x50 - 0x28];
+    void* m_50;
+    u8 _58[0x5e - 0x58];
     u16 m_5e;
     // See gsys::ModelRenderUnitNW::isVisible (material visibility bit index).
     u16 m_60;

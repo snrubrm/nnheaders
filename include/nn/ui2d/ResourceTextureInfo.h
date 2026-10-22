@@ -23,6 +23,9 @@ public:
     const gfx::TextureView* GetTextureView() const override;
     gfx::TextureView* GetTextureView() override;
 
+    // The texture archive resource; ui2d::LoadTexture 0x7100abc670 stores it at +0x10.
+    gfx::ResTexture* GetResource() const { return mResource; }
+
 private:
     friend bool LoadTexture(ResourceTextureInfo*, gfx::Device*, const void*);
 

@@ -27,6 +27,8 @@ public:
     // store 0x1705 at +8 and 0 at +0xc after FindMaterial (0x71011413b4 and siblings).
     void set_8(u32 value) { m_8 = value; }
     void set_c(u16 value) { m_c = value; }
+    // gsys::G3dResMaterialEx::setResMaterial 0x7100c6d21c stores its address at +0x88.
+    void set_88(void* value) { m_88 = value; }
 
     // Native BindTexture ac895c and AGL bindings b33f24/b33f50.
     u8 _0[0x8];
@@ -35,7 +37,9 @@ public:
     u8 _e[0x30 - 0xe];
     const gfx::TextureView** mTextureViews;  // 30
     nn::util::BinPtrToString* mTextureNames;  // 38
-    u8 _40[0x98 - 0x40];
+    u8 _40[0x88 - 0x40];
+    void* m_88;
+    u8 _90[0x98 - 0x90];
     gfx::DescriptorSlot* mTextureDescriptorSlots;  // 98
     u8 _a0[8];
     u8 mTextureCount;  // a8
