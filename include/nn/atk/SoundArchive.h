@@ -10,6 +10,7 @@
 namespace nn::atk {
 
 namespace detail {
+class SoundArchiveFileReader;
 namespace fnd {
 class FileStream;
 }
@@ -52,14 +53,28 @@ public:
         bool isAdvancedWaveSoundEnabled;
     };
 
+    // Only the record pointer is needed by the wrappers below; the record layout is not modelled.
+    struct AdvancedWaveSoundInfo;
+
     bool IsAvailable() const;
     u32 GetSoundCount() const;
+    u32 GetPlayerCount() const;
+    u32 GetGroupCount() const;
+    u32 GetWaveArchiveCount() const;
+    u32 detail_GetFileCount() const;
+    u32 GetItemFileId(u32 item_id) const;
+    u32 GetItemPrefetchFileId(u32 item_id) const;
+    u32 GetSoundType(u32 sound_id) const;
+    bool detail_ReadAdvancedWaveSoundInfo(u32 sound_id, AdvancedWaveSoundInfo* info) const;
+    const u32* detail_GetWaveArchiveIdTable(u32 wave_archive_id) const;
     bool ReadSoundArchivePlayerInfo(SoundArchivePlayerInfo* info) const;
     const char* GetItemLabel(u32 item_id) const;
     u32 GetItemId(const char* label) const;
 
 protected:
-    u8 _8[0x298];
+    // IsAvailable tests it and every accessor above forwards to it.
+    detail::SoundArchiveFileReader* mFileReader;  // +0x8
+    u8 _10[0x290];
 };
 static_assert(sizeof(SoundArchive) == 0x2a0);
 
