@@ -2,11 +2,17 @@
 
 namespace nn::atk::detail {
 
-// NON_MATCHING: the compiler selects the result instead of branching to returns.
 SampleFormat WaveFileReader::GetSampleFormat(u8 format) {
-    if (format <= 2)
-        return static_cast<SampleFormat>(format);
-    return static_cast<SampleFormat>(2);
+    switch (format) {
+    case 0:
+        return static_cast<SampleFormat>(0);
+    case 1:
+        return static_cast<SampleFormat>(1);
+    case 2:
+        return static_cast<SampleFormat>(2);
+    default:
+        return static_cast<SampleFormat>(2);
+    }
 }
 
 }  // namespace nn::atk::detail
