@@ -19,6 +19,9 @@ struct ModuleInfo {
 
 enum AssertionType {};
 
+// sead::system::Halt 0x7100aeef54 asks it whether to spin instead of aborting.
+bool IsDebuggerAttached();
+
 namespace detail {
 // LOG
 void LogImpl(nn::diag::LogMetaData const&, char const*, ...);
