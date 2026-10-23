@@ -1,18 +1,22 @@
 #include <nn/g3d/ResAnimCurve.h>
 
 namespace nn::g3d {
-// NON_MATCHING: frame conversion and key loads are scheduled differently.
 template <typename T>
 int ResAnimCurve::EvaluateBakedInt(float frame, AnimFrameCache*) const {
-    return static_cast<const T*>(pKeys.Get())[int(frame) - int(startFrame)];
+    const int start = int(startFrame);
+    const int index = int(frame) - start;
+    return static_cast<const T*>(pKeys.Get())[index];
 }
-// NON_MATCHING: interpolation inputs and frame conversion are scheduled differently.
 template <typename T>
 float ResAnimCurve::EvaluateBakedFloat(float frame, AnimFrameCache*) const {
+    const int start = int(startFrame);
+    const int frame_int = int(frame);
+    const int index = frame_int - start;
+    const float weight = frame - frame_int;
     const T* keys = static_cast<const T*>(pKeys.Get());
-    const int index = int(frame) - int(startFrame);
-    const float weight = frame - int(frame);
-    return weight * keys[index + 1] + (1.0f - weight) * keys[index];
+    const float next = keys[index + 1];
+    const float prev = keys[index];
+    return weight * next + (1.0f - weight) * prev;
 }
 int ResAnimCurve::EvaluateBakedBool(float frame, AnimFrameCache*) const {
     const int start = int(startFrame);
