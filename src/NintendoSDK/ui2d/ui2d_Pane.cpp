@@ -48,8 +48,8 @@ void Pane::CalculateScaleFromPartsRoot(util::Float2* scale, Pane* parent) const 
 // NON_MATCHING: list initialization, field-copy and parts-bound calculation scheduling.
 Pane::Pane(const ResPane* resource, const BuildArgSet& args)
     : mParent(nullptr), mFlags(0), mFlagEx(0),
-      mMtx{{{1.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 1.0f, 0.0f}}},
+      mMtx{{{{{1.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f, 0.0f},
+              {0.0f, 0.0f, 1.0f, 0.0f}}}}},
       mUserMtx(nullptr), mExtUserDataList(nullptr), mAnimExtUserData(nullptr) {
     const util::Float3* translation = &resource->mTranslation;
     const util::Float3* rotation = &resource->mRotation;

@@ -17,9 +17,13 @@ struct MatrixRowMajor4x3fType : sead::BaseMtx34<f32> {
 };
 static_assert(sizeof(MatrixRowMajor4x3fType) == 48);
 
-struct MatrixColumnMajor4x3fType {
-    f32 m[3][4];
+// The transposed 4x3 form the SDK returns from Pane::GetMtx is a 3x4 float matrix in memory:
+// eui::EffectLinkUser::m1 0x71009d00b8 loads three 16-byte rows from the pane's GetMtx result and
+// transposes them with the sead 4x4 routine, so the type has to convert to sead::BaseMtx34<float>
+// the same way MatrixRowMajor4x3fType does.
+struct MatrixColumnMajor4x3fType : sead::BaseMtx34<f32> {
 };
+static_assert(sizeof(MatrixColumnMajor4x3fType) == 48);
 
 struct MatrixRowMajor4x4fType {
     f32 m[4][4];
