@@ -14,9 +14,9 @@ float ResAnimCurve::EvaluateBakedFloat(float frame, AnimFrameCache*) const {
     const float weight = frame - int(frame);
     return weight * keys[index + 1] + (1.0f - weight) * keys[index];
 }
-// NON_MATCHING: frame conversion is scheduled differently.
 int ResAnimCurve::EvaluateBakedBool(float frame, AnimFrameCache*) const {
-    const int index = int(frame) - int(startFrame);
+    const int start = int(startFrame);
+    const int index = int(frame) - start;
     return (static_cast<const u32*>(pKeys.Get())[index >> 5] >> (index & 31)) & 1;
 }
 template int ResAnimCurve::EvaluateBakedInt<s32>(float, AnimFrameCache*) const;
