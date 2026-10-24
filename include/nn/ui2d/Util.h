@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+#include <nn/font/font_Util.h>
 #include <nn/gfx/gfx_Device.h>
 #include <nn/gfx/gfx_Types.h>
 #include <nn/util/MathTypes.h>
@@ -41,5 +43,18 @@ f32 GetHermiteCurveValue(float, const ResHermiteKey*, s32);
 const ResExtUserData* GetExtUserData(const ResExtUserDataList*, const char*);
 u64 GetAlignedBufferSize(gfx::Device*, gfx::GpuAccess, u64);
 void SetDefaultShaderId(Material*, s32);
+
+// Type check used on panes. T is the result pointer type (e.g. eui::BoundingEx*) and U the
+// static pane type (e.g. nn::ui2d::Pane). Like nn::font::DynamicCast, the target type's
+// static info is evaluated before the null test. The original instantiation with
+// T = eui::BoundingEx* and U = nn::ui2d::Pane is 0x71009300e8.
+template <typename T, typename U>
+T DynamicCast(U* object) {
+    using ClassType = typename std::remove_pointer<T>::type;
+    const font::detail::RuntimeTypeInfo* type = ClassType::GetRuntimeTypeInfoStatic();
+    if (object && object->GetRuntimeTypeInfo()->IsDerivedFrom(type))
+        return static_cast<T>(object);
+    return nullptr;
+}
 
 }  // namespace nn::ui2d
