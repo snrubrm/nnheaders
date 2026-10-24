@@ -271,9 +271,9 @@ void Pane::UnbindAnimationSelf(AnimTransform* transform) {
 }
 
 // 0x7100ab9560
-// NON_MATCHING: memcpy destination address has an extra register move.
 void Pane::LoadMtx(DrawInfo& draw_info) {
-    std::memcpy(&draw_info.mModelViewMtx, &mMtx, sizeof(mMtx));
+    const util::MatrixT4x3fType& mtx = GetMtx();
+    std::memcpy(&draw_info.mModelViewMtx, &mtx, sizeof(mtx));
     draw_info._eb[3] = 0;
 }
 
