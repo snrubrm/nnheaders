@@ -103,6 +103,7 @@ public:
     // Graphics 0x7100f2e0f4: the material count (+0x32) and array (+0x48).
     s32 GetNumMaterials() const { return m_NumMaterials; }
     MaterialObj* GetMaterial(int index) { return &m_Materials[index]; }
+    const MaterialObj* GetMaterial(int index) const { return &m_Materials[index]; }
 
     // inline-only in the original; name is a guess: +58 user pointer in ModelNW Bone/MaterialVisibilityCallback c04134/c04164.
     void* GetUserPtr() { return m_UserData; }

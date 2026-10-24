@@ -34,7 +34,13 @@ public:
     u8 _0[0x8];
     u32 m_8;
     u16 m_c;
-    u8 _e[0x30 - 0xe];
+    u8 _e[0x10 - 0xe];
+
+    // Inline-only in the original; name is a guess. gsys::ModelNW::getMaterialName
+    // 0x7100c06f30 builds its SafeString from this pointer plus two characters.
+    const char* m_pName;
+
+    u8 _18[0x30 - 0x18];
     const gfx::TextureView** mTextureViews;  // 30
     nn::util::BinPtrToString* mTextureNames;  // 38
     u8 _40[0x88 - 0x40];
