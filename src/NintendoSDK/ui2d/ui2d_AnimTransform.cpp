@@ -319,7 +319,7 @@ void AnimTransformBasic::UnbindMaterial(const Material* material) {
             continue;
         if (i + 1 < mBindCount)
             _30[i] = _30[mBindCount - 1];
-        --mBindCount;
+        mBindCount -= 1;
         break;
     }
 }
