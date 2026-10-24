@@ -62,7 +62,7 @@ size_t DispStringBuffer::sub_71013240B4(gfx::Device* device, const InitializeArg
     const size_t character_alignment = gfx::TBuffer<gfx::ApiVariationNvn8>::GetBufferAlignment(device, info);
     const size_t characters_size =
         (character_size * capacity + character_alignment - 1) & -character_alignment;
-    return header_size + characters_size + (arg._14 ? characters_size : 0);
+    return header_size + characters_size + (arg._14 == 0 ? 0 : characters_size);
 }
 
 }  // namespace nn::font
