@@ -13,7 +13,8 @@ namespace nn::ui2d {
 
 // 0x7100ac35cc
 // NON_MATCHING: the compiler removes the unused native destructor vtable store.
-Material::~Material() {}
+// 0x7100ac35cc: the original keeps the vtable store, which clang 4 drops for an empty body.
+Material::~Material() { ; }
 
 namespace detail {
 // 0x7100ac01fc
