@@ -109,6 +109,10 @@ public:
 
     s32 get_8c() const { return _8c; }
 
+    // Inline-only in the original; name is a guess. gsys::ModelNW::getViewNum 0x7100c07b88
+    // returns the byte at +0x18.
+    u8 GetNumViews() const { return _18; }
+
     // Inline-only; names are ours. gsys::ModelRenderUnitNW::isVisible 0x7100c09d74 tests bit
     // (ResShape +0x5e) of the word array at +0x10, then bit (ResShape +0x60) of the array at +0x8.
     bool IsBoneVisible(int index) const { return m_pBoneVisArray[index >> 5] & (1 << (index & 0x1f)); }
