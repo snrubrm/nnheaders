@@ -9,6 +9,10 @@ int HardwareManager::GetChannelCountMax() const {
     return _758 ? 2 : 6;
 }
 
+int HardwareManager::GetRequiredMemSizeForMemoryPool(int max_voices) const {
+    return LowLevelVoiceAllocator::GetRequiredMemSize(max_voices);
+}
+
 }  // namespace driver
 }  // namespace detail
 }  // namespace atk

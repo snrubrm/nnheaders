@@ -6,6 +6,16 @@
 #include <nn/atk/detail/Util.h>
 #include <nn/types.h>
 
+namespace nn::atk::detail {
+
+/// Declared only: the voice allocator's required-size query 0x7101356d6c is still undecompiled.
+class LowLevelVoiceAllocator {
+public:
+    static int GetRequiredMemSize(int max_voices);
+};
+
+}  // namespace nn::atk::detail
+
 namespace nn::atk::detail::driver {
 
 class HardwareManager {
@@ -30,6 +40,8 @@ public:
     // Native 1344670 returns the renderer channel count (2 or 6). The private
     // configuration flag it reads remains outside this partial representation.
     int GetChannelCountMax() const;
+    /// 0x7101344564: forwards the voice count to LowLevelVoiceAllocator::GetRequiredMemSize.
+    int GetRequiredMemSizeForMemoryPool(int max_voices) const;
     bool IsFinishedClearEffect(AuxBus bus, OutputDevice device, int index) const;
     /// 0x71013450b8 (declared only)
     void SetOutputMode(OutputMode mode, OutputDevice device);
