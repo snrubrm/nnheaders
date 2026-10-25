@@ -1,11 +1,21 @@
 #include <nn/atk/detail/SoundArchiveFileReader.h>
 
+#include <cstring>
+
 namespace nn {
 namespace atk {
 namespace detail {
 
 SoundArchiveFileReader::SoundArchiveFileReader()
     : mStringBlock(nullptr), mInfoBlock(nullptr), _48(0) {
+}
+
+void SoundArchiveFileReader::Initialize(const void* file) {
+    const auto* header = static_cast<const SoundArchiveFile::FileHeader*>(file);
+    if (header->GetSignature() == SoundArchiveFile::FileHeader::cSignature &&
+        u32(header->GetVersion() - SoundArchiveFile::FileHeader::cMinVersion) <=
+            SoundArchiveFile::FileHeader::cMaxVersion - SoundArchiveFile::FileHeader::cMinVersion)
+        std::memcpy(&mFileHeader, file, sizeof(mFileHeader));
 }
 
 void SoundArchiveFileReader::Finalize() {

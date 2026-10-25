@@ -29,6 +29,14 @@ struct SoundArchiveFile {
     };
 
     struct FileHeader {
+        /// The file identifier, "FSAR" in memory order.
+        static constexpr u32 cSignature = 0x52415346;
+        /// The oldest and newest version words the reader accepts.
+        static constexpr u32 cMinVersion = 0x10000;
+        static constexpr u32 cMaxVersion = 0x20300;
+
+        u32 GetSignature() const { return mSignature; }
+        u32 GetVersion() const { return mVersion; }
         u32 GetInfoBlockSize() const;
         u32 GetStringBlockSize() const;
         u32 GetStringBlockOffset() const;
@@ -38,10 +46,13 @@ struct SoundArchiveFile {
     private:
         const BlockDescriptor* findBlock(u16 signature) const;
 
-        u8 _0[0x14];
+        u32 mSignature;  // +0, "FSAR"
+        u32 mFileSize;   // +4
+        u32 mVersion;    // +8
+        u8 _c[8];
         BlockDescriptor mBlocks[3];  // +0x14
-        u8 _38[0x40 - 0x38];
     };
+    static_assert(sizeof(FileHeader) == 0x38);
 
     /// The 8-byte header that precedes every block body (signature, size).
     struct BlockHeader {
@@ -287,7 +298,7 @@ public:
                                            size_t size) const override;
 
     detail::SoundArchiveFile::FileHeader mFileHeader;
-    u8 _2e0[0x371 - 0x2e0];
+    u8 _2d8[0x371 - 0x2d8];
     bool _371;
     u8 _372[0x618 - 0x372];
 };
