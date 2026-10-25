@@ -5,11 +5,14 @@
 
 #pragma once
 
+#include <nn/atk/AuxBus.h>
+#include <nn/atk/SoundPlayer.h>
 #include <nn/types.h>
 
 namespace nn {
 namespace atk {
 class SoundActor;
+class SoundHandle;
 class SoundPlayer;
 
 enum MixMode {
@@ -49,6 +52,7 @@ public:
     void SetPlayerPriority(s32);
     void ForceStop();
     void Pause(bool, s32);
+    void Pause(bool, s32, nn::atk::PauseMode);
     void Mute(bool, s32);
     void SetAutoStopCounter(s32);
     void FadeIn(s32);
@@ -93,37 +97,46 @@ public:
     f32 GetSurroundPan() const;
     void SetMainSend(f32);
     f32 GetMainSend() const;
+    void SetFxSend(nn::atk::AuxBus, f32);
 
-    u64* _8;                             // nn::atk::detail::PlayerHeap*
-    u64* _10;                            // nn::atk::SoundHandle*
-    u64* _18;                            // nn::atk::SoundHandle*
-    nn::atk::SoundPlayer* mSoundPlayer;  // _20
-    u64* _28;                            // nn::atk::SoundActor*
-    u64* _30;                            // nn::atk::detail::ExternalSoundPlayer*
-    u64* _38;                            // nn::atk::SoundArchive*
-    u8 _40[0xF0 - 0x40];
-    s32 mPriority;  // _F0
-    u32 _F4;
-    u32 _F8;
-    s32 mAutoStopCounter;  // _FC
-    u64 _100;
-    u32 mID;  // _108
-    u32 _10C;
-    u32 _110;
-    u32 _114;
-    f32 mInitialVolume;  // _118
-    f32 mPitch;          // _11C
-    f32 mLpfFreq;        // _120
-    f32 _124;
-    u32 mOutputLine;  // _128
-    f32 _12C;
-    f32 mVolume;  // _130
+    u64* _8;                                 // nn::atk::detail::PlayerHeap*
+    nn::atk::SoundHandle* mGeneralHandle;    // _10
+    u64* _18;                                // nn::atk::SoundHandle*
+    nn::atk::SoundPlayer* mSoundPlayer;      // _20
+    u64* _28;                                // nn::atk::SoundActor*
+    u64* _30;                                // nn::atk::detail::ExternalSoundPlayer*
+    u64* _38;                                // nn::atk::SoundArchive*
+    u8 _40[0xB4 - 0x40];
+    s32 _B4;  // a per-frame counter compared with _B8
+    s32 _B8;
+    u8 _BC[0xD4 - 0xBC];
+    s32 _D4;
+    s32 _D8;
+    u8 mPreparedFlag;  // _DC, StartPrepared stores 1
+    u8 _DD[0xE8 - 0xDD];
+    u8 mPlayerPriority;     // _E8
+    u8 mBiquadFilterIndex;  // _E9
+    u8 _EA[0xEC - 0xEA];
+    u32 mState;  // _EC, the destructor writes 3
+    u8 _F0;
+    u8 mPauseState;  // _F1, 1 and 2 count as paused
+    u8 _F2[0x100 - 0xF2];
+    u32 mID;             // _100
+    u32 _104;
+    f32 mInitialVolume;  // _108
+    f32 mPitch;          // _10C
+    f32 mLpfFreq;        // _110
+    f32 mBiquadFilterFreq;  // _114
+    u32 mOutputLine;        // _118
+    f32 mPrevVolume;        // _11C
+    f32 mVolume;            // _120
+    u32 mVolumeRampTime;    // _124
+    u32 mVolumeRampFrame;   // _128
+    nn::atk::MixMode mMixMode;  // _12C
+    u32 _130;
     u32 _134;
-    u32 _138;
-    nn::atk::MixMode mMixMode;  // _13C
-    f32 mPan;                   // _140
-    f32 mSurroundPan;           // _144
-    f32 mMainSend;              // _148
+    f32 mMainSend;          // _138
+    f32 mFxSend[4];         // _13C, indexed by nn::atk::AuxBus
     u8 _14C[0x158 - 0x14C];
     f32 mOutputVol;  // _158
     u8 _15C[0x190 - 0x15C];
