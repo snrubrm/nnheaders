@@ -6,7 +6,7 @@ namespace nn::atk::detail {
 
 /// Reads the info block of a sound archive. The file header copy at +0 gives the block offsets;
 /// the info block pointer at +0x40 is what the count and record accessors use.
-class SoundArchiveFileReader {
+class SoundArchiveFileReader : public SoundArchiveFile::FileHeader {
 public:
     SoundArchiveFileReader();
     void Initialize(const void* file);
@@ -27,7 +27,6 @@ public:
     bool ReadAdvancedWaveSoundInfo(u32 sound_id, SoundArchive::AdvancedWaveSoundInfo* info) const;
 
 private:
-    SoundArchiveFile::FileHeader mFileHeader;              // +0
     const SoundArchiveFile::StringBlockBody* mStringBlock;  // _38
     const SoundArchiveFile::InfoBlockBody* mInfoBlock;      // _40
     u64 _48;                                               // _48, zeroed with the two pointers

@@ -6,6 +6,11 @@ namespace nn::atk {
 // The original destructor only restores the vtable; the reader is owned by Initialize/Finalize.
 SoundArchive::~SoundArchive() {}
 
+void SoundArchive::Initialize(detail::SoundArchiveFileReader* reader) {
+    mFileReader = reader;
+    mFileBlockOffset = reader->GetFileBlockOffset();
+}
+
 bool SoundArchive::IsAvailable() const {
     return mFileReader != nullptr;
 }

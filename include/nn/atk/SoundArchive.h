@@ -257,6 +257,7 @@ public:
     struct AdvancedWaveSoundInfo;
 
     bool IsAvailable() const;
+    void Initialize(detail::SoundArchiveFileReader* reader);
     u32 GetSoundCount() const;
     u32 GetPlayerCount() const;
     u32 GetGroupCount() const;
@@ -274,7 +275,11 @@ public:
 protected:
     // IsAvailable tests it and every accessor above forwards to it.
     detail::SoundArchiveFileReader* mFileReader;  // +0x8
-    u8 _10[0x290];
+    u8 _10[0x288];
+    // +0x298, added to a file record's offset when a stream is opened. The original's data ends
+    // at 0x2a0, so the class has a second word here that nothing we model reads.
+    u32 mFileBlockOffset;
+    u32 _29c;
 };
 static_assert(sizeof(SoundArchive) == 0x2a0);
 

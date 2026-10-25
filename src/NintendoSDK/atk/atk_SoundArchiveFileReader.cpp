@@ -15,7 +15,8 @@ void SoundArchiveFileReader::Initialize(const void* file) {
     if (header->GetSignature() == SoundArchiveFile::FileHeader::cSignature &&
         u32(header->GetVersion() - SoundArchiveFile::FileHeader::cMinVersion) <=
             SoundArchiveFile::FileHeader::cMaxVersion - SoundArchiveFile::FileHeader::cMinVersion)
-        std::memcpy(&mFileHeader, file, sizeof(mFileHeader));
+        std::memcpy(static_cast<SoundArchiveFile::FileHeader*>(this), file,
+                sizeof(SoundArchiveFile::FileHeader));
 }
 
 void SoundArchiveFileReader::Finalize() {
