@@ -51,6 +51,10 @@ private:
     s32 mMasterVolumeCurrentFrame;
     u8 _ec[0x648 - 0xec];
     u32 mRendererSampleRate;
+    u8 _64c[0x758 - 0x64c];
+    // +0x758: GetChannelCountMax returns 2 when it is set and 6 otherwise; what it means is not
+    // established, so it keeps a placeholder name.
+    u8 _758;
 };
 
 }  // namespace nn::atk::detail::driver

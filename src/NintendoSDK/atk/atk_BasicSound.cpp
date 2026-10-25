@@ -95,5 +95,10 @@ void BasicSound::OnUpdateParam() {
 }
 
 }  // namespace detail
+
+void SoundPlayer::detail_SetPlayableSoundLimit(s32 limit) {
+    mPlayableSoundCount = limit;
+}
+
 }  // namespace atk
 }  // namespace nn
