@@ -13,6 +13,10 @@ enum PauseMode {
 
 };
 
+namespace detail {
+class BasicSound;
+}
+
 class SoundPlayer {
 public:
     SoundPlayer();
@@ -22,6 +26,7 @@ public:
     void Update();
     void DoFreePlayerHeap();
     void detail_SortPriorityList(bool);
+    void detail_SortPriorityList(nn::atk::detail::BasicSound*);
     void PauseAllSound(s32, bool);
     void PauseAllSound(bool pause, s32 fade_frames);
     void PauseAllSound(bool, s32, nn::atk::PauseMode);

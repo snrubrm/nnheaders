@@ -26,6 +26,8 @@ public:
     void SetReleasePriorityFix(bool fix);
     void SetSequenceUserprocCallback(SequenceUserProcCallback callback, void* arg);
     void SetLocalVariable(int index, s16 value);
+    static void SetGlobalVariable(int variable, s16 value);
+    s16* GetVariablePtr(int variable);
 
     // The state transitions. In the original these are virtual overrides; their vtable slots are
     // not established here, so they are plain members.
@@ -51,6 +53,9 @@ private:
     s16 mLocalVariables[0x20];                   // +0x1b0, indexed by the variable number
     u8 _1f0[0x350 - 0x1f0];
     u32 mAudioFrameFrequency;                    // +0x350, zero means one update per frame
+
+    // The variables shared by every player; variable numbers 16..31 select an entry here.
+    static s16 sGlobalVariable[0x10];
 };
 
 }  // namespace driver

@@ -6,6 +6,7 @@
 #pragma once
 
 #include <nn/atk/AuxBus.h>
+#include <nn/font/font_Util.h>
 #include <nn/atk/SoundPlayer.h>
 #include <nn/types.h>
 
@@ -22,10 +23,13 @@ enum MixMode {
 namespace detail {
 class PlayerHeap;
 class ExternalSoundPlayer;
+class SoundPlayerHandle;
 
 class BasicSound {
 public:
     struct AmbientInfo;
+
+    NN_RUNTIME_TYPEINFO_BASE()
 
     BasicSound();
     virtual ~BasicSound();
@@ -35,6 +39,9 @@ public:
     virtual bool IsPrepared() const = 0;
     virtual bool IsAttachedTempSpecialHandle() = 0;
     virtual void DetachTempSpecialHandle() = 0;
+    // Returns the concrete sound's own player handle (StreamSound answers with its handle at
+    // +0x2c0). The base only ever holds the slot.
+    virtual SoundPlayerHandle* GetBasicSoundPlayerHandle() = 0;
     virtual void OnUpdatePlayerPriority();
     virtual void UpdateMoveValue();
     virtual void OnUpdateParam();
@@ -130,8 +137,8 @@ public:
     u32 mOutputLine;        // _118
     f32 mPrevVolume;        // _11C
     f32 mVolume;            // _120
-    u32 mVolumeRampTime;    // _124
-    u32 mVolumeRampFrame;   // _128
+    s32 mVolumeRampTime;    // _124, the two ramp counters compare signed
+    s32 mVolumeRampFrame;   // _128
     nn::atk::MixMode mMixMode;  // _12C
     u32 _130;
     u32 _134;

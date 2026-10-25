@@ -45,6 +45,36 @@ void BasicSound::DetachExternalSoundPlayer(ExternalSoundPlayer*) {
     _30 = nullptr;
 }
 
+void BasicSound::SetPlayerPriority(s32 priority) {
+    mPlayerPriority = priority;
+    if (mSoundPlayer)
+        mSoundPlayer->detail_SortPriorityList(this);
+    OnUpdatePlayerPriority();
+}
+
+void BasicSound::Pause(bool pause, s32 fadeFrames) {
+    // The two-argument overload pauses with mode 0; the original has no default argument here,
+    // since both symbols exist.
+    Pause(pause, fadeFrames, static_cast<PauseMode>(0));
+}
+
+void BasicSound::SetVolume(f32 volume, s32 rampTime) {
+    if (volume < 0.0f)
+        volume = 0.0f;
+
+    const s32 frame = mVolumeRampFrame;
+    const s32 time = mVolumeRampTime;
+    f32 prevVolume = mVolume;
+    if (frame < time)
+        prevVolume = mPrevVolume + (mVolume - mPrevVolume) * static_cast<f32>(frame) /
+                                        static_cast<f32>(time);
+    mPrevVolume = prevVolume;
+
+    mVolume = volume;
+    mVolumeRampTime = rampTime;
+    mVolumeRampFrame = 0;
+}
+
 void BasicSound::SetInitialVolume(f32 volume) {
     if (volume < 0.0f)
         volume = 0.0f;
