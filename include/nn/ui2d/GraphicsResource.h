@@ -28,6 +28,13 @@ public:
     // with 0x78-byte samplers and 8-byte slots; ScreenMgr passes UnregisterSlotForSampler.
     void UnregisterCommonSamplerSlot(SamplerDescriptorCallback callback, void* user_data);
 
+    // 0x7100ac07c0: allocates the shader work buffer, the rect drawer, the vertex buffer and the
+    // 36 samplers / 36 descriptor slots. The native body reads only the device and the count; the
+    // remaining arguments are passed by eui::ScreenMgr::init 0x7100bec244 and are unused (the
+    // original's LTO drops them at that call site).
+    void Setup(gfx::Device* device, int count, gfx::MemoryPool* pool = nullptr,
+               s64 pool_offset = 0, u64 pool_size = 0);
+
     // 0x7100ac13a8
     void Finalize(gfx::Device* device);
     static int GetPresetBlendStateId(const ResBlendMode* color, const ResBlendMode* alpha);
