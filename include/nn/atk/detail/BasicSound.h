@@ -46,6 +46,7 @@ public:
     virtual void UpdateMoveValue();
     virtual void OnUpdateParam();
 
+
     void SetPriority(s32, s32);
     void GetPriority(s32*, s32*) const;
     void ClearIsFinalizedForCannotAllocatedResourceFlag();
@@ -113,21 +114,36 @@ public:
     u64* _28;                                // nn::atk::SoundActor*
     u64* _30;                                // nn::atk::detail::ExternalSoundPlayer*
     u64* _38;                                // nn::atk::SoundArchive*
-    u8 _40[0xB4 - 0x40];
-    s32 _B4;  // a per-frame counter compared with _B8
-    s32 _B8;
-    u8 _BC[0xD4 - 0xBC];
+    u8 _40[0xAC - 0x40];
+    f32 mFadeVolumePrev;  // _AC
+    f32 mFadeVolume;      // _B0
+    s32 mFadeTime;        // _B4
+    s32 mFadeFrame;       // _B8
+    f32 mPauseFadePrevVolume;  // _BC
+    f32 mPauseFadeVolume;      // _C0
+    s32 mPauseFadeTime;        // _C4
+    s32 mPauseFadeFrame;       // _C8
+    u8 _CC[0xD4 - 0xCC];
     s32 _D4;
     s32 _D8;
     u8 mPreparedFlag;  // _DC, StartPrepared stores 1
-    u8 _DD[0xE8 - 0xDD];
+    u8 _DD;
+    bool mAutoStop;  // _DE, set when AutoStopCounter is positive
+    u8 _DF;
+    u8 _E0;
+    u8 mPauseResume;  // _E1, 0 while the pause fade runs, 1 while the resume fade runs
+    u8 _E2[0xE4 - 0xE2];
+    nn::atk::PauseMode mPauseMode;  // _E4
     u8 mPlayerPriority;     // _E8
     u8 mBiquadFilterIndex;  // _E9
     u8 _EA[0xEC - 0xEA];
     u32 mState;  // _EC, the destructor writes 3
     u8 _F0;
     u8 mPauseState;  // _F1, 1 and 2 count as paused
-    u8 _F2[0x100 - 0xF2];
+    u8 _F2;
+    u8 _F3;
+    s32 mAutoStopCounter;  // _F4
+    u8 _F8[0x100 - 0xF8];
     u32 mID;             // _100
     u32 _104;
     f32 mInitialVolume;  // _108

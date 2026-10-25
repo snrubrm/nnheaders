@@ -52,6 +52,20 @@ void BasicSound::SetPlayerPriority(s32 priority) {
     OnUpdatePlayerPriority();
 }
 
+void BasicSound::UpdateMoveValue() {
+    if (mFadeFrame < mFadeTime)
+        mFadeFrame += 1;
+    if (_D8 < _D4)
+        _D8 += 1;
+    if (mVolumeRampFrame < mVolumeRampTime)
+        mVolumeRampFrame += 1;
+}
+
+void BasicSound::SetAutoStopCounter(s32 count) {
+    mAutoStopCounter = count;
+    mAutoStop = count > 0;
+}
+
 void BasicSound::Pause(bool pause, s32 fadeFrames) {
     // The two-argument overload pauses with mode 0; the original has no default argument here,
     // since both symbols exist.
