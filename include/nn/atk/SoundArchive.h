@@ -25,6 +25,24 @@ struct SoundArchiveFile {
         u8 _0[0x40];
     };
 
+    /// The 8-byte header that precedes every block body (signature, size).
+    struct BlockHeader {
+        u32 mSignature;
+        u32 mSize;
+    };
+
+    /// The string block; only the id lookup the reader forwards to is declared.
+    struct StringBlockBody {
+        // The native signature takes a section enum; section 1 is the item-name table.
+        s32 GetItemIdImpl(s32 section, const char* name) const;
+        const char* GetString(u32 string_id) const;
+    };
+
+    struct StringBlock {
+        BlockHeader mHeader;
+        StringBlockBody mBody;
+    };
+
     /// A sound record. Only the type accessor the reader forwards to is declared.
     struct SoundInfo {
         u32 GetSoundType() const;
@@ -42,6 +60,11 @@ struct SoundArchiveFile {
         const u32* GetFileInfoReferenceTable() const;
         u32 GetItemFileId(u32 item_id) const;
         u32 GetItemPrefetchFileId(u32 item_id) const;
+    };
+
+    struct InfoBlock {
+        BlockHeader mHeader;
+        InfoBlockBody mBody;
     };
 };
 }  // namespace detail

@@ -4,6 +4,24 @@ namespace nn {
 namespace atk {
 namespace detail {
 
+SoundArchiveFileReader::SoundArchiveFileReader()
+    : mStringBlock(nullptr), mInfoBlock(nullptr), _48(0) {
+}
+
+void SoundArchiveFileReader::Finalize() {
+    mStringBlock = nullptr;
+    mInfoBlock = nullptr;
+    _48 = 0;
+}
+
+void SoundArchiveFileReader::SetStringBlock(const void* block) {
+    mStringBlock = &static_cast<const SoundArchiveFile::StringBlock*>(block)->mBody;
+}
+
+void SoundArchiveFileReader::SetInfoBlock(const void* block) {
+    mInfoBlock = &static_cast<const SoundArchiveFile::InfoBlock*>(block)->mBody;
+}
+
 u32 SoundArchiveFileReader::GetItemFileId(u32 item_id) const {
     return mInfoBlock->GetItemFileId(item_id);
 }

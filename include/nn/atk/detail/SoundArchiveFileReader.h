@@ -8,6 +8,10 @@ namespace nn::atk::detail {
 /// to are declared; the info block pointer at +0x40 is all of the layout that is known.
 class SoundArchiveFileReader {
 public:
+    SoundArchiveFileReader();
+    void Finalize();
+    void SetStringBlock(const void* block);
+    void SetInfoBlock(const void* block);
     u32 GetItemFileId(u32 item_id) const;
     u32 GetItemPrefetchFileId(u32 item_id) const;
     u32 GetSoundCount() const;
@@ -20,8 +24,10 @@ public:
     bool ReadAdvancedWaveSoundInfo(u32 sound_id, SoundArchive::AdvancedWaveSoundInfo* info) const;
 
 private:
-    u8 _0[0x40];
-    const SoundArchiveFile::InfoBlockBody* mInfoBlock;  // _40
+    u8 _0[0x38];
+    const SoundArchiveFile::StringBlockBody* mStringBlock;  // _38
+    const SoundArchiveFile::InfoBlockBody* mInfoBlock;      // _40
+    u64 _48;                                               // _48, zeroed with the two pointers
 };
 
 }  // namespace nn::atk::detail
