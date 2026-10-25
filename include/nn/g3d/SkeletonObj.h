@@ -1,14 +1,20 @@
 #pragma once
 
 #include "nn/g3d/ResSkeleton.h"
+#include <nn/types.h>
 #include <nn/util/MathTypes.h>
 
 namespace nn::g3d {
 
-// TODO
 class SkeletonObj {
 public:
     const ResSkeleton* GetRes() const { return m_Res; }
+
+    // Inline-only in the original; name is a guess. Initialize 0x7101337c1c copies the resource's
+    // bone array (ResSkeletonData +0x18) to +0x10, and 0x7100f1a3b0 indexes it with the 0x50-byte
+    // ResBone stride to read ResBone::parentIndex.
+    const ResBone* GetBone(int index) const { return &m_Bones[index]; }
+
     /// 0x7101337d1c (declared only)
     void ClearLocalMtx();
     // 0x7101338974 / 0x71013389c0
@@ -17,7 +23,9 @@ public:
 
 private:
     const ResSkeleton* m_Res;
-    // TODO: the rest of the members
+    u16 m_Flags;  // 8
+    u8 _a[0x10 - 0xa];
+    const ResBone* m_Bones;  // 10
 };
 
 }  // namespace nn::g3d
