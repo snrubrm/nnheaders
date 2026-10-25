@@ -7,6 +7,7 @@
 
 #include <nn/gfx/gfx_Types.h>
 #include <nn/types.h>
+#include <nn/g3d/ResShaderFile.h>
 #include <nn/g3d/TextureRef.h>
 #include <nn/util.h>
 #include <nn/util/util_BinaryFormat.h>
@@ -33,7 +34,7 @@ struct ResExternalFile {
     u8 _8[8];
 };
 
-class ResFile : public nn::util::BinaryFileHeader {
+class ResFile : public ResShaderArchive {
 public:
     static bool IsValid(void const* modelSrc);
     void Relocate();
@@ -59,9 +60,6 @@ public:
         return mModelDict->FindIndex(name);
     }
 
-    u64 mFileNameLength;                  // _20
-    nn::g3d::ResModel* mModels;           // _28
-    nn::util::ResDic* mModelDict;         // _30
     u64 mSkeleAnimOffset;                 // _38
     u64 mSkeleAnimDictOffset;             // _40
     nn::g3d::ResMaterialAnim* mMatAnims;  // _48

@@ -1,14 +1,31 @@
 #pragma once
 
 #include <nn/types.h>
+#include <nn/util/util_BinaryFormat.h>
+#include <nn/util/util_ResDic.h>
 
 namespace nn::g3d {
+
+class ResModel;
 
 // The resource layout remains opaque. Only native static entrypoints are declared.
 class ResShaderFile {
 public:
     static bool IsValid(const void* data);
     static ResShaderFile* ResCast(void* data);
+};
+
+// Same resource prefix as ResFile: file name length at +0x20, the model record array at +0x28 and
+// its dictionary at +0x30. ResFile derives from this archive (ModelResource stores a ResFile* at
+// +0x38 and the Mii part setup calls FindShadingModel on it without an offset), and
+// FindShadingModel 0x7100f4d8cc indexes the array with the 0x78 stride of a ResModel.
+class ResShaderArchive : public util::BinaryFileHeader {
+public:
+    ResModel* FindShadingModel(const char* name);
+
+    u64 mFileNameLength;       // _20
+    ResModel* mModels;         // _28
+    util::ResDic* mModelDict;  // _30
 };
 
 // The class name comes from the original symbol. Only the four bytes at
