@@ -86,12 +86,14 @@ struct SoundArchiveFile {
     struct SequenceSoundInfo;
     struct AdvancedWaveSoundInfo;
     struct PlayerInfo;
+    struct SoundArchivePlayerInfo;
 
     /// A stream sound record. The track info table and the extension block are both found by a
     /// signature at a fixed offset and located by a relative offset next to it.
     struct StreamSoundInfo {
         const StreamSoundTrackInfo* GetTrackInfoTable() const;
         const char* GetStreamSoundExtension() const;
+        const u8* GetSendValue() const;
 
     private:
         u8 _0[4];
@@ -201,6 +203,7 @@ struct SoundArchiveFile {
         u32 GetItemFileId(u32 item_id) const;
         u32 GetItemPrefetchFileId(u32 item_id) const;
         s32 GetItemStringId(u32 item_id) const;
+        const SoundArchivePlayerInfo* GetSoundArchivePlayerInfo() const;
 
     private:
         u8 _0[4];
@@ -217,6 +220,8 @@ struct SoundArchiveFile {
         s32 mPlayerInfoTableOffset;        // +0x2c
         u8 _30[4];
         s32 mFileInfoTableOffset;          // +0x34
+        u8 _38[4];
+        s32 mSoundArchivePlayerInfoOffset;  // +0x3c
     };
 
     struct InfoBlock {

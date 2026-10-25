@@ -46,6 +46,16 @@ const char* SoundArchiveFile::StreamSoundInfo::GetStreamSoundExtension() const {
     return nn::util::ConstBytePtr(this, mExtensionOffset).Get<char>();
 }
 
+const u8* SoundArchiveFile::StreamSoundInfo::GetSendValue() const {
+    return nn::util::ConstBytePtr(this, mSendValueOffset).Get<u8>();
+}
+
+const SoundArchiveFile::SoundArchivePlayerInfo*
+SoundArchiveFile::InfoBlockBody::GetSoundArchivePlayerInfo() const {
+    return nn::util::ConstBytePtr(this, mSoundArchivePlayerInfoOffset)
+        .Get<SoundArchivePlayerInfo>();
+}
+
 u32 SoundArchiveFile::WaveSoundInfo::GetChannelPriority() const {
     if (!(mFlags & 1))
         return 64;
