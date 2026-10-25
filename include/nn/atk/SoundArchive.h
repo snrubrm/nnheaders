@@ -92,11 +92,6 @@ struct SoundArchiveFile {
         u32 GetItemPrefetchFileId(u32 item_id) const;
 
     private:
-        // The record lookups differ only in their table and record type, and the original has this
-        // lookup inlined in each one: the table starts with its count, then one 8-byte entry per
-        // record whose second word is the record's offset from the table.
-        const void* findRecord(const u32* table, u32 id) const;
-
         u8 _0[4];
         s32 mSoundInfoTableOffset;         // +0x4
         u8 _8[4];

@@ -32,7 +32,8 @@ const u32* SoundArchiveFile::InfoBlockBody::GetFileInfoReferenceTable() const {
 }
 
 // A reference table: the record count, then one 8-byte item per record whose second word is the
-// record's offset from the table.
+// record's offset from the table. The record lookups below are the same lookup inlined once per
+// record type, as in the original.
 struct ReferenceTableItem {
     u32 _0;
     s32 offset;
@@ -43,60 +44,91 @@ struct ReferenceTable {
     ReferenceTableItem items[1];
 };
 
-const void* SoundArchiveFile::InfoBlockBody::findRecord(const u32* body, u32 id) const {
-    const auto* table = static_cast<const ReferenceTable*>(nn::util::ConstBytePtr(body).Get());
-    const u32 index = id & 0xffffff;
-    if (index >= table->count)
-        return nullptr;
-    return nn::util::ConstBytePtr(body, table->items[index].offset).Get();
-}
-
 const SoundArchiveFile::SoundInfo* SoundArchiveFile::InfoBlockBody::GetSoundInfo(u32 sound_id)
     const {
     if (sound_id >> 24 != 1)
         return nullptr;
-    return static_cast<const SoundInfo*>(findRecord(GetSoundInfoReferenceTable(), sound_id));
+    const u32 index = sound_id & 0xffffff;
+    const auto* table = static_cast<const ReferenceTable*>(
+        nn::util::ConstBytePtr(GetSoundInfoReferenceTable()).Get());
+    if (index >= table->count)
+        return nullptr;
+    return static_cast<const SoundInfo*>(
+        nn::util::ConstBytePtr(table, table->items[index].offset).Get());
 }
 
 const SoundArchiveFile::BankInfo* SoundArchiveFile::InfoBlockBody::GetBankInfo(u32 bank_id) const {
     if (bank_id >> 24 != 3)
         return nullptr;
-    return static_cast<const BankInfo*>(findRecord(
-        nn::util::ConstBytePtr(this, mBankInfoTableOffset).Get<u32>(), bank_id));
+    const u32 index = bank_id & 0xffffff;
+    const auto* table = static_cast<const ReferenceTable*>(
+        nn::util::ConstBytePtr(this, mBankInfoTableOffset).Get());
+    if (index >= table->count)
+        return nullptr;
+    return static_cast<const BankInfo*>(
+        nn::util::ConstBytePtr(table, table->items[index].offset).Get());
 }
 
 const SoundArchiveFile::PlayerInfo* SoundArchiveFile::InfoBlockBody::GetPlayerInfo(
     u32 player_id) const {
     if (player_id >> 24 != 4)
         return nullptr;
-    return static_cast<const PlayerInfo*>(findRecord(GetPlayerInfoReferenceTable(), player_id));
+    const u32 index = player_id & 0xffffff;
+    const auto* table = static_cast<const ReferenceTable*>(
+        nn::util::ConstBytePtr(GetPlayerInfoReferenceTable()).Get());
+    if (index >= table->count)
+        return nullptr;
+    return static_cast<const PlayerInfo*>(
+        nn::util::ConstBytePtr(table, table->items[index].offset).Get());
 }
 
 const SoundArchiveFile::SoundGroupInfo* SoundArchiveFile::InfoBlockBody::GetSoundGroupInfo(
     u32 sound_group_id) const {
     if (sound_group_id >> 24 != 2)
         return nullptr;
+    const u32 index = sound_group_id & 0xffffff;
+    const auto* table = static_cast<const ReferenceTable*>(
+        nn::util::ConstBytePtr(GetSoundGroupInfoReferenceTable()).Get());
+    if (index >= table->count)
+        return nullptr;
     return static_cast<const SoundGroupInfo*>(
-        findRecord(GetSoundGroupInfoReferenceTable(), sound_group_id));
+        nn::util::ConstBytePtr(table, table->items[index].offset).Get());
 }
 
 const SoundArchiveFile::GroupInfo* SoundArchiveFile::InfoBlockBody::GetGroupInfo(u32 group_id)
     const {
     if (group_id >> 24 != 6)
         return nullptr;
-    return static_cast<const GroupInfo*>(findRecord(GetGroupInfoReferenceTable(), group_id));
+    const u32 index = group_id & 0xffffff;
+    const auto* table = static_cast<const ReferenceTable*>(
+        nn::util::ConstBytePtr(GetGroupInfoReferenceTable()).Get());
+    if (index >= table->count)
+        return nullptr;
+    return static_cast<const GroupInfo*>(
+        nn::util::ConstBytePtr(table, table->items[index].offset).Get());
 }
 
 const SoundArchiveFile::WaveArchiveInfo* SoundArchiveFile::InfoBlockBody::GetWaveArchiveInfo(
     u32 wave_archive_id) const {
     if (wave_archive_id >> 24 != 5)
         return nullptr;
+    const u32 index = wave_archive_id & 0xffffff;
+    const auto* table = static_cast<const ReferenceTable*>(
+        nn::util::ConstBytePtr(GetWaveArchiveInfoReferenceTable()).Get());
+    if (index >= table->count)
+        return nullptr;
     return static_cast<const WaveArchiveInfo*>(
-        findRecord(GetWaveArchiveInfoReferenceTable(), wave_archive_id));
+        nn::util::ConstBytePtr(table, table->items[index].offset).Get());
 }
 
 const SoundArchiveFile::FileInfo* SoundArchiveFile::InfoBlockBody::GetFileInfo(u32 file_id) const {
-    return static_cast<const FileInfo*>(findRecord(GetFileInfoReferenceTable(), file_id));
+    const u32 index = file_id & 0xffffff;
+    const auto* table = static_cast<const ReferenceTable*>(
+        nn::util::ConstBytePtr(GetFileInfoReferenceTable()).Get());
+    if (index >= table->count)
+        return nullptr;
+    return static_cast<const FileInfo*>(
+        nn::util::ConstBytePtr(table, table->items[index].offset).Get());
 }
 
 const SoundArchiveFile::StreamSoundInfo* SoundArchiveFile::SoundInfo::GetStreamSoundInfo() const {
