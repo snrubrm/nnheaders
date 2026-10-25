@@ -171,6 +171,8 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/vfx/vfx_Utility.cpp
   src/NintendoSDK/vfx/vfx_CalculateAllocSizeHeap.cpp
   src/NintendoSDK/vfx/vfx_Attribute.cpp
+  src/NintendoSDK/vfx/vfx_EmitterSet.cpp
+  src/NintendoSDK/vfx/vfx_System.cpp
   include/nn/socket.h
   include/nn/aoc.h
   include/nn/ro.h

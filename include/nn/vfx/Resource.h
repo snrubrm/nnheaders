@@ -54,7 +54,7 @@ public:
                                    detail::BufferSizeCalculator*);
     void GetPrimitive(size_t) const;
     void GetG3dPrimitive(size_t) const;
-    void SearchEmitterSetId(const char*) const;
+    int SearchEmitterSetId(const char*) const;
     void SearchEmitterSetIdWithFilePath(const char*) const;
     void BindResource(int, EmitterSetResource*);
     void UnbindResource(int);

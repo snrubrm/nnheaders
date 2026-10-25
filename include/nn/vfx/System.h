@@ -27,6 +27,8 @@ public:
 
     // 0x7100acd77c: the id of the named emitter set in resource slot `resource_id`, or -1.
     int SearchEmitterSetId(const char* name, int resource_id) const;
+    // 0x7100acd778: the native body is empty.
+    void FlushTempBuffer();
     // Inline-only in the original; name is a guess. xlink2::OneEmitterMgr::createOneEmitterInstance
     // 0x7100bcdf6c loops over this many resource slots (+0x64).
     int GetResourceNumMaybe() const { return _64; }
