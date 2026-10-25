@@ -6,6 +6,7 @@
 #pragma once
 
 #include <nn/types.h>
+#include <nn/util/util_BytePtr.h>
 
 namespace nn::atk {
 
@@ -43,15 +44,44 @@ struct SoundArchiveFile {
         StringBlockBody mBody;
     };
 
-    /// A sound record. Only the type accessor the reader forwards to is declared.
+    /// A sound record. The signature at +0xc names the sound type and +0x10 is the offset of
+    /// the type-specific sub-info that follows the record body.
+    struct StreamSoundInfo;
+    struct WaveSoundInfo;
+    struct SequenceSoundInfo;
+    struct AdvancedWaveSoundInfo;
+    struct BankInfo;
+    struct PlayerInfo;
+    struct SoundGroupInfo;
+    struct GroupInfo;
+    struct WaveArchiveInfo;
+    struct FileInfo;
+
     struct SoundInfo {
+        const StreamSoundInfo* GetStreamSoundInfo() const;
+        const WaveSoundInfo* GetWaveSoundInfo() const;
+        const SequenceSoundInfo* GetSequenceSoundInfo() const;
+        const AdvancedWaveSoundInfo* GetAdvancedWaveSoundInfo() const;
         u32 GetSoundType() const;
+
+    private:
+        u8 _0[0xc];
+        u16 mSignature;     // +0xc
+        s32 mSubInfoOffset; // +0x10, relative to this
     };
 
-    /// The info block. Each reference table starts with the record count, which is what the
-    /// reader's count getters read; the records themselves are not modelled.
+    /// The info block. Each of the seven tables is described by a {u32, s32} pair (the second word
+    /// is the table's offset from the block body) and the table itself starts with its record
+    /// count, which is what the reader's count getters read; the records themselves are not
+    /// modelled.
     struct InfoBlockBody {
         const SoundInfo* GetSoundInfo(u32 sound_id) const;
+        const BankInfo* GetBankInfo(u32 bank_id) const;
+        const PlayerInfo* GetPlayerInfo(u32 player_id) const;
+        const SoundGroupInfo* GetSoundGroupInfo(u32 sound_group_id) const;
+        const GroupInfo* GetGroupInfo(u32 group_id) const;
+        const WaveArchiveInfo* GetWaveArchiveInfo(u32 wave_archive_id) const;
+        const FileInfo* GetFileInfo(u32 file_id) const;
         const u32* GetSoundInfoReferenceTable() const;
         const u32* GetPlayerInfoReferenceTable() const;
         const u32* GetSoundGroupInfoReferenceTable() const;
@@ -60,6 +90,27 @@ struct SoundArchiveFile {
         const u32* GetFileInfoReferenceTable() const;
         u32 GetItemFileId(u32 item_id) const;
         u32 GetItemPrefetchFileId(u32 item_id) const;
+
+    private:
+        // The record lookups differ only in their table and record type, and the original has this
+        // lookup inlined in each one: the table starts with its count, then one 8-byte entry per
+        // record whose second word is the record's offset from the table.
+        const void* findRecord(const u32* table, u32 id) const;
+
+        u8 _0[4];
+        s32 mSoundInfoTableOffset;         // +0x4
+        u8 _8[4];
+        s32 mSoundGroupInfoTableOffset;    // +0xc
+        u8 _10[4];
+        s32 mBankInfoTableOffset;          // +0x14
+        u8 _18[4];
+        s32 mWaveArchiveInfoTableOffset;   // +0x1c
+        u8 _20[4];
+        s32 mGroupInfoTableOffset;         // +0x24
+        u8 _28[4];
+        s32 mPlayerInfoTableOffset;        // +0x2c
+        u8 _30[4];
+        s32 mFileInfoTableOffset;          // +0x34
     };
 
     struct InfoBlock {
