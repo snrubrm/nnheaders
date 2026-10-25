@@ -31,6 +31,55 @@ const u32* SoundArchiveFile::InfoBlockBody::GetFileInfoReferenceTable() const {
     return nn::util::ConstBytePtr(this, mFileInfoTableOffset).Get<u32>();
 }
 
+// One string-table entry: the string's offset from the table is the third word.
+struct StringTableItem {
+    u32 _0;
+    u32 _4;
+    s32 mOffset;
+};
+
+struct StringTable {
+    StringTableItem items[1];
+};
+
+const char* SoundArchiveFile::StringBlockBody::GetString(u32 string_id) const {
+    if (string_id == 0xffffffff)
+        return nullptr;
+    const auto* table =
+        static_cast<const StringTable*>(nn::util::ConstBytePtr(this, mStringTableOffset).Get());
+    if (!table)
+        return nullptr;
+    return nn::util::ConstBytePtr(table, table->items[s32(string_id)].mOffset).Get<char>();
+}
+
+const SoundArchiveFile::BlockDescriptor* SoundArchiveFile::FileHeader::findBlock(
+    u16 signature) const {
+    return mBlocks[0].mSignature == signature ? &mBlocks[0]
+           : mBlocks[1].mSignature == signature ? &mBlocks[1]
+           : mBlocks[2].mSignature == signature ? &mBlocks[2]
+                                                : nullptr;
+}
+
+u32 SoundArchiveFile::FileHeader::GetStringBlockSize() const {
+    return findBlock(0x2000)->mSize;
+}
+
+u32 SoundArchiveFile::FileHeader::GetStringBlockOffset() const {
+    return findBlock(0x2000)->mOffset;
+}
+
+u32 SoundArchiveFile::FileHeader::GetInfoBlockSize() const {
+    return findBlock(0x2001)->mSize;
+}
+
+u32 SoundArchiveFile::FileHeader::GetInfoBlockOffset() const {
+    return findBlock(0x2001)->mOffset;
+}
+
+u32 SoundArchiveFile::FileHeader::GetFileBlockOffset() const {
+    return findBlock(0x2002)->mOffset;
+}
+
 // A reference table: the record count, then one 8-byte item per record whose second word is the
 // record's offset from the table. The record lookups below are the same lookup inlined once per
 // record type, as in the original.
@@ -129,6 +178,56 @@ const SoundArchiveFile::FileInfo* SoundArchiveFile::InfoBlockBody::GetFileInfo(u
         return nullptr;
     return static_cast<const FileInfo*>(
         nn::util::ConstBytePtr(table, table->items[index].offset).Get());
+}
+
+u32 SoundArchiveFile::InfoBlockBody::GetItemFileId(u32 item_id) const {
+    switch (item_id >> 24) {
+    case 1: {
+        const SoundInfo* info = GetSoundInfo(item_id);
+        if (!info)
+            return -1;
+        return info->mItemFileId;
+    }
+    case 2: {
+        const SoundGroupInfo* sound_group = GetSoundGroupInfo(item_id);
+        if (!sound_group)
+            return -1;
+        const SoundInfo* info = GetSoundInfo(sound_group->mSoundId);
+        if (!info)
+            return -1;
+        return info->mItemFileId;
+    }
+    case 3: {
+        const BankInfo* info = GetBankInfo(item_id);
+        if (!info)
+            return -1;
+        return info->mItemFileId;
+    }
+    case 5: {
+        const WaveArchiveInfo* info = GetWaveArchiveInfo(item_id);
+        if (!info)
+            return -1;
+        return info->mItemFileId;
+    }
+    case 6: {
+        const GroupInfo* info = GetGroupInfo(item_id);
+        if (!info)
+            return -1;
+        return info->mItemFileId;
+    }
+    default:
+        return -1;
+    }
+}
+
+u32 SoundArchiveFile::InfoBlockBody::GetItemPrefetchFileId(u32 item_id) const {
+    const SoundInfo* info = GetSoundInfo(item_id);
+    if (!info)
+        return -1;
+    // Only wave sounds carry a prefetch file id (signature 0x2201).
+    if (info->GetSignature() != 0x2201)
+        return -1;
+    return info->GetWaveSoundInfo()->mPrefetchFileId;
 }
 
 const SoundArchiveFile::StreamSoundInfo* SoundArchiveFile::SoundInfo::GetStreamSoundInfo() const {

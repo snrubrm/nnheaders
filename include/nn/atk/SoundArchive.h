@@ -19,11 +19,28 @@ class FileStream;
 /// TODO: only the header of the archive file (0x40 bytes) and the info block's reference
 /// tables are declared.
 struct SoundArchiveFile {
+    /// One of the three block descriptors the file header holds; the signature names the block
+    /// (0x2000 string, 0x2001 info, 0x2002 file) and offset / size locate it in the file.
+    struct BlockDescriptor {
+        u16 mSignature;  // +0
+        u16 _2;
+        u32 mOffset;  // +4
+        u32 mSize;    // +8
+    };
+
     struct FileHeader {
         u32 GetInfoBlockSize() const;
         u32 GetStringBlockSize() const;
+        u32 GetStringBlockOffset() const;
+        u32 GetInfoBlockOffset() const;
+        u32 GetFileBlockOffset() const;
 
-        u8 _0[0x40];
+    private:
+        const BlockDescriptor* findBlock(u16 signature) const;
+
+        u8 _0[0x14];
+        BlockDescriptor mBlocks[3];  // +0x14
+        u8 _38[0x40 - 0x38];
     };
 
     /// The 8-byte header that precedes every block body (signature, size).
@@ -37,6 +54,10 @@ struct SoundArchiveFile {
         // The native signature takes a section enum; section 1 is the item-name table.
         s32 GetItemIdImpl(s32 section, const char* name) const;
         const char* GetString(u32 string_id) const;
+
+    private:
+        u8 _0[4];
+        s32 mStringTableOffset;  // +4, relative to this
     };
 
     struct StringBlock {
@@ -47,15 +68,33 @@ struct SoundArchiveFile {
     /// A sound record. The signature at +0xc names the sound type and +0x10 is the offset of
     /// the type-specific sub-info that follows the record body.
     struct StreamSoundInfo;
-    struct WaveSoundInfo;
     struct SequenceSoundInfo;
     struct AdvancedWaveSoundInfo;
-    struct BankInfo;
     struct PlayerInfo;
-    struct SoundGroupInfo;
-    struct GroupInfo;
-    struct WaveArchiveInfo;
     struct FileInfo;
+
+    /// A wave sound record; only the prefetch file id the item lookup returns is known.
+    struct WaveSoundInfo {
+        u8 _0[0x20];
+        u32 mPrefetchFileId;  // +0x20
+    };
+
+    /// The file id every item record starts with, and the sound id a sound group starts with.
+    struct BankInfo {
+        u32 mItemFileId;  // +0
+    };
+
+    struct SoundGroupInfo {
+        u32 mSoundId;  // +0
+    };
+
+    struct GroupInfo {
+        u32 mItemFileId;  // +0
+    };
+
+    struct WaveArchiveInfo {
+        u32 mItemFileId;  // +0
+    };
 
     struct SoundInfo {
         const StreamSoundInfo* GetStreamSoundInfo() const;
@@ -64,8 +103,12 @@ struct SoundArchiveFile {
         const AdvancedWaveSoundInfo* GetAdvancedWaveSoundInfo() const;
         u32 GetSoundType() const;
 
+        u32 mItemFileId;  // +0
+
+        u16 GetSignature() const { return mSignature; }
+
     private:
-        u8 _0[0xc];
+        u8 _4[0x8];
         u16 mSignature;     // +0xc
         s32 mSubInfoOffset; // +0x10, relative to this
     };
