@@ -193,6 +193,14 @@ public:
     u8 GetGlobalAlpha() const { return mGlobalAlpha; }
 
     const util::MatrixT4x3fType& GetMtx() const { return mMtx; }
+    // Inline-only in the original; name is a guess. Unk_7102479838::m25 0x71009a44a4 resets the
+    // matrix's x / y scale entries and then drops the user-global-matrix flag.
+    void ResetMtxScaleMaybe()
+    {
+        mMtx.m[0][0] = 1.0f;
+        mMtx.m[1][1] = 1.0f;
+        detail::SetBit(&mFlags, PaneFlag_UserGlobalMatrix, false);
+    }
 
 protected:
     virtual void LoadMtx(DrawInfo&);

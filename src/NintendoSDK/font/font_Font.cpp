@@ -15,9 +15,10 @@ void Font::Finalize(gfx::Device*) {}
 // 0x7100ab4144
 // NON_MATCHING: the character buffer and converted code occupy different stack slots.
 u32 CharStrmReader::ReadNextCharUtf8() {
+    u32 code;
     char character[4];
     util::PickOutCharacterFromUtf8String(character, &mStream);
-    u32 code = 0;
+    code = 0;
     util::ConvertCharacterUtf8ToUtf32(&code, character);
     return code;
 }

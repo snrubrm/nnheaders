@@ -54,4 +54,15 @@ T* DynamicCast(U* object) {
     return nullptr;
 }
 
+// The type test the library's callers inline. Like DynamicCast, the target type's static info is
+// evaluated before the null test. The game's instantiation with T = eui::BoundingEx and
+// U = nn::ui2d::Pane is 0x7100bf00bc.
+template <typename T, typename U>
+bool IsDerivedFrom(const U* object) {
+    const detail::RuntimeTypeInfo* type = T::GetRuntimeTypeInfoStatic();
+    if (object && object->GetRuntimeTypeInfo()->IsDerivedFrom(type))
+        return true;
+    return false;
+}
+
 }  // namespace nn::font
