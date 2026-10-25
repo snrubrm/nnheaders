@@ -15,13 +15,33 @@ namespace fnd {
 class FileStream;
 }
 
-/// TODO: only the header of the archive file (0x40 bytes) is declared.
+/// TODO: only the header of the archive file (0x40 bytes) and the info block's reference
+/// tables are declared.
 struct SoundArchiveFile {
     struct FileHeader {
         u32 GetInfoBlockSize() const;
         u32 GetStringBlockSize() const;
 
         u8 _0[0x40];
+    };
+
+    /// A sound record. Only the type accessor the reader forwards to is declared.
+    struct SoundInfo {
+        u32 GetSoundType() const;
+    };
+
+    /// The info block. Each reference table starts with the record count, which is what the
+    /// reader's count getters read; the records themselves are not modelled.
+    struct InfoBlockBody {
+        const SoundInfo* GetSoundInfo(u32 sound_id) const;
+        const u32* GetSoundInfoReferenceTable() const;
+        const u32* GetPlayerInfoReferenceTable() const;
+        const u32* GetSoundGroupInfoReferenceTable() const;
+        const u32* GetGroupInfoReferenceTable() const;
+        const u32* GetWaveArchiveInfoReferenceTable() const;
+        const u32* GetFileInfoReferenceTable() const;
+        u32 GetItemFileId(u32 item_id) const;
+        u32 GetItemPrefetchFileId(u32 item_id) const;
     };
 };
 }  // namespace detail

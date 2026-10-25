@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <nn/atk/detail/SoundInstanceManager.h>
 #include <nn/types.h>
 
 namespace nn {
@@ -12,7 +13,9 @@ namespace atk {
 namespace detail {
 class SoundArchiveManager;
 
-class SequenceSoundRuntime {
+class SequenceSound;
+
+class SequenceSoundRuntime : public SoundInstanceManager<SequenceSound> {
 public:
     SequenceSoundRuntime();
     ~SequenceSoundRuntime();

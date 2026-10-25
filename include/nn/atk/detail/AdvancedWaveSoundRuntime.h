@@ -5,12 +5,15 @@
 
 #pragma once
 
+#include <nn/atk/detail/SoundInstanceManager.h>
 #include <nn/types.h>
 
 namespace nn {
 namespace atk {
 namespace detail {
-class AdvancedWaveSoundRuntime {
+class AdvancedWaveSound;
+
+class AdvancedWaveSoundRuntime : public SoundInstanceManager<AdvancedWaveSound> {
 public:
     AdvancedWaveSoundRuntime();
     ~AdvancedWaveSoundRuntime();
@@ -20,8 +23,6 @@ public:
     s32 GetActiveCount() const;
     void SetupUserParam(void**, u64);
     void Update();
-
-    u8 _0[0x30];
 };
 }  // namespace detail
 }  // namespace atk

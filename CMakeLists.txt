@@ -164,6 +164,7 @@ add_library(NintendoSDK OBJECT
   include/nn/prepo.h
   include/nn/vfx/Config.h
   include/nn/vfx/EmitterSet.h
+  include/nn/atk/detail/SoundInstanceManager.h
   include/nn/vfx/System.h
   include/nn/vfx/Heap.h
   include/nn/vfx/detail/CalculateAllocSizeHeap.h
@@ -338,6 +339,8 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_SoundStartable.cpp
   src/NintendoSDK/atk/atk_SoundSystem.cpp
   src/NintendoSDK/atk/atk_BasicSound.cpp
+  src/NintendoSDK/atk/atk_SoundInstanceManager.cpp
+  src/NintendoSDK/atk/atk_SoundArchiveFileReader.cpp
   src/NintendoSDK/g3d/g3d_ResFile.cpp
   src/NintendoSDK/g3d/g3d_ResShaderFile.cpp
   src/NintendoSDK/g3d/g3d_ResModel.cpp
