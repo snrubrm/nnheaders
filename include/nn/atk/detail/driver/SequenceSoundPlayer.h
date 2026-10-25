@@ -12,6 +12,8 @@ struct SequenceUserProcCallbackParam;
 namespace detail {
 namespace driver {
 
+class Channel;
+
 /// The user callback the player runs at every sequence tick.
 using SequenceUserProcCallback = void (*)(u16, SequenceUserProcCallbackParam*, void*);
 
@@ -25,8 +27,18 @@ public:
     void SetSequenceUserprocCallback(SequenceUserProcCallback callback, void* arg);
     void SetLocalVariable(int index, s16 value);
 
+    // The state transitions. In the original these are virtual overrides; their vtable slots are
+    // not established here, so they are plain members.
+    void Start();
+    void Update();
+    void ChannelCallback(Channel* channel);
+    void OnUpdateFrameSoundThread();
+    void OnUpdateFrameSoundThreadWithAudioFrameFrequency();
+
 private:
-    u8 _0[0xe0];
+    u8 _0[0x31];
+    bool mStarted;  // +0x31
+    u8 _32[0xe0 - 0x32];
     bool mReleasePriorityFix;  // +0xe0
     u8 _e1[0xe8 - 0xe1];
     f32 mTempoRatio;           // +0xe8
@@ -37,6 +49,8 @@ private:
     void* mUserProcArg;                          // +0x128
     u8 _130[0x1b0 - 0x130];
     s16 mLocalVariables[0x20];                   // +0x1b0, indexed by the variable number
+    u8 _1f0[0x350 - 0x1f0];
+    u32 mAudioFrameFrequency;                    // +0x350, zero means one update per frame
 };
 
 }  // namespace driver

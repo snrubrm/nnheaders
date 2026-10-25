@@ -26,6 +26,22 @@ void SequenceSoundPlayer::SetLocalVariable(int index, s16 value) {
     mLocalVariables[index] = value;
 }
 
+void SequenceSoundPlayer::Start() {
+    mStarted = true;
+}
+
+void SequenceSoundPlayer::ChannelCallback(Channel*) {
+}
+
+void SequenceSoundPlayer::OnUpdateFrameSoundThread() {
+    Update();
+}
+
+void SequenceSoundPlayer::OnUpdateFrameSoundThreadWithAudioFrameFrequency() {
+    if (mAudioFrameFrequency == 0)
+        Update();
+}
+
 }  // namespace driver
 }  // namespace detail
 }  // namespace atk
