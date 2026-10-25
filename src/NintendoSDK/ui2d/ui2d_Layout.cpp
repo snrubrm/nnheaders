@@ -38,8 +38,10 @@ void Layout::SetTagProcessor(font::TagProcessorBase<u16>* tag_processor) {
 // pointer together with the node's second link
 // 0x7100ab662c
 Layout::Layout()
-    : mPane(nullptr), _20(nullptr), mLayoutSize{}, mName(nullptr), mResourceAccessor(nullptr),
-      mUserShaderCallback(nullptr) {}
+    : mPane(nullptr), mName(nullptr), mResourceAccessor(nullptr), mUserShaderCallback(nullptr) {
+    _20 = nullptr;
+    mLayoutSize = {};
+}
 
 // 0x7100ab6674
 void Layout::Finalize(gfx::Device* device) {
