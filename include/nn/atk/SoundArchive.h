@@ -67,16 +67,68 @@ struct SoundArchiveFile {
 
     /// A sound record. The signature at +0xc names the sound type and +0x10 is the offset of
     /// the type-specific sub-info that follows the record body.
-    struct StreamSoundInfo;
+    struct StreamSoundTrackInfo;
     struct SequenceSoundInfo;
     struct AdvancedWaveSoundInfo;
     struct PlayerInfo;
-    struct FileInfo;
 
-    /// A wave sound record; only the prefetch file id the item lookup returns is known.
+    /// A stream sound record. The track info table and the extension block are both found by a
+    /// signature at a fixed offset and located by a relative offset next to it.
+    struct StreamSoundInfo {
+        const StreamSoundTrackInfo* GetTrackInfoTable() const;
+        const char* GetStreamSoundExtension() const;
+
+    private:
+        u8 _0[4];
+        u16 mTrackInfoSignature;  // +0x4
+        u8 _6[2];
+        s32 mTrackInfoOffset;  // +0x8
+        u8 _c[8];
+        s32 mSendValueOffset;  // +0x14
+        u16 mExtensionSignature;  // +0x18
+        u8 _1a[2];
+        s32 mExtensionOffset;  // +0x1c, -1 when there is no extension
+    };
+
+    /// A wave sound record; the optional values are present when bit 0 of the flag byte is set.
     struct WaveSoundInfo {
-        u8 _0[0x20];
+        u32 GetChannelPriority() const;
+        u32 GetIsReleasePriorityFix() const;
+        u32 GetPrefetchFileId() const { return mPrefetchFileId; }
+
+    private:
+        u8 _0[8];
+        u8 mFlags;  // +0x8
+        u8 _9[3];
+        u32 mChannelPriority;  // +0xc, the release-priority-fix flag sits in its upper bits
+        u8 _10[0x10];
         u32 mPrefetchFileId;  // +0x20
+    };
+
+    /// A sequence sound record; the start offset is optional (bit 0 of the flag byte at +0xc).
+    struct SequenceSoundInfo {
+        u32 GetStartOffset() const;
+
+    private:
+        u8 _0[0xc];
+        u8 mFlags;  // +0xc
+        u8 _d[3];
+        u32 mStartOffset;  // +0x10
+    };
+
+    /// A file record: the signature names the internal (0x220c) or external (0x220d) file info
+    /// that the offset at +4 points at.
+    struct InternalFileInfo;
+    struct ExternalFileInfo;
+
+    struct FileInfo {
+        const InternalFileInfo* GetInternalFileInfo() const;
+        const ExternalFileInfo* GetExternalFileInfo() const;
+
+    private:
+        u16 mSignature;  // +0
+        u8 _2[2];
+        s32 mFileInfoOffset;  // +4
     };
 
     /// The file id every item record starts with, and the sound id a sound group starts with.

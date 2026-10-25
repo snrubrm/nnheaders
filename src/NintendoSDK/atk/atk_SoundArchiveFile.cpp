@@ -31,6 +31,51 @@ const u32* SoundArchiveFile::InfoBlockBody::GetFileInfoReferenceTable() const {
     return nn::util::ConstBytePtr(this, mFileInfoTableOffset).Get<u32>();
 }
 
+const SoundArchiveFile::StreamSoundTrackInfo* SoundArchiveFile::StreamSoundInfo::GetTrackInfoTable()
+    const {
+    if (mTrackInfoSignature != 0x101)
+        return nullptr;
+    return nn::util::ConstBytePtr(this, mTrackInfoOffset).Get<StreamSoundTrackInfo>();
+}
+
+const char* SoundArchiveFile::StreamSoundInfo::GetStreamSoundExtension() const {
+    if (mExtensionOffset == -1)
+        return nullptr;
+    if (mExtensionSignature != 0x2210)
+        return nullptr;
+    return nn::util::ConstBytePtr(this, mExtensionOffset).Get<char>();
+}
+
+u32 SoundArchiveFile::WaveSoundInfo::GetChannelPriority() const {
+    if (!(mFlags & 1))
+        return 64;
+    return mChannelPriority;
+}
+
+u32 SoundArchiveFile::WaveSoundInfo::GetIsReleasePriorityFix() const {
+    if (!(mFlags & 1))
+        return 0;
+    return mChannelPriority >> 8;
+}
+
+u32 SoundArchiveFile::SequenceSoundInfo::GetStartOffset() const {
+    if (!(mFlags & 1))
+        return 0;
+    return mStartOffset;
+}
+
+const SoundArchiveFile::InternalFileInfo* SoundArchiveFile::FileInfo::GetInternalFileInfo() const {
+    if (mSignature != 0x220c)
+        return nullptr;
+    return nn::util::ConstBytePtr(this, mFileInfoOffset).Get<InternalFileInfo>();
+}
+
+const SoundArchiveFile::ExternalFileInfo* SoundArchiveFile::FileInfo::GetExternalFileInfo() const {
+    if (mSignature != 0x220d)
+        return nullptr;
+    return nn::util::ConstBytePtr(this, mFileInfoOffset).Get<ExternalFileInfo>();
+}
+
 // One string-table entry: the string's offset from the table is the third word.
 struct StringTableItem {
     u32 _0;
@@ -227,7 +272,7 @@ u32 SoundArchiveFile::InfoBlockBody::GetItemPrefetchFileId(u32 item_id) const {
     // Only wave sounds carry a prefetch file id (signature 0x2201).
     if (info->GetSignature() != 0x2201)
         return -1;
-    return info->GetWaveSoundInfo()->mPrefetchFileId;
+    return info->GetWaveSoundInfo()->GetPrefetchFileId();
 }
 
 const SoundArchiveFile::StreamSoundInfo* SoundArchiveFile::SoundInfo::GetStreamSoundInfo() const {
