@@ -23,13 +23,16 @@ public:
     virtual const void* GetFileAddressFromTable(u32 file_id) const = 0;
     virtual const void* GetFileAddressImpl(u32 file_id) const = 0;
 
+    /// 0x7101341a44
+    void SetSoundArchive(const SoundArchive* archive);
     bool IsAvailable() const;
     const void* GetFileAddressFromSoundArchive(u32 file_id) const;
     /// 0x13427fc (declared only)
     bool LoadData(const char* label, SoundHeap* heap, u32 load_flag, u32 unknown);
 
 protected:
-    u8 _8[0x230 - 0x18 - 8];
+    const SoundArchive* mArchive;  // _8
+    u8 _10[0x230 - 0x18 - 0x10];
 };
 
 /// The first base of SoundDataManager (0x18 bytes, the contents are not known: the constructor sets the two pointers

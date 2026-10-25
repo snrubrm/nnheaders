@@ -33,6 +33,10 @@ public:
     bool IsFinishedClearEffect(AuxBus bus, OutputDevice device, int index) const;
     /// 0x71013450b8 (declared only)
     void SetOutputMode(OutputMode mode, OutputDevice device);
+    /// 0x7101347174: the native body is empty on this platform.
+    void FlushDataCache(void* address, size_t size);
+    /// Inline-only, name guessed: the renderer's sample count at +0x64c.
+    u32 GetRendererSampleCount() const { return mRendererSampleCount; }
     OutputMode GetOutputMode() const { return mOutputMode; }
     // Inline-only, name guessed: aal::FinalOutputMeasure::updateActivation 0x7100baa290 compares +0x648
     // with 48000.
@@ -51,7 +55,8 @@ private:
     s32 mMasterVolumeCurrentFrame;
     u8 _ec[0x648 - 0xec];
     u32 mRendererSampleRate;
-    u8 _64c[0x758 - 0x64c];
+    u32 mRendererSampleCount;  // +0x64c
+    u8 _650[0x758 - 0x650];
     // +0x758: GetChannelCountMax returns 2 when it is set and 6 otherwise; what it means is not
     // established, so it keeps a placeholder name.
     u8 _758;

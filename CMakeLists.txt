@@ -342,6 +342,8 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_SoundInstanceManager.cpp
   src/NintendoSDK/atk/atk_SoundArchiveFileReader.cpp
   src/NintendoSDK/atk/atk_HardwareManager.cpp
+  src/NintendoSDK/atk/atk_SoundSystem.cpp
+  src/NintendoSDK/atk/atk_SoundArchiveLoader.cpp
   src/NintendoSDK/g3d/g3d_ResFile.cpp
   src/NintendoSDK/g3d/g3d_ResShaderFile.cpp
   src/NintendoSDK/g3d/g3d_ResModel.cpp
