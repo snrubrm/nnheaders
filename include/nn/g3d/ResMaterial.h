@@ -43,7 +43,19 @@ public:
     u8 _18[0x30 - 0x18];
     const gfx::TextureView** mTextureViews;  // 30
     nn::util::BinPtrToString* mTextureNames;  // 38
-    u8 _40[0x88 - 0x40];
+    u8 _40[0x48 - 0x40];
+    // 0x20-byte per-texture records at +0x48. 0x7101140644 reads the half-texel value at +0x10,
+    // 0x710114065c the float at +0x8, and terrain 0x71011473a0 caches +0x8.
+    struct TextureRecord {
+        u8 _0[8];
+        f32 _8;
+        u8 _c[4];
+        f32 _10;
+        u8 _14[0xc];
+    };
+    static_assert(sizeof(TextureRecord) == 0x20);
+    TextureRecord* mTextureRecords;  // 48
+    u8 _50[0x88 - 0x50];
     void* m_88;
     u8 _90[0x98 - 0x90];
     gfx::DescriptorSlot* mTextureDescriptorSlots;  // 98
