@@ -12,6 +12,8 @@ public:
     void Finalize();
     void SetStringBlock(const void* block);
     void SetInfoBlock(const void* block);
+    s32 GetItemId(const char* label) const;
+    const char* GetItemLabel(u32 item_id) const;
     u32 GetItemFileId(u32 item_id) const;
     u32 GetItemPrefetchFileId(u32 item_id) const;
     u32 GetSoundCount() const;

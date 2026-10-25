@@ -51,8 +51,12 @@ struct SoundArchiveFile {
 
     /// The string block; only the id lookup the reader forwards to is declared.
     struct StringBlockBody {
-        // The native signature takes a section enum; section 1 is the item-name table.
-        s32 GetItemIdImpl(s32 section, const char* name) const;
+        /// The sections whose names the block can look up; only the item section is used here.
+        enum Sections {
+            Sections_Item = 1,
+        };
+
+        s32 GetItemIdImpl(Sections section, const char* name) const;
         const char* GetString(u32 string_id) const;
 
     private:
@@ -185,6 +189,7 @@ struct SoundArchiveFile {
         const u32* GetFileInfoReferenceTable() const;
         u32 GetItemFileId(u32 item_id) const;
         u32 GetItemPrefetchFileId(u32 item_id) const;
+        s32 GetItemStringId(u32 item_id) const;
 
     private:
         u8 _0[4];
