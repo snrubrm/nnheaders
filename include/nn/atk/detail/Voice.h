@@ -8,6 +8,7 @@ namespace nn::atk::detail {
 // the s32 at +0xac.
 class Voice {
 public:
+    Voice();
     u64 GetPlayPosition() const;
 
 private:

@@ -20,6 +20,7 @@ public:
     void Flush();
     void EnableCache(void*, u64);
     void DisableCache();
+    void Close();
 
 private:
     u8 _0[8];

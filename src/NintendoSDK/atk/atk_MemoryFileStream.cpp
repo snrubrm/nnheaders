@@ -44,4 +44,10 @@ void MemoryFileStream::EnableCache(void*, u64) {}
 
 void MemoryFileStream::DisableCache() {}
 
+void MemoryFileStream::Close() {
+    mSize = 0;
+    mPosition = 0;
+    mData = nullptr;
+}
+
 }  // namespace nn::atk::detail

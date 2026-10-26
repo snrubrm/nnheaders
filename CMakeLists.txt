@@ -166,11 +166,13 @@ add_library(NintendoSDK OBJECT
   include/nn/vfx/EmitterSet.h
   include/nn/vfx/Primitive.h
   include/nn/atk/EffectBase.h
+  include/nn/atk/EffectAux.h
   include/nn/atk/detail/MemoryFileStream.h
   include/nn/atk/detail/fnd/FileStreamImpl.h
   include/nn/atk/detail/fnd/FileStreamProxy.h
   include/nn/atk/detail/fnd/Stream.h
   include/nn/atk/detail/LowLevelVoice.h
+  include/nn/atk/detail/LowLevelVoiceCommand.h
   include/nn/atk/detail/Voice.h
   include/nn/atk/detail/driver/MultiVoice.h
   include/nn/atk/detail/driver/SequenceTrack.h
@@ -366,6 +368,8 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_MultiVoice.cpp
   src/NintendoSDK/atk/atk_SequenceTrack.cpp
   src/NintendoSDK/atk/atk_EffectBase.cpp
+  src/NintendoSDK/atk/atk_EffectAux.cpp
+  src/NintendoSDK/atk/atk_LowLevelVoiceCommand.cpp
   src/NintendoSDK/atk/atk_SequenceSoundFileReader.cpp
   src/NintendoSDK/g3d/g3d_ResFile.cpp
   src/NintendoSDK/g3d/g3d_ResShaderFile.cpp
