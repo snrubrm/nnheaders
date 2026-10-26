@@ -49,7 +49,7 @@ public:
     struct TextureRecord {
         u8 _0[8];
         f32 _8;
-        u8 _c[4];
+        f32 _c;
         f32 _10;
         u8 _14[0xc];
     };
