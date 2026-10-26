@@ -48,4 +48,48 @@ u64 Primitive::GetOffset(PrimitiveDataElementIndex index) const {
     return mOffsets[index];
 }
 
+u32 G3dPrimitive::GetVertexBufferArrayCount() const {
+    return mShape->mVertexBufferArrayCount;
+}
+
+u32 G3dPrimitive::GetIndexCount() const {
+    return mIndex->mIndexCount;
+}
+
+s64 G3dPrimitive::GetStrideSize(int index) const {
+    return mShape->mStrideSizes[index].value;
+}
+
+u32 G3dPrimitive::GetVertexBufferSize(int index) const {
+    return mShape->mVertexBufferSizes[index].value;
+}
+
+void G3dPrimitive::GetVertexBufferGpuAddress(gfx::GpuAddress* address, int index) const {
+    mShape->mBuffers[index]->GetGpuAddress(address);
+}
+
+const gfx::GpuAddress& G3dPrimitive::GetIndexBufferGpuAddress() const {
+    return mIndexBufferGpuAddress;
+}
+
+u32 G3dPrimitive::GetBufferCount() const {
+    return mShape->mBufferCount;
+}
+
+u32 G3dPrimitive::GetBufferIndex(PrimitiveDataElementIndex index) const {
+    return mBufferIndices[index];
+}
+
+gfx::AttributeFormat G3dPrimitive::GetFormat(PrimitiveDataElementIndex index) const {
+    return mFormats[index];
+}
+
+gfx::IndexFormat G3dPrimitive::GetIndexFormat() const {
+    return mIndex->mFormat;
+}
+
+u64 G3dPrimitive::GetOffset(PrimitiveDataElementIndex index) const {
+    return mOffsets[index];
+}
+
 }  // namespace nn::vfx
