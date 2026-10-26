@@ -176,7 +176,10 @@ add_library(NintendoSDK OBJECT
   include/nn/atk/detail/Voice.h
   include/nn/atk/detail/driver/MultiVoice.h
   include/nn/atk/detail/driver/SequenceTrack.h
-  include/nn/atk/detail/SequenceSoundFileReader.h
+  include/nn/atk/detail/StreamSound.h
+  include/nn/atk/detail/WaveSound.h
+  include/nn/atk/detail/AdvancedWaveSound.h
+  include/nn/atk/detail/SequenceSound.h
   include/nn/atk/detail/SoundInstanceManager.h
   include/nn/vfx/System.h
   include/nn/vfx/Heap.h
@@ -371,6 +374,10 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_EffectAux.cpp
   src/NintendoSDK/atk/atk_LowLevelVoiceCommand.cpp
   src/NintendoSDK/atk/atk_SequenceSoundFileReader.cpp
+  src/NintendoSDK/atk/atk_StreamSound.cpp
+  src/NintendoSDK/atk/atk_WaveSound.cpp
+  src/NintendoSDK/atk/atk_AdvancedWaveSound.cpp
+  src/NintendoSDK/atk/atk_SequenceSound.cpp
   src/NintendoSDK/g3d/g3d_ResFile.cpp
   src/NintendoSDK/g3d/g3d_ResShaderFile.cpp
   src/NintendoSDK/g3d/g3d_ResModel.cpp
