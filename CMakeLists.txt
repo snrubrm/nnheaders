@@ -168,6 +168,7 @@ add_library(NintendoSDK OBJECT
   include/nn/atk/EffectBase.h
   include/nn/atk/detail/MemoryFileStream.h
   include/nn/atk/detail/fnd/FileStreamImpl.h
+  include/nn/atk/detail/fnd/FileStreamProxy.h
   include/nn/atk/detail/LowLevelVoice.h
   include/nn/atk/detail/Voice.h
   include/nn/atk/detail/driver/MultiVoice.h
@@ -357,6 +358,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_SequenceSoundPlayer.cpp
   src/NintendoSDK/atk/atk_MemoryFileStream.cpp
   src/NintendoSDK/atk/atk_FileStreamImpl.cpp
+  src/NintendoSDK/atk/atk_FileStreamProxy.cpp
   src/NintendoSDK/atk/atk_LowLevelVoice.cpp
   src/NintendoSDK/atk/atk_Voice.cpp
   src/NintendoSDK/atk/atk_MultiVoice.cpp
