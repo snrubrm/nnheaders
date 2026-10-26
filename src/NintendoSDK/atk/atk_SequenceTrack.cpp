@@ -15,4 +15,20 @@ void SequenceTrack::SetTrackVariable(int index, s16 value) {
     mTrackVariables[index] = value;
 }
 
+void SequenceTrack::SetBankIndex(int index) {
+    mBankIndex = index;
+}
+
+void SequenceTrack::SetTranspose(int transpose) {
+    mTranspose = transpose;
+}
+
+void SequenceTrack::SetVelocityRange(int range) {
+    mVelocityRange = range;
+}
+
+void SequenceTrack::SetOutputLine(u32 line) {
+    mOutputLine = line;
+}
+
 }  // namespace nn::atk::detail::driver

@@ -11,6 +11,10 @@ public:
     void SetPlayerTrackNo(int track_no);
     void SetSeqData(const void* data, int size);
     void SetTrackVariable(int index, s16 value);
+    void SetBankIndex(int index);
+    void SetTranspose(int transpose);
+    void SetVelocityRange(int range);
+    void SetOutputLine(u32 line);
 
 private:
     u8 _0[8];
@@ -18,7 +22,14 @@ private:
     u8 _9[0x68 - 0x9];
     /* 0x68 */ const void* mSeqData;
     /* 0x70 */ const void* mSeqDataEnd;
-    u8 _78[0x1b8 - 0x78];
+    u8 _78[0x12b - 0x78];
+    /* 0x12b */ u8 mBankIndex;
+    u8 _12c[0x198 - 0x12c];
+    /* 0x198 */ u8 mVelocityRange;
+    u8 _199[0x19c - 0x199];
+    /* 0x19c */ u8 mTranspose;
+    u8 _19d[0x1b4 - 0x19d];
+    /* 0x1b4 */ u32 mOutputLine;
     /* 0x1b8 */ s16 mTrackVariables[16];
 };
 
