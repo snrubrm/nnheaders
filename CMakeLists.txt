@@ -164,12 +164,21 @@ add_library(NintendoSDK OBJECT
   include/nn/prepo.h
   include/nn/vfx/Config.h
   include/nn/vfx/EmitterSet.h
+  include/nn/vfx/Primitive.h
+  include/nn/atk/EffectBase.h
+  include/nn/atk/detail/MemoryFileStream.h
+  include/nn/atk/detail/fnd/FileStreamImpl.h
+  include/nn/atk/detail/LowLevelVoice.h
+  include/nn/atk/detail/Voice.h
+  include/nn/atk/detail/driver/MultiVoice.h
+  include/nn/atk/detail/SequenceSoundFileReader.h
   include/nn/atk/detail/SoundInstanceManager.h
   include/nn/vfx/System.h
   include/nn/vfx/Heap.h
   include/nn/vfx/detail/CalculateAllocSizeHeap.h
   include/nn/vfx/detail/Attribute.h
   src/NintendoSDK/vfx/vfx_Utility.cpp
+  src/NintendoSDK/vfx/vfx_Primitive.cpp
   src/NintendoSDK/vfx/vfx_CalculateAllocSizeHeap.cpp
   src/NintendoSDK/vfx/vfx_Attribute.cpp
   src/NintendoSDK/vfx/vfx_EmitterSet.cpp
@@ -346,6 +355,13 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_SoundSystem.cpp
   src/NintendoSDK/atk/atk_SoundArchiveLoader.cpp
   src/NintendoSDK/atk/atk_SequenceSoundPlayer.cpp
+  src/NintendoSDK/atk/atk_MemoryFileStream.cpp
+  src/NintendoSDK/atk/atk_FileStreamImpl.cpp
+  src/NintendoSDK/atk/atk_LowLevelVoice.cpp
+  src/NintendoSDK/atk/atk_Voice.cpp
+  src/NintendoSDK/atk/atk_MultiVoice.cpp
+  src/NintendoSDK/atk/atk_EffectBase.cpp
+  src/NintendoSDK/atk/atk_SequenceSoundFileReader.cpp
   src/NintendoSDK/g3d/g3d_ResFile.cpp
   src/NintendoSDK/g3d/g3d_ResShaderFile.cpp
   src/NintendoSDK/g3d/g3d_ResModel.cpp
