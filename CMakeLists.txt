@@ -169,6 +169,7 @@ add_library(NintendoSDK OBJECT
   include/nn/atk/detail/MemoryFileStream.h
   include/nn/atk/detail/fnd/FileStreamImpl.h
   include/nn/atk/detail/fnd/FileStreamProxy.h
+  include/nn/atk/detail/fnd/Stream.h
   include/nn/atk/detail/LowLevelVoice.h
   include/nn/atk/detail/Voice.h
   include/nn/atk/detail/driver/MultiVoice.h
