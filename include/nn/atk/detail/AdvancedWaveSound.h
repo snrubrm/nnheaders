@@ -10,6 +10,7 @@ namespace nn::atk::detail {
 class AdvancedWaveSound {
 public:
     bool IsAttachedTempSpecialHandle();
+    void DetachTempSpecialHandle();
     // 0x710135dfd8
     SoundPlayerHandle* GetBasicSoundPlayerHandle();
 

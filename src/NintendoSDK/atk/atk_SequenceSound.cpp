@@ -6,6 +6,10 @@ bool SequenceSound::IsAttachedTempSpecialHandle() {
     return mTempSpecialHandle != nullptr;
 }
 
+void SequenceSound::DetachTempSpecialHandle() {
+    mTempSpecialHandle->DetachSound();
+}
+
 SoundPlayerHandle* SequenceSound::GetBasicSoundPlayerHandle() {
     return &mBasicSoundPlayerHandle;
 }

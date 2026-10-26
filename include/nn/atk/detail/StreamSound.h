@@ -1,5 +1,6 @@
 #pragma once
 
+#include <nn/atk/StreamSoundHandle.h>
 #include <nn/atk/detail/BasicSoundPlayerHandle.h>
 #include <nn/types.h>
 
@@ -10,12 +11,13 @@ namespace nn::atk::detail {
 class StreamSound {
 public:
     bool IsAttachedTempSpecialHandle();
+    void DetachTempSpecialHandle();
     // 0x710134c490
     SoundPlayerHandle* GetBasicSoundPlayerHandle();
 
 private:
     u8 _0[0x1f0];
-    /* 0x1f0 */ const void* mTempSpecialHandle;
+    /* 0x1f0 */ StreamSoundHandle* mTempSpecialHandle;
     u8 _1f8[0x2c0 - 0x1f8];
     /* 0x2c0 */ BasicSoundPlayerHandle mBasicSoundPlayerHandle;
 };

@@ -6,6 +6,9 @@ bool WaveSound::IsAttachedTempSpecialHandle() {
     return mTempSpecialHandle != nullptr;
 }
 
+void WaveSound::DetachTempSpecialHandle() {
+}
+
 SoundPlayerHandle* WaveSound::GetBasicSoundPlayerHandle() {
     return &mBasicSoundPlayerHandle;
 }

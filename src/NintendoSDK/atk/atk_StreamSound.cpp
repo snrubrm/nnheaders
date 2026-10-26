@@ -6,6 +6,10 @@ bool StreamSound::IsAttachedTempSpecialHandle() {
     return mTempSpecialHandle != nullptr;
 }
 
+void StreamSound::DetachTempSpecialHandle() {
+    mTempSpecialHandle->DetachSound();
+}
+
 SoundPlayerHandle* StreamSound::GetBasicSoundPlayerHandle() {
     return &mBasicSoundPlayerHandle;
 }
