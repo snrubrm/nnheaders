@@ -2,6 +2,7 @@
 
 #include <nn/types.h>
 #include <nn/util/util_BinaryFormat.h>
+#include <nn/util/util_BinTypes.h>
 #include <nn/util/util_ResDic.h>
 
 namespace nn::g3d {
@@ -15,17 +16,21 @@ public:
     static ResShaderFile* ResCast(void* data);
 };
 
-// Same resource prefix as ResFile: file name length at +0x20, the model record array at +0x28 and
-// its dictionary at +0x30. ResFile derives from this archive (ModelResource stores a ResFile* at
-// +0x38 and the Mii part setup calls FindShadingModel on it without an offset), and
+// Same resource prefix as ResFile: the relocated file name at +0x20, the model record array at
+// +0x28 and its dictionary at +0x30. ResFile derives from this archive (ModelResource stores a
+// ResFile* at +0x38 and the Mii part setup calls FindShadingModel on it without an offset), and
 // FindShadingModel 0x7100f4d8cc indexes the array with the 0x78 stride of a ResModel.
 class ResShaderArchive : public util::BinaryFileHeader {
 public:
     ResModel* FindShadingModel(const char* name);
 
-    u64 mFileNameLength;       // _20
-    ResModel* mModels;         // _28
-    util::ResDic* mModelDict;  // _30
+    // Inline-only in the original; name is a guess. 0x710125ac84 reads the binary string through
+    // this pointer and adds the two-byte length to reach the characters.
+    const char* GetName() const { return pName.Get()->GetData(); }
+
+    nn::util::BinPtrToString pName;  // _20
+    ResModel* mModels;               // _28
+    util::ResDic* mModelDict;        // _30
 };
 
 // The class name comes from the original symbol. Only the four bytes at
