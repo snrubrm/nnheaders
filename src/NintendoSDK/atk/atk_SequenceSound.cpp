@@ -6,4 +6,8 @@ bool SequenceSound::IsAttachedTempSpecialHandle() {
     return mTempSpecialHandle != nullptr;
 }
 
+SoundPlayerHandle* SequenceSound::GetBasicSoundPlayerHandle() {
+    return &mBasicSoundPlayerHandle;
+}
+
 }  // namespace nn::atk::detail

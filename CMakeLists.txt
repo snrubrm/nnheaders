@@ -180,6 +180,7 @@ add_library(NintendoSDK OBJECT
   include/nn/atk/detail/WaveSound.h
   include/nn/atk/detail/AdvancedWaveSound.h
   include/nn/atk/detail/SequenceSound.h
+  include/nn/atk/detail/BasicSoundPlayerHandle.h
   include/nn/atk/detail/SoundInstanceManager.h
   include/nn/vfx/System.h
   include/nn/vfx/Heap.h

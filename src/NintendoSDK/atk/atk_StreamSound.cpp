@@ -6,4 +6,8 @@ bool StreamSound::IsAttachedTempSpecialHandle() {
     return mTempSpecialHandle != nullptr;
 }
 
+SoundPlayerHandle* StreamSound::GetBasicSoundPlayerHandle() {
+    return &mBasicSoundPlayerHandle;
+}
+
 }  // namespace nn::atk::detail

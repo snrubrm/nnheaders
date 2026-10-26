@@ -6,4 +6,8 @@ bool WaveSound::IsAttachedTempSpecialHandle() {
     return mTempSpecialHandle != nullptr;
 }
 
+SoundPlayerHandle* WaveSound::GetBasicSoundPlayerHandle() {
+    return &mBasicSoundPlayerHandle;
+}
+
 }  // namespace nn::atk::detail
