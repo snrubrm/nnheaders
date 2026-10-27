@@ -11,7 +11,11 @@ class ResMesh {
 public:
     u16 GetSubMeshCount() const { return m_SubMeshCount; }
 
-    u8 _0[0x34];
+    u8 _0[0x2c];
+    // Read and divided by 3 by gsys::ModelNW::countPolygonNum 0x7100c054bc, so this is the
+    // index count of the mesh's first primitive. Name is a guess.
+    u32 mIndexCount;
+    u8 _30[0x34 - 0x30];
     u16 m_SubMeshCount;
     u8 _36[0x38 - 0x36];
 };
