@@ -8,6 +8,8 @@
 
 namespace nn::g3d {
 
+class ICalculateWorldCallback;
+
 // One 0x60-byte local bone matrix slot. gsys::ModelNW::setBoneLocalScale 0x7100c04cd0
 // writes the scale at +0x10 and clears bits 24-27 of the flag word at +0.
 struct BoneLocalMatrix {
@@ -39,6 +41,18 @@ public:
     BoneLocalMatrix* GetLocalMatrix(int index) const { return &mLocalMatrices[index]; }
     void* GetWorldMatrices() const { return mWorldMatrices; }
 
+    // Inline-only in the original; names are guesses. gsys::ModelNW::setCallbackBoneIndex
+    // 0x7100c03e8c stores the model's world callback and selects the bone it runs for.
+    void setCalculateWorldCallback(ICalculateWorldCallback* callback) {
+        mCalculateWorldCallback = callback;
+    }
+    void setCallbackBoneIndex(s32 index) {
+        if (index < 0 || index >= mBoneCount)
+            mCallbackBoneIndex = 0xffff;
+        else
+            mCallbackBoneIndex = index;
+    }
+
     /// 0x7101337d1c (declared only)
     void ClearLocalMtx();
     // 0x7101338974 / 0x71013389c0
@@ -57,6 +71,13 @@ private:
     // passes its +0x48 size to ShaderUtilG3D::load.
     gfx::TBuffer<gfx::ApiVariationNvn8>* mBuffers;  // 40
     u64 mBufferSize;  // 48
+    /// Bone count used by the callback-bone clamp. Name is a guess.
+    u16 mBoneCount;  // 50
+    /// The bone the world callback runs for; 0xffff when unset.
+    u16 mCallbackBoneIndex;  // 52
+    u8 _54[4];
+    /// ModelNW's world callback, set by ModelNW::setCallbackBoneIndex 0x7100c03e8c.
+    ICalculateWorldCallback* mCalculateWorldCallback;  // 58
 };
 
 }  // namespace nn::g3d
