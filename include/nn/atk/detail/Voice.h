@@ -9,6 +9,8 @@ namespace nn::atk::detail {
 class Voice {
 public:
     Voice();
+    // 0x7101358bd4: the original body is a four-byte empty function.
+    ~Voice();
     u64 GetPlayPosition() const;
 
 private:

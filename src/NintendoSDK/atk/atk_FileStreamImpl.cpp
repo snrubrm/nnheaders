@@ -2,6 +2,9 @@
 
 namespace nn::atk::detail::fnd {
 
+// 0x710135c864
+FileStreamImpl::~FileStreamImpl() {}
+
 void FileStreamImpl::DirectStream::Close() {
 }
 

@@ -2,6 +2,9 @@
 
 namespace nn::atk::detail {
 
+// 0x7101358bd4
+Voice::~Voice() {}
+
 Voice::Voice() {
     _ac = -1;
 }

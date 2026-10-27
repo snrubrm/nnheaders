@@ -9,6 +9,8 @@ namespace nn::atk::detail::fnd {
 // lives at +0x10.
 class FileStreamImpl {
 public:
+    // 0x710135c864: the original body is a four-byte empty function.
+    ~FileStreamImpl();
     // Nested stream that forwards the read-side queries to the stream at +0x8.
     class DirectStream : public Stream {
     public:

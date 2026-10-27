@@ -1,4 +1,5 @@
 #include <nn/ui2d/Pane.h>
+#include <nn/ui2d/Bounding.h>
 
 #include <cstring>
 #include <nn/ui2d/ResExtUserData.h>
@@ -430,5 +431,8 @@ const ResExtUserData* Pane::FindExtUserDataByName(const char* name) const {
     }
     return nullptr;
 }
+
+// 0x7100abff04: a bounding pane draws nothing of its own.
+void Bounding::DrawSelf(DrawInfo&, gfx::CommandBuffer&) {}
 
 }  // namespace nn::ui2d
