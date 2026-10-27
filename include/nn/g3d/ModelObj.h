@@ -135,6 +135,8 @@ public:
     // 0x710132eaf4 / 0x710132eafc: forward to the skeleton object.
     void CalculateWorld(const nn::util::neon::MatrixRowMajor4x3fType& mtx);
     void CalculateSkeleton(int index);
+    // 0x710132ecb0: gsys::ModelNW::calcGPUSkinning_ calls this after CalculateSkeleton.
+    void CalculateShape(int index);
 
     // Inline-only in the original; name is a guess. ModelNW::getName
     // 0x7100c06bc0 and ModelRig 0x7100c8338c read this actual resource.
