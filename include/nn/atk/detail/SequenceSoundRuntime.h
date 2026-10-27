@@ -31,7 +31,7 @@ public:
     s32 GetSequenceSkipIntervalTick();
     void Update();
 
-    u8 _0[0xD0];
+    u8 _30[0xD0 - 0x30];
     nn::atk::detail::SoundArchiveManager* mArchiveManager;  // _D0
     u64 _D8;
 };

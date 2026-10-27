@@ -61,4 +61,9 @@ const u32* SoundArchive::detail_GetWaveArchiveIdTable(u32 wave_archive_id) const
     return mFileReader->GetWaveArchiveIdTable(wave_archive_id);
 }
 
+// NON_MATCHING: the empty destructor emits ret; the original tail-calls SoundArchive::~SoundArchive.
+MemorySoundArchive::~MemorySoundArchive() {
+}
+
 }  // namespace nn::atk
+

@@ -37,3 +37,10 @@ Result SoundArchivePlayer::detail_SetupSound(SoundHandle* handle, u32 sound_id, 
 }
 
 }  // namespace nn::atk
+
+namespace nn::atk::detail {
+
+StreamSoundRuntime::~StreamSoundRuntime() {
+}
+
+}  // namespace nn::atk::detail

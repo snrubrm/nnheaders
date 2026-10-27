@@ -68,6 +68,17 @@ void BasicSound::Pause(bool pause, s32 fadeFrames, PauseMode mode) {
     mPauseMode = mode;
 }
 
+AdvancedWaveSoundRuntime::~AdvancedWaveSoundRuntime() {
+}
+
+SequenceSoundRuntime::~SequenceSoundRuntime() {
+    mArchiveManager = nullptr;
+}
+
+WaveSoundRuntime::~WaveSoundRuntime() {
+}
+
 }  // namespace detail
 }  // namespace atk
 }  // namespace nn
+
