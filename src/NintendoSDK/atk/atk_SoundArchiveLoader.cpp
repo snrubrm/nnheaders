@@ -9,6 +9,10 @@ SoundArchiveLoader::~SoundArchiveLoader() {
     mArchive = nullptr;
 }
 
+void SoundArchiveLoader::SetSoundArchive(const SoundArchive* archive) {
+    mArchive = archive;
+}
+
 bool SoundArchiveLoader::IsAvailable() const {
     if (!mArchive)
         return false;
