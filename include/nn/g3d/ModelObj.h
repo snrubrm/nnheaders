@@ -39,7 +39,21 @@ public:
     u8 mFlags;  // 8
 
 private:
-    u8 _9[0x40 - 0x9];
+    u8 _9[0x10 - 0x9];
+
+public:
+    /// One bit per shader parameter, set when a parameter setter writes the runtime buffer.
+    u32* mParamDirtyBits;  // 10
+
+private:
+    u8 _18[0x2c - 0x18];
+
+public:
+    /// Set together with the parameter's dirty bit.
+    u8 mParamDirtyFlag;  // 2c
+
+private:
+    u8 _2d[0x40 - 0x2d];
 
 public:
     gfx::Buffer* mBuffers;  // 40
@@ -56,6 +70,26 @@ public:
     template <typename T>
     const T& getParam(int offset) const {
         return *static_cast<const T*>(static_cast<const void*>(static_cast<const u8*>(m_UserData) + offset));
+    }
+
+    template <typename T>
+    void setParam(int offset, const T& value) {
+        *static_cast<T*>(static_cast<void*>(static_cast<u8*>(m_UserData) + offset)) = value;
+    }
+
+    // 0x710132d858 / 0x710132d4f8: clear the pending parameter writes, then rebuild the
+    // dependent-parameter pointer table from the runtime buffer.
+    void ResetDirtyFlags();
+    void InitializeDependPointer();
+
+    // Inline-only in the original; name is a guess. ModelNW's setMaterialParam* rows mark the
+    // written parameter and its dependent parameter dirty before storing the value.
+    void markParamDirty(int param_idx) {
+        const u32 mask = 1u << (param_idx & 0x1f);
+        u32* bits = mParamDirtyBits;
+        const int word_index = param_idx >> 5;
+        bits[word_index] |= mask;
+        mParamDirtyFlag |= 1;
     }
 
 public:

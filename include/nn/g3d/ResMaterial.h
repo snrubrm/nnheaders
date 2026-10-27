@@ -28,7 +28,11 @@ public:
     u8 mType;  // 10
     u8 _11;
     u16 mDataOffset;  // 12
-    u8 _14[0xc];
+    /// Bit 31 skips the dirty mark of the wrapped parameter.
+    u32 mFlags;  // 14
+    /// Parameter this one depends on; its dirty bit is marked together with this one.
+    u16 mDependentIndex;  // 18
+    u8 _1a[6];
 };
 static_assert(sizeof(ResShaderParam) == 0x20);
 
@@ -81,7 +85,9 @@ public:
     /// Parameter-name dictionary; ModelNW::getMaterialParamName 0x7100c0709c indexes it
     /// with ResDic::GetKey and skips the two-byte BinString length.
     nn::util::ResDic* mShaderParamDic;  // 60
-    u8 _68[0x88 - 0x68];
+    /// Default runtime parameter block copied by MaterialObj::Reset.
+    const void* mDefaultParamData;  // 68
+    u8 _70[0x88 - 0x70];
     void* m_88;
     u8 _90[0x98 - 0x90];
     gfx::DescriptorSlot* mTextureDescriptorSlots;  // 98
@@ -89,7 +95,10 @@ public:
     u8 mTextureCount;  // a8
     // Graphics 0x7100f2e0f4 bounds agl::g3d::MaterialObj::GetResTexture's index with this byte.
     u8 _a9;
-    u8 _aa[0xb4 - 0xaa];
+    u8 _aa[0xae - 0xaa];
+    /// Size of the default runtime parameter block.
+    u16 mParamDataSize;  // ae
+    u8 _b0[0xb4 - 0xb0];
 };
 }  // namespace g3d
 }  // namespace nn
