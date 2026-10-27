@@ -17,6 +17,21 @@ class ResDic;
 namespace nn {
 namespace g3d {
 
+// 0x7100ac85ac: parameter type sizes used by the material parameter getters.
+class ResShaderParam {
+public:
+    enum Type : s32 {};
+
+    static size_t GetSize(Type type);
+
+    u8 _0[0x10];
+    u8 mType;  // 10
+    u8 _11;
+    u16 mDataOffset;  // 12
+    u8 _14[0xc];
+};
+static_assert(sizeof(ResShaderParam) == 0x20);
+
 class ResMaterial {
 public:
     u64 BindTexture(nn::g3d::TextureRef (*)(char const*, void*), void*);
@@ -62,13 +77,7 @@ public:
     u8 _50[0x58 - 0x50];
     /// One 0x20-byte per-parameter record. ModelNW's getMaterialParam* rows read the halfword
     /// byte offset at +0x12 and add it to the material object's parameter buffer.
-    struct ShaderParam {
-        u8 _0[0x12];
-        u16 mDataOffset;
-        u8 _14[0xc];
-    };
-    static_assert(sizeof(ShaderParam) == 0x20);
-    ShaderParam* mShaderParams;  // 58
+    ResShaderParam* mShaderParams;  // 58
     /// Parameter-name dictionary; ModelNW::getMaterialParamName 0x7100c0709c indexes it
     /// with ResDic::GetKey and skips the two-byte BinString length.
     nn::util::ResDic* mShaderParamDic;  // 60

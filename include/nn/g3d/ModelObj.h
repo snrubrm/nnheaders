@@ -51,6 +51,8 @@ public:
 
     // Inline-only in the original; name is a guess. The material parameter records store a
     // byte offset into m_UserData.
+    const void* getParamData() const { return m_UserData; }
+
     template <typename T>
     const T& getParam(int offset) const {
         return *static_cast<const T*>(static_cast<const void*>(static_cast<const u8*>(m_UserData) + offset));
