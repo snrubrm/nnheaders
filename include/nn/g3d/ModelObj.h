@@ -137,6 +137,8 @@ public:
     void CalculateSkeleton(int index);
     // 0x710132ecb0: gsys::ModelNW::calcGPUSkinning_ calls this after CalculateSkeleton.
     void CalculateShape(int index);
+    // 0x710132ed54: gsys::ModelNW::forceCalcDrawSetup calls this last.
+    void CalculateMaterial(int index);
 
     // Inline-only in the original; name is a guess. ModelNW::getName
     // 0x7100c06bc0 and ModelRig 0x7100c8338c read this actual resource.
