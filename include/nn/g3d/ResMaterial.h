@@ -10,6 +10,10 @@
 #include <nn/g3d/TextureRef.h>
 #include <nn/util/util_BinTypes.h>
 
+namespace nn::util {
+class ResDic;
+}
+
 namespace nn {
 namespace g3d {
 
@@ -55,7 +59,20 @@ public:
     };
     static_assert(sizeof(TextureRecord) == 0x20);
     TextureRecord* mTextureRecords;  // 48
-    u8 _50[0x88 - 0x50];
+    u8 _50[0x58 - 0x50];
+    /// One 0x20-byte per-parameter record. ModelNW's getMaterialParam* rows read the halfword
+    /// byte offset at +0x12 and add it to the material object's parameter buffer.
+    struct ShaderParam {
+        u8 _0[0x12];
+        u16 mDataOffset;
+        u8 _14[0xc];
+    };
+    static_assert(sizeof(ShaderParam) == 0x20);
+    ShaderParam* mShaderParams;  // 58
+    /// Parameter-name dictionary; ModelNW::getMaterialParamName 0x7100c0709c indexes it
+    /// with ResDic::GetKey and skips the two-byte BinString length.
+    nn::util::ResDic* mShaderParamDic;  // 60
+    u8 _68[0x88 - 0x68];
     void* m_88;
     u8 _90[0x98 - 0x90];
     gfx::DescriptorSlot* mTextureDescriptorSlots;  // 98

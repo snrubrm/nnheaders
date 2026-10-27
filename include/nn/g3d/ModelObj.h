@@ -44,8 +44,17 @@ private:
 public:
     gfx::Buffer* mBuffers;  // 40
 
-private:
-    u8 _48[0x50 - 0x48];
+public:
+    /// Runtime parameter buffer. ModelNW's getMaterialParam* rows add the ResMaterial shader
+    /// parameter's byte offset to this pointer.
+    void* m_UserData;  // 48
+
+    // Inline-only in the original; name is a guess. The material parameter records store a
+    // byte offset into m_UserData.
+    template <typename T>
+    const T& getParam(int offset) const {
+        return *static_cast<const T*>(static_cast<const void*>(static_cast<const u8*>(m_UserData) + offset));
+    }
 
 public:
     // AGL MaterialObj bindings 0x7100b33fbc/0x7100b33fd8 read the view array at
@@ -103,6 +112,19 @@ static_assert(offsetof(ShapeObj, mBuffers) == 0x20);
 static_assert(offsetof(ShapeObj, mBoundSphere) == 0x38);
 static_assert(sizeof(ShapeObj) == 0x68);
 
+// Runtime layout of one getMaterialParamTexSRT record; the target reads the two output
+// vectors and the rotation at these offsets.
+struct MaterialParamTexSRT {
+    f32 _0;
+    sead::Vector2f mScale;      // 4
+    f32 mRotate;                // c
+    sead::Vector2f mTranslate;  // 10
+    f32 _18;
+};
+static_assert(offsetof(MaterialParamTexSRT, mScale) == 0x4);
+static_assert(offsetof(MaterialParamTexSRT, mRotate) == 0xc);
+static_assert(offsetof(MaterialParamTexSRT, mTranslate) == 0x10);
+
 // TODO
 class ModelObj {
 public:
@@ -128,6 +150,15 @@ public:
     // inline-only in the original; name is a guess: +58 user pointer in ModelNW Bone/MaterialVisibilityCallback c04134/c04164.
     void* GetUserPtr() { return m_UserData; }
 
+    // Inline-only in the original; names are guesses. gsys::ModelNW::setBoneVisible and
+    // setMaterialVisible load these before calling the stored function.
+    void (*GetBoneVisibilityCallback() const)(ModelObj*, int) {
+        return mBoneVisibilityCallback;
+    }
+    void (*GetMaterialVisibilityCallback() const)(ModelObj*, int) {
+        return mMaterialVisibilityCallback;
+    }
+
     s32 get_8c() const { return _8c; }
 
     // Inline-only in the original; name is a guess. gsys::ModelNW::getViewNum 0x7100c07b88
@@ -135,9 +166,33 @@ public:
     u8 GetNumViews() const { return _18; }
 
     // Inline-only; names are ours. gsys::ModelRenderUnitNW::isVisible 0x7100c09d74 tests bit
-    // (ResShape +0x5e) of the word array at +0x10, then bit (ResShape +0x60) of the array at +0x8.
+    // (ResShape +0x5e) of the material array at +0x10, then bit (ResShape +0x60) of the bone
+    // array at +0x8.
     bool IsBoneVisible(int index) const { return m_pBoneVisArray[index >> 5] & (1 << (index & 0x1f)); }
     bool IsMatVisible(int index) const { return m_pMatVisArray[index >> 5] & (1 << (index & 0x1f)); }
+
+    // Inline-only in the original; name is a guess. gsys::ModelNW::setBoneVisible 0x7100c06d60
+    // updates the bit and calls the callback when the value changed.
+    bool SetBoneVisible(int index, bool visible) {
+        u32 word = m_pBoneVisArray[index >> 5];
+        const int bit = index & 0x1f;
+        const u32 mask = 1u << bit;
+        const u32 value = u32(visible) << bit;
+        const bool old = (word & mask) != 0;
+        word = (word & ~mask) | value;
+        m_pBoneVisArray[index >> 5] = word;
+        return old;
+    }
+    bool SetMatVisible(int index, bool visible) {
+        u32 word = m_pMatVisArray[index >> 5];
+        const int bit = index & 0x1f;
+        const u32 mask = 1u << bit;
+        const u32 value = u32(visible) << bit;
+        const bool old = (word & mask) != 0;
+        word = (word & ~mask) | value;
+        m_pMatVisArray[index >> 5] = word;
+        return old;
+    }
 
 private:
     struct InitializeArgument;
@@ -145,8 +200,8 @@ private:
     bool Initialize(const InitializeArgument& arg, void* buffer, size_t bufferSize);
 
     const ResModel* m_ResModel;
-    u32* m_pMatVisArray;
     u32* m_pBoneVisArray;
+    u32* m_pMatVisArray;
     u8 _18;
     u8 _19;
     u16 _1a;
@@ -162,8 +217,10 @@ private:
     void* _60;
     void* _68;
     void* _70;
-    void* _78;
-    void* _80;
+    /// gsys::ModelNW::setBoneVisible 0x7100c06d60 / setMaterialVisible 0x7100c07b08 call these
+    /// with the model object and the bit index (the target leaves the new value in w2).
+    void (*mBoneVisibilityCallback)(ModelObj*, int);  // 78
+    void (*mMaterialVisibilityCallback)(ModelObj*, int);  // 80
     bool _88;
     int _8c;
 };

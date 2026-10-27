@@ -146,14 +146,19 @@ struct ResSkeletonData {
     nn::util::BinTPtr<short> pMtxToBoneTable;
     nn::util::BinTPtr<nn::util::FloatColumnMajor4x3> pInvModelMatrixArray;
     nn::util::BinPtr pUserPtr;
-    nn::util::BinTPtr<short> pMirroringBoneTable;
-    uint8_t reserved1[8];
     nn::Bit32 flag;
     uint16_t boneCount;
     uint16_t smoothMtxCount;
     uint16_t rigidMtxCount;
     uint8_t reserved2[6];
+    // Sample sizes read by GetBranchEndIndex (0x7100ac72f0) and SkeletonObj::Initialize
+    // (0x7101337c1c): pBoneArray at +0x18, flag at +0x38, boneCount at +0x3c.
+    // The mirroring table offset is not verified.
+    nn::util::BinTPtr<short> pMirroringBoneTable;
 };
+static_assert(offsetof(ResSkeletonData, pBoneArray) == 0x18);
+static_assert(offsetof(ResSkeletonData, flag) == 0x38);
+static_assert(offsetof(ResSkeletonData, boneCount) == 0x3c);
 
 class ResSkeleton : public nn::util::AccessorBase<nn::g3d::ResSkeletonData> {
 public:
