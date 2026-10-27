@@ -18,10 +18,28 @@ public:
     // 0x710134b508
     void SetBiquadFilter(int type, f32 frequency);
 
+    // Inline-only in the original; SequenceSoundPlayer's SetTrack* loops write these fields.
+    void SetVolume(f32 volume) { mVolume = volume; }
+    void SetPitch(f32 pitch) { mPitch = pitch; }
+    void SetLpfFreq(f32 frequency) { mLpfFreq = frequency; }
+    void SetTvVolume(f32 volume) { mTvVolume = volume; }
+    void SetTvPan(f32 pan) { mTvPan = pan; }
+    void SetTvSurroundPan(f32 pan) { mTvSurroundPan = pan; }
+    void SetTvMainSend(f32 send) { mTvMainSend = send; }
+
 private:
     u8 _0[8];
     /* 0x8 */ u8 mPlayerTrackNo;
-    u8 _9[0x68 - 0x9];
+    u8 _9[0xc - 0x9];
+    /* 0xc */ f32 mVolume;
+    /* 0x10 */ f32 mPitch;
+    /* 0x14 */ u32 _14;
+    /* 0x18 */ f32 mTvVolume;
+    u8 _1c[0x50 - 0x1c];
+    /* 0x50 */ f32 mTvPan;
+    /* 0x54 */ f32 mTvSurroundPan;
+    /* 0x58 */ f32 mTvMainSend;
+    u8 _5c[0x68 - 0x5c];
     /* 0x68 */ const void* mSeqData;
     /* 0x70 */ const void* mSeqDataEnd;
     u8 _78[0x12b - 0x78];
@@ -32,7 +50,8 @@ private:
     /* 0x19c */ u8 mTranspose;
     u8 _19d[0x1a6 - 0x19d];
     /* 0x1a6 */ u8 mBiquadFilterType;
-    u8 _1a7[0x1b0 - 0x1a7];
+    u8 _1a7[0x1ac - 0x1a7];
+    /* 0x1ac */ f32 mLpfFreq;
     /* 0x1b0 */ f32 mBiquadFilterFrequency;
     /* 0x1b4 */ u32 mOutputLine;
     /* 0x1b8 */ s16 mTrackVariables[16];

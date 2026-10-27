@@ -13,6 +13,7 @@ namespace detail {
 namespace driver {
 
 class Channel;
+class SequenceTrack;
 
 /// The user callback the player runs at every sequence tick.
 using SequenceUserProcCallback = void (*)(u16, SequenceUserProcCallbackParam*, void*);
@@ -28,6 +29,21 @@ public:
     void SetLocalVariable(int index, s16 value);
     static void SetGlobalVariable(int variable, s16 value);
     s16* GetVariablePtr(int variable);
+
+    // 0x7101347d00 / 0x7101347f1c .. 0x7101348438
+    SequenceTrack* GetPlayerTrack(int index);
+    void SetTrackVolume(u32 track_mask, f32 volume);
+    void SetTrackPitch(u32 track_mask, f32 pitch);
+    void SetTrackLpfFreq(u32 track_mask, f32 frequency);
+    void SetTrackTvVolume(u32 track_mask, f32 volume);
+    void SetTrackTvPan(u32 track_mask, f32 pan);
+    void SetTrackTvSurroundPan(u32 track_mask, f32 pan);
+    void SetTrackTvMainSend(u32 track_mask, f32 send);
+    void SetTrackBiquadFilter(u32 track_mask, int type, f32 frequency);
+    void SetTrackTranspose(u32 track_mask, s8 transpose);
+    void SetTrackVelocityRange(u32 track_mask, u8 range);
+    void SetTrackOutputLine(u32 track_mask, u32 line);
+    void ResetTrackOutputLine(u32 track_mask);
 
     // The state transitions. In the original these are virtual overrides; their vtable slots are
     // not established here, so they are plain members.
@@ -49,7 +65,7 @@ private:
     u8 _101[0x120 - 0x101];
     SequenceUserProcCallback mUserProcCallback;  // +0x120
     void* mUserProcArg;                          // +0x128
-    u8 _130[0x1b0 - 0x130];
+    SequenceTrack* mTracks[16];  // +0x130
     s16 mLocalVariables[0x20];                   // +0x1b0, indexed by the variable number
     u8 _1f0[0x350 - 0x1f0];
     u32 mAudioFrameFrequency;                    // +0x350, zero means one update per frame
