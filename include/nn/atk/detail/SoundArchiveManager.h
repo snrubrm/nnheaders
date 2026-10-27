@@ -12,6 +12,7 @@ namespace atk {
 class SoundHandle;
 class SoundArchive;
 class SoundDataManager;
+class SoundPlayer;
 
 namespace detail {
 class AddonSoundArchiveContainer;
@@ -38,7 +39,8 @@ public:
     const nn::atk::SoundDataManager* mTargetSoundDataManager;
     u32 mSoundPlayerCount;  // read through SoundArchivePlayer::GetSoundPlayerCount
     u32 _34;
-    u64 _38;
+    /// GetSoundPlayer 0x710133b438 indexes this array with a 0x78-byte stride.
+    SoundPlayer* mSoundPlayers;
 };
 static_assert(sizeof(SoundArchiveManager) == 0x40);
 }  // namespace detail

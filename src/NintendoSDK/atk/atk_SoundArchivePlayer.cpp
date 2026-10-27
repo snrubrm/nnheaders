@@ -1,10 +1,16 @@
 #include <nn/atk/SoundArchivePlayer.h>
+#include <nn/atk/SoundPlayer.h>
 #include <nn/atk/detail/StreamSoundRuntime.h>
 
 namespace nn::atk {
 
 bool SoundArchivePlayer::IsAvailable() const {
     return mArchiveManager.IsAvailable();
+}
+
+SoundPlayer* SoundArchivePlayer::GetSoundPlayer(u32 player_id) {
+    const u32 index = player_id & 0xffffff;
+    return &mArchiveManager.mSoundPlayers[index];
 }
 
 const SoundArchive* SoundArchivePlayer::GetSoundArchive() const {

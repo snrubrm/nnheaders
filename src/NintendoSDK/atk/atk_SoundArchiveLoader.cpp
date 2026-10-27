@@ -19,4 +19,10 @@ bool SoundArchiveLoader::IsAvailable() const {
     return mArchive->IsAvailable();
 }
 
+const void* SoundArchiveLoader::GetFileAddressFromSoundArchive(u32 file_id) const {
+    if (!mArchive)
+        return nullptr;
+    return mArchive->detail_GetFileAddress(file_id);
+}
+
 }  // namespace nn::atk::detail
