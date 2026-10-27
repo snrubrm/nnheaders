@@ -62,8 +62,8 @@ bool FileStreamProxy::CanSetFsAccessLog() const {
     return mStream->CanSetFsAccessLog();
 }
 
-bool FileStreamProxy::SetFsAccessLog(FsAccessLog* log) {
-    return mStream->SetFsAccessLog(log);
+void FileStreamProxy::SetFsAccessLog(FsAccessLog* log) {
+    mStream->SetFsAccessLog(log);
 }
 
 }  // namespace nn::atk::detail::fnd

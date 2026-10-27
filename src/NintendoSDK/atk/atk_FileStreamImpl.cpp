@@ -20,6 +20,24 @@ bool FileStreamImpl::CanSetFsAccessLog() const {
     return true;
 }
 
+// 0x710135c400 / 0x710135c40c / 0x710135c418
+bool FileStreamImpl::CanRead() const {
+    return IsOpened();
+}
+
+bool FileStreamImpl::CanWrite() const {
+    return IsOpened();
+}
+
+bool FileStreamImpl::CanSeek() const {
+    return IsOpened();
+}
+
+// 0x710135c4bc
+u32 FileStreamImpl::ValidateAlignment(const void*) const {
+    return GetIoBufferAlignment();
+}
+
 bool FileStreamImpl::DirectStream::IsOpened() const {
     return mStream->IsOpened();
 }

@@ -24,7 +24,7 @@ public:
     bool IsCacheEnabled() const override;
     u32 GetIoBufferAlignment() const override;
     bool CanSetFsAccessLog() const override;
-    bool SetFsAccessLog(FsAccessLog* log) override;
+    void SetFsAccessLog(FsAccessLog* log) override;
 
 private:
     /* 0x8 */ Stream* mStream;

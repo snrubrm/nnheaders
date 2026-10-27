@@ -47,7 +47,7 @@ public:
     virtual bool IsCacheEnabled() const = 0;
     virtual u32 GetIoBufferAlignment() const = 0;
     virtual bool CanSetFsAccessLog() const = 0;
-    virtual bool SetFsAccessLog(FsAccessLog* log) = 0;
+    virtual void SetFsAccessLog(FsAccessLog* log) = 0;
 };
 
 }  // namespace nn::atk::detail::fnd
