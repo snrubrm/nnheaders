@@ -2,6 +2,11 @@
 
 namespace nn::atk::detail::driver {
 
+// 0x710134b540
+s16* SequenceTrack::GetVariablePtr(int index) {
+    return index < 0x10 ? &mTrackVariables[index] : nullptr;
+}
+
 void SequenceTrack::SetPlayerTrackNo(int track_no) {
     mPlayerTrackNo = track_no;
 }

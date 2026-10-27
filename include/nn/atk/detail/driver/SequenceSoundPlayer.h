@@ -1,6 +1,7 @@
 #pragma once
 
 #include <nn/types.h>
+#include <nn/atk/AuxBus.h>
 
 namespace nn {
 namespace atk {
@@ -44,6 +45,7 @@ public:
     void SetTrackVelocityRange(u32 track_mask, u8 range);
     void SetTrackOutputLine(u32 track_mask, u32 line);
     void ResetTrackOutputLine(u32 track_mask);
+    void SetTrackTvFxSend(u32 track_mask, nn::atk::AuxBus bus, f32 send);
 
     // The state transitions. In the original these are virtual overrides; their vtable slots are
     // not established here, so they are plain members.

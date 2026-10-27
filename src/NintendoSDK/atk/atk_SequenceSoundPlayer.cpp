@@ -149,6 +149,15 @@ void SequenceSoundPlayer::ResetTrackOutputLine(u32 track_mask) {
     }
 }
 
+void SequenceSoundPlayer::SetTrackTvFxSend(u32 track_mask, nn::atk::AuxBus bus, f32 send) {
+    for (s32 i = 0; i < 16 && track_mask != 0; ++i, track_mask >>= 1) {
+        if ((track_mask & 1) != 0) {
+            if (SequenceTrack* track = mTracks[i])
+                track->SetTvFxSend(bus, send);
+        }
+    }
+}
+
 s16* SequenceSoundPlayer::GetVariablePtr(int variable) {
     if (variable <= 0xf)
         return &mLocalVariables[variable];

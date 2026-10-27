@@ -1,6 +1,7 @@
 #pragma once
 
 #include <nn/types.h>
+#include <nn/atk/AuxBus.h>
 
 namespace nn::atk::detail::driver {
 
@@ -11,6 +12,8 @@ public:
     void SetPlayerTrackNo(int track_no);
     void SetSeqData(const void* data, int size);
     void SetTrackVariable(int index, s16 value);
+    // 0x710134b540
+    s16* GetVariablePtr(int index);
     void SetBankIndex(int index);
     void SetTranspose(int transpose);
     void SetVelocityRange(int range);
@@ -26,6 +29,7 @@ public:
     void SetTvPan(f32 pan) { mTvPan = pan; }
     void SetTvSurroundPan(f32 pan) { mTvSurroundPan = pan; }
     void SetTvMainSend(f32 send) { mTvMainSend = send; }
+    void SetTvFxSend(nn::atk::AuxBus bus, f32 send) { mTvFxSend[u32(bus)] = send; }
 
 private:
     u8 _0[8];
@@ -39,7 +43,7 @@ private:
     /* 0x50 */ f32 mTvPan;
     /* 0x54 */ f32 mTvSurroundPan;
     /* 0x58 */ f32 mTvMainSend;
-    u8 _5c[0x68 - 0x5c];
+    /* 0x5c */ f32 mTvFxSend[3];
     /* 0x68 */ const void* mSeqData;
     /* 0x70 */ const void* mSeqDataEnd;
     u8 _78[0x12b - 0x78];
