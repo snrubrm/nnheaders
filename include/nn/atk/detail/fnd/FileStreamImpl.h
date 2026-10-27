@@ -26,10 +26,14 @@ public:
     bool IsOpened() const;
     u32 GetIoBufferAlignment() const;
     bool CanSetFsAccessLog() const;
+    // 0x710135c8e0. The stream is a partial standalone model here, so the native void return is used.
+    void SetFsAccessLog(FsAccessLog* log);
 
 private:
     u8 _0[0x10];
     /* 0x10 */ bool mOpened;
+    u8 _11[0x78 - 0x11];
+    /* 0x78 */ FsAccessLog* mFsAccessLog;
 };
 
 }  // namespace nn::atk::detail::fnd

@@ -37,4 +37,9 @@ bool FileStreamImpl::DirectStream::CanSeek() const {
     return mStream->CanSeek();
 }
 
+void FileStreamImpl::SetFsAccessLog(FsAccessLog* log) {
+    mFsAccessLog = log;
+}
+
 }  // namespace nn::atk::detail::fnd
+
