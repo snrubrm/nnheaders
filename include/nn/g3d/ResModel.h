@@ -47,6 +47,10 @@ public:
         return dict->FindIndex(name);
     }
 
+    // Inline-only in the original; name is a guess. The skeleton resource read by the AS
+    // bone lookups (SkeltalAsset 0x710125d88c and the mii rows).
+    const ResSkeleton* GetSkeleton() const { return pSkeleton.Get(); }
+
     // BindTexture AC6308 reads material count 6c and B8-byte array at 40.
     // Native ResFile arrays advance by 78 in AC57FC/AC58A0.
     u8 _0[0x10];
@@ -60,7 +64,11 @@ public:
     u8 _38[0x40 - 0x38];
     ResMaterial* mMaterials;
     nn::util::BinTPtr<nn::util::ResDic> pMaterialDic;
-    u8 _50[0x6c - 0x50];
+    u8 _50[0x60 - 0x50];
+    // gsys::G3dResModelEx::initialize (0x7100c6dd78) stores the game's model-extension object
+    // here (0xc6dda8). The AS bone lookups recover the extension from the resource through it.
+    void* pExtension;
+    u8 _68[0x6c - 0x68];
     u16 mMaterialCount;
     u8 _6e[0x78 - 0x6e];
 };

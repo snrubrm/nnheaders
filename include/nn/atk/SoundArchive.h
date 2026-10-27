@@ -242,8 +242,11 @@ public:
     virtual void FileAccessEnd() const {}
     virtual bool IsAddon() const { return false; }
     virtual detail::fnd::FileStream* OpenStream(void* buffer, size_t buffer_size, s64 offset, size_t size) const = 0;
-    virtual detail::fnd::FileStream* OpenExtStream(void* buffer, size_t buffer_size, const char* ext_path,
-                                                   const char* name, size_t size) const = 0;
+    // The mangled symbol substitutes the first void* for the fourth parameter, so the
+    // original declaration's fourth parameter is a void* (not a string).
+    virtual detail::fnd::FileStream* OpenExtStream(void* buffer, size_t buffer_size,
+                                                   const char* ext_path, void* name,
+                                                   size_t size) const = 0;
 
     /// The player limits of the archive (aal::StreamingViewer::initialize 0x7100b7d730 reads the stream counts).
     struct SoundArchivePlayerInfo {
@@ -263,6 +266,7 @@ public:
 
     bool IsAvailable() const;
     void Initialize(detail::SoundArchiveFileReader* reader);
+    void Finalize();
     u32 GetSoundCount() const;
     u32 GetPlayerCount() const;
     u32 GetGroupCount() const;
@@ -280,7 +284,10 @@ public:
 protected:
     // IsAvailable tests it and every accessor above forwards to it.
     detail::SoundArchiveFileReader* mFileReader;  // +0x8
-    u8 _10[0x288];
+    u8 _10[0x18 - 0x10];
+    // Finalize 0x7101339f40 stores the constant 47 here after it releases the reader.
+    u16 mFileVersion;  // +0x18
+    u8 _1a[0x298 - 0x1a];
     // +0x298, added to a file record's offset when a stream is opened. The original's data ends
     // at 0x2a0, so the class has a second word here that nothing we model reads.
     u32 mFileBlockOffset;
@@ -304,7 +311,8 @@ public:
     void FileAccessBegin() const override;
     void FileAccessEnd() const override;
     detail::fnd::FileStream* OpenStream(void* buffer, size_t buffer_size, s64 offset, size_t size) const override;
-    detail::fnd::FileStream* OpenExtStream(void* buffer, size_t buffer_size, const char* ext_path, const char* name,
+    detail::fnd::FileStream* OpenExtStream(void* buffer, size_t buffer_size,
+                                           const char* ext_path, void* name,
                                            size_t size) const override;
 
     detail::SoundArchiveFile::FileHeader mFileHeader;
@@ -326,7 +334,8 @@ public:
     const void* detail_GetFileAddress(u32 file_id) const override;
     size_t detail_GetRequiredStreamBufferSize() const override;
     detail::fnd::FileStream* OpenStream(void* buffer, size_t buffer_size, s64 offset, size_t size) const override;
-    detail::fnd::FileStream* OpenExtStream(void* buffer, size_t buffer_size, const char* ext_path, const char* name,
+    detail::fnd::FileStream* OpenExtStream(void* buffer, size_t buffer_size,
+                                           const char* ext_path, void* name,
                                            size_t size) const override;
 
 private:

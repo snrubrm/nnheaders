@@ -61,5 +61,25 @@ const u32* SoundArchive::detail_GetWaveArchiveIdTable(u32 wave_archive_id) const
     return mFileReader->GetWaveArchiveIdTable(wave_archive_id);
 }
 
+// 0x7101339f40
+void SoundArchive::Finalize() {
+    if (mFileReader) {
+        mFileReader->Finalize();
+        mFileReader = nullptr;
+    }
+    mFileVersion = 0x2f;
+}
+
+// 0x7101339ecc: the memory archive has no external streams.
+detail::fnd::FileStream* MemorySoundArchive::OpenExtStream(void*, size_t, const char*, void*,
+                                                  size_t) const {
+    return nullptr;
+}
+
+// 0x7101339ed4: the 0x20-byte file stream object is the whole buffer requirement.
+size_t MemorySoundArchive::detail_GetRequiredStreamBufferSize() const {
+    return 0x20;
+}
+
 }  // namespace nn::atk
 

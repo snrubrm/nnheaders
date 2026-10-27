@@ -20,10 +20,12 @@ public:
 // modelled; the default implementations stay in the platform stream classes.
 class Stream {
 public:
+    // MemoryFileStream::Seek (0x71013543e0) treats value 1 as the end-relative and value 2 as the
+    // current-relative origin, so the original enumerators are ordered Begin, End, Current.
     enum SeekOrigin {
         SeekOrigin_Begin,
-        SeekOrigin_Current,
         SeekOrigin_End,
+        SeekOrigin_Current,
     };
 
     virtual ~Stream() = default;
