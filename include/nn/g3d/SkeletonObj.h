@@ -37,6 +37,7 @@ public:
     // skeleton's matrix flags and indexes the 0x60-byte local matrix slots.
     void SetFlags(u16 bits) { m_Flags |= bits; }
     BoneLocalMatrix* GetLocalMatrix(int index) const { return &mLocalMatrices[index]; }
+    void* GetWorldMatrices() const { return mWorldMatrices; }
 
     /// 0x7101337d1c (declared only)
     void ClearLocalMtx();
@@ -50,7 +51,8 @@ private:
     u8 _a[0x10 - 0xa];
     const ResBone* m_Bones;  // 10
     BoneLocalMatrix* mLocalMatrices;  // 18
-    u8 _20[0x40 - 0x20];
+    void* mWorldMatrices;  // 20, 0x40-byte per-bone world matrices
+    u8 _28[0x40 - 0x28];
     // ModelRenderCache::loadResource 0x7100c809ac indexes this array with the buffer index and
     // passes its +0x48 size to ShaderUtilG3D::load.
     gfx::TBuffer<gfx::ApiVariationNvn8>* mBuffers;  // 40

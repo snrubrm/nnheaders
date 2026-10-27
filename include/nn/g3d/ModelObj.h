@@ -153,6 +153,7 @@ public:
 
     // inline-only in the original; name is a guess: +58 user pointer in ModelNW Bone/MaterialVisibilityCallback c04134/c04164.
     void* GetUserPtr() { return m_UserData; }
+    void SetUserPtr(void* ptr) { m_UserData = ptr; }
 
     // Inline-only in the original; names are guesses. gsys::ModelNW::setBoneVisible and
     // setMaterialVisible load these before calling the stored function.
@@ -162,6 +163,15 @@ public:
     void (*GetMaterialVisibilityCallback() const)(ModelObj*, int) {
         return mMaterialVisibilityCallback;
     }
+    void SetBoneVisibilityCallback(void (*callback)(ModelObj*, int)) {
+        mBoneVisibilityCallback = callback;
+    }
+    void SetMaterialVisibilityCallback(void (*callback)(ModelObj*, int)) {
+        mMaterialVisibilityCallback = callback;
+    }
+
+    // 0x710132edb0: stores the material texture-change callback.
+    void SetTextureChangeCallback(void (*callback)(MaterialObj*, int));
 
     s32 get_8c() const { return _8c; }
 
