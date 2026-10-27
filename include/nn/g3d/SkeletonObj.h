@@ -8,6 +8,17 @@
 
 namespace nn::g3d {
 
+// One 0x60-byte local bone matrix slot. gsys::ModelNW::setBoneLocalScale 0x7100c04cd0
+// writes the scale at +0x10 and clears bits 24-27 of the flag word at +0.
+struct BoneLocalMatrix {
+    u32 mFlags;
+    u8 _4[0xc];
+    sead::Vector3f mScale;
+    u8 _1c[4];
+    f32 mMatrix[4][4];  // 20, a 4x4 matrix the game transposes into a 3x4
+};
+static_assert(sizeof(BoneLocalMatrix) == 0x60);
+
 class SkeletonObj {
 public:
     const ResSkeleton* GetRes() const { return m_Res; }
@@ -22,6 +33,11 @@ public:
     gfx::TBuffer<gfx::ApiVariationNvn8>* GetBuffersMaybe() const { return mBuffers; }
     u64 GetBufferSizeMaybe() const { return mBufferSize; }
 
+    // Inline-only in the original; names are guesses. ModelNW::setBoneLocalScale marks the
+    // skeleton's matrix flags and indexes the 0x60-byte local matrix slots.
+    void SetFlags(u16 bits) { m_Flags |= bits; }
+    BoneLocalMatrix* GetLocalMatrix(int index) const { return &mLocalMatrices[index]; }
+
     /// 0x7101337d1c (declared only)
     void ClearLocalMtx();
     // 0x7101338974 / 0x71013389c0
@@ -33,7 +49,8 @@ private:
     u16 m_Flags;  // 8
     u8 _a[0x10 - 0xa];
     const ResBone* m_Bones;  // 10
-    u8 _18[0x40 - 0x18];
+    BoneLocalMatrix* mLocalMatrices;  // 18
+    u8 _20[0x40 - 0x20];
     // ModelRenderCache::loadResource 0x7100c809ac indexes this array with the buffer index and
     // passes its +0x48 size to ShaderUtilG3D::load.
     gfx::TBuffer<gfx::ApiVariationNvn8>* mBuffers;  // 40
