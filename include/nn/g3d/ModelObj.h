@@ -2,6 +2,7 @@
 
 #include <nn/types.h>
 #include <nn/util/MathTypes.h>
+#include <math/seadVector.h>
 #include <nn/gfx/gfx_DescriptorSlot.h>
 #include <nn/gfx/gfx_Types.h>
 #include <nn/g3d/ResShape.h>
@@ -12,6 +13,16 @@ class ResMaterial;
 class ResModel;
 class ShapeObj;
 class SkeletonObj;
+
+// The bound sphere cached on a ShapeObj at +0x38. gsys::ModelRenderUnitNW::getBoundSphereImpl
+// 0x7100c0a530 reads the center from +0, +4 and +8 and the radius from +0x10.
+class Sphere {
+public:
+    sead::Vector3f mCenter;
+    f32 _c;
+    f32 mRadius;
+};
+static_assert(offsetof(Sphere, mRadius) == 0x10);
 
 // Graphics 0x7100f2e0f4 walks ModelObj's material array with a 0x80-byte stride and reads the
 // resource material through +0; agl::g3d::MaterialObj::GetResTexture 0x7100b33fbc reads +0x50.
@@ -76,11 +87,20 @@ public:
     gfx::Buffer* mBuffers;  // 20
 
 private:
+    u8 _28[0x38 - 0x28];
+
+public:
+    // Bound sphere of the shape. gsys::ModelRenderUnitNW::getBoundSphereImpl reads this pointer
+    // and copies the center and radius out of it.
+    Sphere* mBoundSphere;  // 38
+
+private:
     // ModelRenderUnitNW::getShape 0x7100c09d28 indexes this array with a 0x68-byte stride.
-    u8 _28[0x68 - 0x28];
+    u8 _40[0x68 - 0x40];
 };
 static_assert(offsetof(ShapeObj, _8_flags) == 0x8);
 static_assert(offsetof(ShapeObj, mBuffers) == 0x20);
+static_assert(offsetof(ShapeObj, mBoundSphere) == 0x38);
 static_assert(sizeof(ShapeObj) == 0x68);
 
 // TODO
