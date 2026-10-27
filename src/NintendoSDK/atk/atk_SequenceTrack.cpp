@@ -31,4 +31,9 @@ void SequenceTrack::SetOutputLine(u32 line) {
     mOutputLine = line;
 }
 
+void SequenceTrack::SetBiquadFilter(int type, f32 frequency) {
+    mBiquadFilterType = type;
+    mBiquadFilterFrequency = frequency;
+}
+
 }  // namespace nn::atk::detail::driver

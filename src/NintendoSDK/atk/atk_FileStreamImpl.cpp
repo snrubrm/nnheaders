@@ -2,6 +2,9 @@
 
 namespace nn::atk::detail::fnd {
 
+void FileStreamImpl::DirectStream::Close() {
+}
+
 bool FileStreamImpl::IsOpened() const {
     return mOpened;
 }

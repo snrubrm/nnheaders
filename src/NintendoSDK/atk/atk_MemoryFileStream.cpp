@@ -50,4 +50,12 @@ void MemoryFileStream::Close() {
     mData = nullptr;
 }
 
+s64 MemoryFileStream::Write(const void* data, u64 size, fnd::FndResult* result) {
+    return 0;
+}
+
+fnd::FsAccessLog* MemoryFileStream::SetFsAccessLog(fnd::FsAccessLog* log) {
+    return nullptr;
+}
+
 }  // namespace nn::atk::detail

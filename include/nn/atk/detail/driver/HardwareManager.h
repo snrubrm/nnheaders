@@ -4,6 +4,8 @@
 #include <nn/atk/AuxBus.h>
 #include <nn/audio.h>
 #include <nn/atk/detail/Util.h>
+#include <nn/os.h>
+#include <nn/os/os_Mutex.h>
 #include <nn/types.h>
 
 namespace nn::atk::detail {
@@ -53,19 +55,28 @@ public:
     // Inline-only, name guessed: aal::FinalOutputMeasure::updateActivation 0x7100baa290 compares +0x648
     // with 48000.
     u32 GetRendererSampleRate() const { return mRendererSampleRate; }
+    // 0x71013528ec / 0x71013528f4: the effect-aux list is guarded by the mutex at +0x368.
+    void LockEffectAuxList();
+    void UnlockEffectAuxList();
+    // 0x710134617c: waits on the audio-renderer event at +0x88.
+    bool TimedWaitAudioRendererEvent(nn::TimeSpan span);
 
 private:
     bool mIsInitialized;
     u8 _1[0x18 - 1];
     nn::audio::AudioRendererConfig mAudioRendererConfig;
-    u8 _70[0xd0 - 0x70];
+    u8 _70[0x88 - 0x70];
+    /* 0x88 */ nn::os::SystemEventType mAudioRendererEvent;
+    u8 _b8[0xd0 - 0xb8];
     OutputMode mOutputMode;
     u8 _d4[0xdc - 0xd4];
     f32 mMasterVolumeStart;
     f32 mMasterVolumeTarget;
     s32 mMasterVolumeFrames;
     s32 mMasterVolumeCurrentFrame;
-    u8 _ec[0x648 - 0xec];
+    u8 _ec[0x368 - 0xec];
+    /* 0x368 */ nn::os::MutexType mEffectAuxMutex;
+    u8 _388[0x648 - 0x388];
     u32 mRendererSampleRate;
     u32 mRendererSampleCount;  // +0x64c
     u8 _650[0x758 - 0x650];

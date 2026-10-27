@@ -17,4 +17,9 @@ void EffectAux::SetEffectBuffer(void* buffer, u64 size) {
     mBufferSize = size;
 }
 
+bool EffectAux::IsRemovable() const {
+    return nn::audio::IsAuxRemovable(&mAux);
+}
+
 }  // namespace nn::atk
+

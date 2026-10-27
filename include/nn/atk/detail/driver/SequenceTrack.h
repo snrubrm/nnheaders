@@ -15,6 +15,8 @@ public:
     void SetTranspose(int transpose);
     void SetVelocityRange(int range);
     void SetOutputLine(u32 line);
+    // 0x710134b508
+    void SetBiquadFilter(int type, f32 frequency);
 
 private:
     u8 _0[8];
@@ -28,7 +30,10 @@ private:
     /* 0x198 */ u8 mVelocityRange;
     u8 _199[0x19c - 0x199];
     /* 0x19c */ u8 mTranspose;
-    u8 _19d[0x1b4 - 0x19d];
+    u8 _19d[0x1a6 - 0x19d];
+    /* 0x1a6 */ u8 mBiquadFilterType;
+    u8 _1a7[0x1b0 - 0x1a7];
+    /* 0x1b0 */ f32 mBiquadFilterFrequency;
     /* 0x1b4 */ u32 mOutputLine;
     /* 0x1b8 */ s16 mTrackVariables[16];
 };

@@ -181,6 +181,7 @@ add_library(NintendoSDK OBJECT
   include/nn/atk/detail/AdvancedWaveSound.h
   include/nn/atk/detail/SequenceSound.h
   include/nn/atk/detail/BasicSoundPlayerHandle.h
+  include/nn/atk/detail/SequenceSoundFile.h
   include/nn/atk/StreamSoundHandle.h
   include/nn/atk/SequenceSoundHandle.h
   include/nn/atk/detail/SoundInstanceManager.h
@@ -194,6 +195,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/vfx/vfx_Attribute.cpp
   src/NintendoSDK/vfx/vfx_EmitterSet.cpp
   src/NintendoSDK/vfx/vfx_System.cpp
+  src/NintendoSDK/vfx/vfx_Config.cpp
   include/nn/socket.h
   include/nn/aoc.h
   include/nn/ro.h
@@ -378,6 +380,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_LowLevelVoiceCommand.cpp
   src/NintendoSDK/atk/atk_SequenceSoundFileReader.cpp
   src/NintendoSDK/atk/atk_StreamSound.cpp
+  src/NintendoSDK/atk/atk_SoundThread.cpp
   src/NintendoSDK/atk/atk_WaveSound.cpp
   src/NintendoSDK/atk/atk_AdvancedWaveSound.cpp
   src/NintendoSDK/atk/atk_SequenceSound.cpp

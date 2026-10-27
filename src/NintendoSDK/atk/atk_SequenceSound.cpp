@@ -10,6 +10,9 @@ void SequenceSound::DetachTempSpecialHandle() {
     mTempSpecialHandle->DetachSound();
 }
 
+void SequenceSound::OnUpdateParam() {
+}
+
 SoundPlayerHandle* SequenceSound::GetBasicSoundPlayerHandle() {
     return &mBasicSoundPlayerHandle;
 }

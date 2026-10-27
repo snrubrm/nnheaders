@@ -1,5 +1,6 @@
 #pragma once
 
+#include <nn/atk/detail/fnd/Stream.h>
 #include <nn/types.h>
 
 namespace nn::atk::detail {
@@ -21,6 +22,10 @@ public:
     void EnableCache(void*, u64);
     void DisableCache();
     void Close();
+    // 0x710135444c / 0x71013544a8: the memory stream cannot write or hold an access log.
+    s64 Write(const void* data, u64 size, fnd::FndResult* result);
+    // The native body returns the log pointer slot, so it is modelled as returning it.
+    fnd::FsAccessLog* SetFsAccessLog(fnd::FsAccessLog* log);
 
 private:
     u8 _0[8];

@@ -26,6 +26,18 @@ namespace driver {
 void HardwareManager::FlushDataCache(void*, size_t) {
 }
 
+void HardwareManager::LockEffectAuxList() {
+    nn::os::LockMutex(&mEffectAuxMutex);
+}
+
+void HardwareManager::UnlockEffectAuxList() {
+    nn::os::UnlockMutex(&mEffectAuxMutex);
+}
+
+bool HardwareManager::TimedWaitAudioRendererEvent(nn::TimeSpan span) {
+    return nn::os::TimedWaitSystemEvent(&mAudioRendererEvent, span);
+}
+
 }  // namespace driver
 }  // namespace detail
 }  // namespace atk

@@ -68,6 +68,7 @@ struct SystemEventType {
     u8 state;
 };
 void WaitSystemEvent(SystemEventType* event);
+bool TimedWaitSystemEvent(SystemEventType* event, nn::TimeSpan span);
 // 0x71011fb5ac calls this through the import table on the AudioMgr event at +0x240.
 bool TryWaitSystemEvent(SystemEventType* event);
 void DestroySystemEvent(SystemEventType* event);

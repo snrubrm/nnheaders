@@ -12,6 +12,7 @@ public:
     // Nested stream that forwards the read-side queries to the stream at +0x8.
     class DirectStream : public Stream {
     public:
+        void Close() override;
         bool IsOpened() const override;
         u64 GetSize() const override;
         bool CanRead() const override;

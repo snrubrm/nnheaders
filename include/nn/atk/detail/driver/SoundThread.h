@@ -9,6 +9,8 @@ public:
     /// Registers a function that is called by the sound thread every sound frame with `arg`.
     void RegisterSoundFrameUserCallback(void (*callback)(unsigned long), unsigned long arg);
     void ClearSoundFrameUserCallback();
+    // 0x7101352740: the native body is empty.
+    void ForceWakeup();
 };
 
 }  // namespace nn::atk::detail::driver

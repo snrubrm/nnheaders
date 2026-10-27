@@ -12,6 +12,8 @@ class SequenceSound {
 public:
     bool IsAttachedTempSpecialHandle();
     void DetachTempSpecialHandle();
+    // 0x7101359f60 / 0x7101361c64: the native bodies are empty.
+    void OnUpdateParam();
     // 0x7101361c5c
     SoundPlayerHandle* GetBasicSoundPlayerHandle();
 
