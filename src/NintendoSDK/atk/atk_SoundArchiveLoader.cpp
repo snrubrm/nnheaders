@@ -1,13 +1,18 @@
+#include <nn/atk/SoundArchive.h>
 #include <nn/atk/SoundDataManager.h>
 
-namespace nn {
-namespace atk {
-namespace detail {
+namespace nn::atk::detail {
 
-void SoundArchiveLoader::SetSoundArchive(const SoundArchive* archive) {
-    mArchive = archive;
+SoundArchiveLoader::SoundArchiveLoader() : mArchive(nullptr) {}
+
+SoundArchiveLoader::~SoundArchiveLoader() {
+    mArchive = nullptr;
 }
 
-}  // namespace detail
-}  // namespace atk
-}  // namespace nn
+bool SoundArchiveLoader::IsAvailable() const {
+    if (!mArchive)
+        return false;
+    return mArchive->IsAvailable();
+}
+
+}  // namespace nn::atk::detail
