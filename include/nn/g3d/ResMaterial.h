@@ -63,7 +63,15 @@ public:
     // 0x7100c06f30 builds its SafeString from this pointer plus two characters.
     const char* m_pName;
 
-    u8 _18[0x30 - 0x18];
+    // The shading-model and shader names the shader archive is searched with (0x7100c3d3b4).
+    struct ShaderAssign {
+        nn::util::BinPtrToString mShadingModelName;
+        nn::util::BinPtrToString mShaderName;
+    };
+
+    u8 _18[0x28 - 0x18];
+    ShaderAssign* mShaderAssign;  // 28
+
     const gfx::TextureView** mTextureViews;  // 30
     nn::util::BinPtrToString* mTextureNames;  // 38
     u8 _40[0x48 - 0x40];
