@@ -14,6 +14,11 @@ class ResShaderFile {
 public:
     static bool IsValid(const void* data);
     static ResShaderFile* ResCast(void* data);
+
+    // The relocated shader archive at +0x20; gsys::ModelShaderArchive::setBinary 0x7100c3cea0
+    // stores this pointer in its archive at +0x30.
+    u8 _0[0x20];
+    void* mShaderArchive;  // 20
 };
 
 // Same resource prefix as ResFile: the relocated file name at +0x20, the model record array at
