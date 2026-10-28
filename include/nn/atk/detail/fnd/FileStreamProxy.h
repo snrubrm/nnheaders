@@ -7,7 +7,7 @@ namespace nn::atk::detail::fnd {
 
 // Forwards every stream call to the stream at +0x8. The Open/Seek bodies do more than the
 // one-call forwarders and are not modelled yet.
-class FileStreamProxy : public Stream {
+class FileStreamProxy : public FileStream {
 public:
     void Close() override;
     bool IsOpened() const override;
@@ -27,7 +27,7 @@ public:
     void SetFsAccessLog(FsAccessLog* log) override;
 
 private:
-    /* 0x8 */ Stream* mStream;
+    /* 0x8 */ FileStream* mStream;
 };
 
 }  // namespace nn::atk::detail::fnd

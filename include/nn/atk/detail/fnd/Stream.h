@@ -7,16 +7,7 @@ namespace nn::atk::detail::fnd {
 struct FndResult;
 class FsAccessLog;
 
-class FileStream {
-public:
-    enum AccessMode {
-        AccessMode_Read,
-        AccessMode_Write,
-        AccessMode_ReadWrite,
-    };
-};
-
-// Interface of the SDK's file streams. Only the virtual order needed by the proxy classes is
+// Interface of the SDK's plain streams. Only the virtual order needed by the stream classes is
 // modelled; the default implementations stay in the platform stream classes.
 class Stream {
 public:
@@ -42,7 +33,20 @@ public:
     virtual bool CanRead() const = 0;
     virtual bool CanWrite() const = 0;
     virtual bool CanSeek() const = 0;
-    virtual bool Open(const char* path, FileStream::AccessMode mode) = 0;
+};
+
+// A stream that can also open a file and cache its reads. FileStreamImpl's vtable continues the
+// Stream slots with these eight, and the nested DirectStream (which only implements Stream) has
+// the shorter vtable the binary shows at its vtable.
+class FileStream : public Stream {
+public:
+    enum AccessMode {
+        AccessMode_Read,
+        AccessMode_Write,
+        AccessMode_ReadWrite,
+    };
+
+    virtual bool Open(const char* path, AccessMode mode) = 0;
     virtual void Flush() = 0;
     virtual void EnableCache(void* buffer, u64 size) = 0;
     virtual void DisableCache() = 0;

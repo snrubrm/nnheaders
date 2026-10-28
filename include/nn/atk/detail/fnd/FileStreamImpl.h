@@ -7,9 +7,9 @@
 namespace nn::atk::detail::fnd {
 
 // The atk file stream that reads through a stream cache and falls back to the direct file
-// handle. The class derives from Stream: its vtable is at 0x710252dab0 and the open flag lives at
-// +0x10. Nested DirectStream objects at +0x68 forward to this stream for the cache.
-class FileStreamImpl : public Stream {
+// handle. The class derives from FileStream: its vtable is at 0x710252dab0 and the open flag lives
+// at +0x10. The nested DirectStream object at +0x68 only implements Stream.
+class FileStreamImpl : public FileStream {
 public:
     // Reads and writes go through the cache buffer while it is enabled.
     class StreamCache {
@@ -43,9 +43,12 @@ public:
 
     // 0x710135c864: the original body is a four-byte empty function.
     ~FileStreamImpl() override;
+    // 0x710135c4c8: zeroes the handle, the flag and the position and installs the nested stream.
+    FileStreamImpl();
     // Nested stream that forwards the read-side queries to this stream at +0x8 of itself.
     class DirectStream : public Stream {
     public:
+        explicit DirectStream(FileStreamImpl* stream) : mStream(stream) {}
         void Close() override;
         bool IsOpened() const override;
         s32 Read(void* data, u64 size, FndResult* result) override;
@@ -69,8 +72,12 @@ public:
     bool CanRead() const override;
     bool CanWrite() const override;
     bool CanSeek() const override;
+    // 0x710135c39c: seeks through the cache while it is enabled.
+    s64 Seek(s64 offset, Stream::SeekOrigin origin) override;
     // 0x710135c4b4: finalizes the stream cache at +0x28.
     void DisableCache() override;
+    // 0x710135c424: aligns the buffer and installs it in the stream cache.
+    void EnableCache(void* buffer, u64 size) override;
     // 0x710135c4bc: checks a pointer against the stream's alignment.
     u32 ValidateAlignment(const void* ptr) const;
     // 0x710135c8e0: the binary never writes w0 here.
@@ -89,14 +96,13 @@ private:
     s32 WriteDirect(const void* data, u64 size, FndResult* result);
     s64 SeekDirect(s64 offset, Stream::SeekOrigin origin);
 
-    /* 0x08 */ nn::fs::FileHandle mFileHandle;
-    /* 0x10 */ bool mOpened;
+    /* 0x08 */ nn::fs::FileHandle mFileHandle = {};
+    /* 0x10 */ bool mOpened = false;
     u8 _11[0x20 - 0x11];
-    /* 0x20 */ u64 mPosition;
+    /* 0x20 */ u64 mPosition = 0;
     /* 0x28 */ StreamCache mStreamCache;
-    // The embedded DirectStream object at +0x68; not modelled yet because the original Stream
-    // interface is narrower than this model's (see the note above the class).
-    u8 _68[0x10];
+    // The embedded DirectStream object at +0x68; StreamCache::Initialize gets its address.
+    /* 0x68 */ DirectStream mDirectStream{this};
     /* 0x78 */ FsAccessLog* mFsAccessLog;
 };
 static_assert(sizeof(FileStreamImpl) == 0x80);

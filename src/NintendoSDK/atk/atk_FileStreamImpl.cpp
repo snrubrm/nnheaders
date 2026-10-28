@@ -2,6 +2,7 @@
 
 #include <nn/diag.h>
 #include <nn/fs/fs_files.h>
+#include <nn/util/util_BytePtr.h>
 
 namespace nn::atk::detail::fnd {
 
@@ -34,6 +35,17 @@ bool FileStreamImpl::CanWrite() const {
 
 bool FileStreamImpl::CanSeek() const {
     return IsOpened();
+}
+
+// 0x710135c424
+void FileStreamImpl::EnableCache(void* buffer, u64 size) {
+    if (mStreamCache.isEnabled())
+        mStreamCache.Finalize();
+
+    const s32 alignment = GetIoBufferAlignment();
+    nn::util::BytePtr ptr(buffer);
+    ptr.AlignUp(alignment);
+    mStreamCache.Initialize(&mDirectStream, ptr.Get(), ptr.Distance(buffer) + size);
 }
 
 // 0x710135c4b4
@@ -108,6 +120,13 @@ u32 FileStreamImpl::GetSize() const {
     if (nn::fs::GetFileSize(&size, mFileHandle).IsSuccess())
         return size;
     nn::diag::detail::AbortImpl("", "", "", 0);
+}
+
+// 0x710135c39c
+s64 FileStreamImpl::Seek(s64 offset, Stream::SeekOrigin origin) {
+    const u32 result = IsCacheEnabled() ? mStreamCache.Seek(offset, origin)
+                                        : SeekDirect(offset, origin);
+    return result;
 }
 
 // 0x710135c32c
