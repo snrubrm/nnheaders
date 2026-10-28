@@ -1,12 +1,42 @@
 #pragma once
 
+#include <nn/os.h>
+#include <nn/types.h>
+
 namespace nn::atk::detail::fnd {
 
-// Partial: only the empty destructor and resume hook are modelled (0x710135d698 / 0x710135d898).
+// The sound system's worker thread. The status word at +0 is the state Release waits for
+// (1 while the body runs, 2 when it has exited); the os thread object follows at +8.
 class Thread {
 public:
+    enum AffinityMask : u32 {};
+
+    Thread();
+    // 0x710135d698
     ~Thread();
+    // 0x710135d780 / 0x710135d78c: the state the thread body runs in.
+    void OnRun();
+    void OnExit();
+    // 0x710135d89c / 0x710135d860: wait for or destroy the os thread.
+    void Join();
+    void Detach();
+    // 0x710135d874 / 0x710135d88c
+    void SetName(const char* name);
+    void SetAffinityMask(int core, AffinityMask mask);
+    // 0x710135d748: detaches a thread whose body has exited and marks it released.
+    void Release();
+    // 0x710135d898
     void Resume();
+
+private:
+    /* 0x000 */ s32 mStatus = 0;
+    u8 _4[4];
+    /* 0x008 */ nn::os::ThreadType mThread;
+    /* 0x1c8 */ u64 _1c8 = 0xffffffff;
+    /* 0x1d0 */ u32 _1d0 = 0x10;
+    u8 _1d4[0xc];
+    /* 0x1e0 */ u64 _1e0 = 0;
+    /* 0x1e8 */ bool _1e8 = false;
 };
 
 }  // namespace nn::atk::detail::fnd

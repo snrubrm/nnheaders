@@ -22,7 +22,7 @@ u64 FileStreamProxy::GetCurrentPosition() const {
     return mStream->GetCurrentPosition();
 }
 
-u64 FileStreamProxy::GetSize() const {
+u32 FileStreamProxy::GetSize() const {
     return mStream->GetSize();
 }
 

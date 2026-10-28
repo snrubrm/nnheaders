@@ -36,7 +36,9 @@ public:
     virtual s32 Write(const void* data, u64 size, FndResult* result) = 0;
     virtual s64 Seek(s64 offset, SeekOrigin origin) = 0;
     virtual u64 GetCurrentPosition() const = 0;
-    virtual u64 GetSize() const = 0;
+    // 0x710135c638 reads the result with a 32-bit load; MemoryFileStream::GetSize 0x710135445c
+    // returns a 64-bit member and is not an override of this interface.
+    virtual u32 GetSize() const = 0;
     virtual bool CanRead() const = 0;
     virtual bool CanWrite() const = 0;
     virtual bool CanSeek() const = 0;

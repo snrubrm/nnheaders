@@ -14,7 +14,7 @@ public:
     s32 Read(void* data, u64 size, FndResult* result) override;
     s32 Write(const void* data, u64 size, FndResult* result) override;
     u64 GetCurrentPosition() const override;
-    u64 GetSize() const override;
+    u32 GetSize() const override;
     bool CanRead() const override;
     bool CanWrite() const override;
     bool CanSeek() const override;

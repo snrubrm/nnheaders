@@ -25,7 +25,7 @@ bool IsDebuggerAttached();
 namespace detail {
 // LOG
 void LogImpl(nn::diag::LogMetaData const&, char const*, ...);
-void AbortImpl(char const*, char const*, char const*, s32);
+[[noreturn]] void AbortImpl(char const*, char const*, char const*, s32);
 void AbortImpl(char const*, char const*, char const*, int, Result);
 
 void OnAssertionFailure(nn::diag::AssertionType, char const*, char const*, char const*, int);
