@@ -10,6 +10,15 @@ namespace nn::atk::detail::fnd {
 // +0x10.
 class FileStreamImpl : public Stream {
 public:
+    // Partial: only Finalize is modelled; the cache occupies +0x28..+0x78 of FileStreamImpl.
+    class StreamCache {
+    public:
+        void Finalize();
+
+    private:
+        u8 _0[0x50];
+    };
+
     // 0x710135c864: the original body is a four-byte empty function.
     ~FileStreamImpl() override;
     // Nested stream that forwards the read-side queries to the stream at +0x8.
@@ -34,6 +43,8 @@ public:
     bool CanRead() const override;
     bool CanWrite() const override;
     bool CanSeek() const override;
+    // 0x710135c4b4: finalizes the stream cache at +0x28.
+    void DisableCache() override;
     // 0x710135c4bc: checks a pointer against the stream's alignment.
     u32 ValidateAlignment(const void* ptr) const;
     // 0x710135c8e0: the binary never writes w0 here.
@@ -42,7 +53,8 @@ public:
 private:
     u8 _8[0x10 - 0x8];
     /* 0x10 */ bool mOpened;
-    u8 _11[0x78 - 0x11];
+    u8 _11[0x28 - 0x11];
+    /* 0x28 */ StreamCache mStreamCache;
     /* 0x78 */ FsAccessLog* mFsAccessLog;
 };
 

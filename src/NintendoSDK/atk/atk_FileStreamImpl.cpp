@@ -33,6 +33,11 @@ bool FileStreamImpl::CanSeek() const {
     return IsOpened();
 }
 
+// 0x710135c4b4
+void FileStreamImpl::DisableCache() {
+    mStreamCache.Finalize();
+}
+
 // 0x710135c4bc
 u32 FileStreamImpl::ValidateAlignment(const void*) const {
     return GetIoBufferAlignment();
