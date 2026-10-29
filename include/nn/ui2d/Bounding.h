@@ -8,10 +8,11 @@
 #include <nn/ui2d/Pane.h>
 
 namespace nn::ui2d {
-struct ResBounding;
+// Known resource prefix: the constructor passes it directly to Pane without reading later fields.
+// The full resource extent is not established.
+struct ResBounding : ResPane {};
 
-// Declarations only. Bounding::Bounding (0x7100abfe78) passes the first resource to Pane::Pane and stores the
-// vtable; the complete destructor 0x7100abfedc branches to Pane::~Pane, so the class adds no members.
+// Bounding adds no pane members; its complete destructor delegates to Pane's destructor.
 class Bounding : public Pane {
 public:
     NN_RUNTIME_TYPEINFO(Pane)
@@ -22,5 +23,6 @@ public:
     ~Bounding() override;                                    // D0 0x7100abfee0
     void DrawSelf(DrawInfo&, gfx::CommandBuffer&) override;  // 0x7100abff04
 };
+static_assert(sizeof(Bounding) == sizeof(Pane));
 
 }  // namespace nn::ui2d

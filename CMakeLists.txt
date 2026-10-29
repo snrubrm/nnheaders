@@ -440,6 +440,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/ui2d/ui2d_Parts.cpp
   src/NintendoSDK/ui2d/ui2d_Picture.cpp
   src/NintendoSDK/ui2d/ui2d_Window.cpp
+  src/NintendoSDK/ui2d/ui2d_Bounding.cpp
   src/NintendoSDK/ui2d/ui2d_TexCoordArray.cpp
   src/NintendoSDK/ui2d/ui2d_TextBox.cpp
   src/NintendoSDK/ui2d/ui2d_ResourceAccessor.cpp
