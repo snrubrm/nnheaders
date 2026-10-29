@@ -13,6 +13,10 @@
 
 namespace nn::ui2d {
 
+namespace detail {
+class AnimPaneTree;
+}
+
 class Group;
 class Material;
 class Pane;
@@ -162,6 +166,7 @@ public:
 };
 
 class AnimTransformBasic : public AnimTransform {
+    friend class detail::AnimPaneTree;
 public:
     NN_RUNTIME_TYPEINFO(AnimTransform)
 
