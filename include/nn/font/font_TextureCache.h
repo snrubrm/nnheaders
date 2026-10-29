@@ -26,9 +26,11 @@ public:
     GlyphTreeMap();
 
     void Initialize(void* (*allocate)(size_t, size_t, void*), void* user_data, u32 count);
+    GlyphNode* Find(u32 code, u16 size, u16 face) const;
+    static void UpdateFlagsForCompleteTextureCacheRecursive(GlyphNode* node);
 
 private:
-    /* 0x00 */ void* _0;
+    /* 0x00 */ GlyphNode* _0;
     /* 0x08 */ void* mNodes;
     /* 0x10 */ void* _10;
     /* 0x18 */ u32 mCount;

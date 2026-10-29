@@ -1,8 +1,32 @@
 #include <nn/font/font_TextureCache.h>
+#include <nn/font/font_GlyphNode.h>
 
 namespace nn::font {
 
 GlyphTreeMap::GlyphTreeMap() : _0(), mNodes(), _10(), mCount(0) {}
+
+GlyphNode* GlyphTreeMap::Find(u32 code, u16 size, u16 face) const {
+    const u64 key = (static_cast<u64>(size) << 48) | (static_cast<u64>(face) << 32) | code;
+    GlyphNode* node = _0;
+    while (node) {
+        if (node->key > key)
+            node = node->left;
+        else if (node->key < key)
+            node = node->right;
+        else
+            return node;
+    }
+    return nullptr;
+}
+
+void GlyphTreeMap::UpdateFlagsForCompleteTextureCacheRecursive(GlyphNode* node) {
+    do {
+        node->flags = ((node->flags & 5) != 0 ? 0x10 : 0) | (node->flags & 0x60);
+        if (node->left)
+            UpdateFlagsForCompleteTextureCacheRecursive(node->left);
+        node = node->right;
+    } while (node);
+}
 
 // 0x7100ab1a84
 void TextureCache::RegisterTextureViewToDescriptorPool(
