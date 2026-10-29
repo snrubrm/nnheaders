@@ -109,7 +109,7 @@ public:
 
     u64* _8;                                 // nn::atk::detail::PlayerHeap*
     nn::atk::SoundHandle* mGeneralHandle;    // _10
-    u64* _18;                                // nn::atk::SoundHandle*
+    nn::atk::SoundHandle* mTempGeneralHandle;  // _18, cleared by SoundHandle::DetachSound
     nn::atk::SoundPlayer* mSoundPlayer;      // _20
     u64* _28;                                // nn::atk::SoundActor*
     u64* _30;                                // nn::atk::detail::ExternalSoundPlayer*

@@ -1,4 +1,5 @@
 #include <nn/atk/SoundArchive.h>
+#include <nn/atk/detail/Util.h>
 #include <nn/util/util_BytePtr.h>
 
 namespace nn {
@@ -69,7 +70,7 @@ u32 SoundArchiveFile::WaveSoundInfo::GetIsReleasePriorityFix() const {
 }
 
 u32 SoundArchiveFile::SequenceSoundInfo::GetStartOffset() const {
-    if (!(mFlags & 1))
+    if (!(mOptionFlags & 1))
         return 0;
     return mStartOffset;
 }
@@ -315,6 +316,74 @@ u32 SoundArchiveFile::SoundInfo::GetSoundType() const {
     default:
         return 0;
     }
+}
+
+u32 SoundArchiveFile::PlayerInfo::GetPlayerHeapSize() const {
+    const u32* option = &mOptionFlags;
+    if (!(*option & 2))
+        return 0;
+    return option[(*option & 1) + 1];
+}
+
+u32 SoundArchiveFile::WaveArchiveInfo::GetWaveCount() const {
+    const u32* option = &mOptionFlags;
+    if (!(*option & 2))
+        return 0;
+    return option[(*option & 1) + 1];
+}
+u32 SoundArchiveFile::SoundInfo::GetPanMode() const {
+    u32 value;
+    if (!Util::ReadOptionParameter(&mOptionFlags, 1, &value))
+        return 0;
+    return static_cast<u8>(value);
+}
+
+u32 SoundArchiveFile::SoundInfo::GetPanCurve() const {
+    u32 value;
+    if (!Util::ReadOptionParameter(&mOptionFlags, 1, &value))
+        return 0;
+    return static_cast<u8>(value >> 8);
+}
+
+u32 SoundArchiveFile::SoundInfo::GetPlayerPriority() const {
+    u32 value;
+    if (!Util::ReadOptionParameter(&mOptionFlags, 2, &value))
+        return 64;
+    return value;
+}
+
+u8 SoundArchiveFile::SoundInfo::GetActorPlayerId() const {
+    u32 value;
+    if (!Util::ReadOptionParameter(&mOptionFlags, 2, &value))
+        return 0;
+    return value >> 8;
+}
+
+bool SoundArchiveFile::SoundInfo::IsFrontBypass() const {
+    u32 value;
+    if (!Util::ReadOptionParameter(&mOptionFlags, 17, &value))
+        return false;
+    return value & 1;
+}
+
+void SoundArchiveFile::SequenceSoundInfo::GetBankIds(u32* bankIds) const {
+    const u32* table = nn::util::ConstBytePtr(this, mBankIdTableOffset).Get<u32>();
+    for (u32 i = 0; i < 4; ++i)
+        bankIds[i] = i < table[0] ? table[i + 1] : 0xffffffff;
+}
+
+u32 SoundArchiveFile::SequenceSoundInfo::GetChannelPriority() const {
+    u32 value;
+    if (!Util::ReadOptionParameter(&mOptionFlags, 1, &value))
+        return 64;
+    return value;
+}
+
+bool SoundArchiveFile::SequenceSoundInfo::IsReleasePriorityFix() const {
+    u32 value;
+    if (!Util::ReadOptionParameter(&mOptionFlags, 1, &value))
+        return true;
+    return (value >> 8) & 0xff;
 }
 
 }  // namespace detail

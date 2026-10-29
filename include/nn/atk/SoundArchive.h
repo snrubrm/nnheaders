@@ -125,11 +125,18 @@ struct SoundArchiveFile {
     /// A sequence sound record; the start offset is optional (bit 0 of the flag byte at +0xc).
     struct SequenceSoundInfo {
         u32 GetStartOffset() const;
+        // 0x7101340e78: the bank id table (count, ids) at the offset at +4; four ids, -1 past
+        // the count.
+        void GetBankIds(u32* bankIds) const;
+        // 0x7101340f0c / 0x7101340f2c: the optional value for bit 1 of the option word at +0xc.
+        u32 GetChannelPriority() const;
+        bool IsReleasePriorityFix() const;
 
     private:
-        u8 _0[0xc];
-        u8 mFlags;  // +0xc
-        u8 _d[3];
+        u8 _0[4];
+        s32 mBankIdTableOffset;  // +0x4
+        u8 _8[4];
+        u32 mOptionFlags;  // +0xc, followed by the present optional values
         u32 mStartOffset;  // +0x10
     };
 
@@ -161,11 +168,32 @@ struct SoundArchiveFile {
         u32 mItemFileId;  // +0
     };
 
+    /// 0x7101340f78: the wave count is the optional value for bit 1 of the option flags at +8;
+    /// the value for bit 0 (when present) comes first.
     struct WaveArchiveInfo {
+        u32 GetWaveCount() const;
+
         u32 mItemFileId;  // +0
+        u8 _4[4];
+        u32 mOptionFlags;  // +0x8, followed by the present optional values
+    };
+
+    /// 0x7101340f58: the heap size is the optional value for bit 1 of the option flags at +4.
+    struct PlayerInfo {
+        u32 GetPlayerHeapSize() const;
+
+        u32 mPlayerSoundLimit;  // +0
+        u32 mOptionFlags;       // +0x4, followed by the present optional values
     };
 
     struct SoundInfo {
+        // 0x7101340ce8..0x7101340d84: optional values of the option parameter at +0x14.
+        u32 GetPanMode() const;
+        u32 GetPanCurve() const;
+        u32 GetPlayerPriority() const;
+        u8 GetActorPlayerId() const;
+        bool IsFrontBypass() const;
+
         const StreamSoundInfo* GetStreamSoundInfo() const;
         const WaveSoundInfo* GetWaveSoundInfo() const;
         const SequenceSoundInfo* GetSequenceSoundInfo() const;
@@ -180,6 +208,7 @@ struct SoundArchiveFile {
         u8 _4[0x8];
         u16 mSignature;     // +0xc
         s32 mSubInfoOffset; // +0x10, relative to this
+        u32 mOptionFlags;   // +0x14, followed by the present optional values
     };
 
     /// The info block. Each of the seven tables is described by a {u32, s32} pair (the second word

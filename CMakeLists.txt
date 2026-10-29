@@ -279,6 +279,11 @@ add_library(NintendoSDK OBJECT
   include/nn/atk/detail/CurveLfoParam.h
   include/nn/atk/detail/CurveAdshr.h
   include/nn/atk/SampleFormat.h
+  include/nn/atk/detail/GroupFile.h
+  include/nn/atk/detail/StreamSoundPrefetchFile.h
+  include/nn/atk/detail/Task.h
+  include/nn/atk/detail/WaveArchiveFile.h
+  include/nn/atk/detail/WaveFile.h
   include/nn/atk/detail/WaveFileReader.h
   include/nn/atk/OutputMode.h
   include/nn/atk/SoundSystem.h
@@ -357,10 +362,16 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/g3d/g3d_ModelObj.cpp
   src/NintendoSDK/atk/atk_SoundArchive.cpp
   src/NintendoSDK/atk/atk_SoundArchivePlayer.cpp
+  src/NintendoSDK/atk/atk_GroupFile.cpp
+  src/NintendoSDK/atk/atk_StreamSoundPrefetchFile.cpp
+  src/NintendoSDK/atk/atk_Task.cpp
+  src/NintendoSDK/atk/atk_SoundHandle.cpp
   src/NintendoSDK/atk/atk_SoundHeap.cpp
   src/NintendoSDK/atk/atk_Util.cpp
   src/NintendoSDK/atk/atk_CurveLfo.cpp
   src/NintendoSDK/atk/atk_CurveAdshr.cpp
+  src/NintendoSDK/atk/atk_WaveArchiveFile.cpp
+  src/NintendoSDK/atk/atk_WaveFile.cpp
   src/NintendoSDK/atk/atk_WaveFileReader.cpp
   src/NintendoSDK/atk/atk_SoundStartable.cpp
   src/NintendoSDK/atk/atk_SoundSystem.cpp
@@ -390,6 +401,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_EffectBase.cpp
   src/NintendoSDK/atk/atk_EffectAux.cpp
   src/NintendoSDK/atk/atk_LowLevelVoiceCommand.cpp
+  src/NintendoSDK/atk/atk_SequenceSoundFile.cpp
   src/NintendoSDK/atk/atk_SequenceSoundFileReader.cpp
   src/NintendoSDK/atk/atk_SoundArchiveLoader.cpp
   src/NintendoSDK/atk/atk_StreamSound.cpp
@@ -397,6 +409,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_WaveSound.cpp
   src/NintendoSDK/atk/atk_AdvancedWaveSound.cpp
   src/NintendoSDK/atk/atk_SequenceSound.cpp
+  src/NintendoSDK/atk/atk_SequenceSoundHandle.cpp
   src/NintendoSDK/g3d/g3d_ResFile.cpp
   src/NintendoSDK/g3d/g3d_ResShaderFile.cpp
   src/NintendoSDK/g3d/g3d_ResModel.cpp

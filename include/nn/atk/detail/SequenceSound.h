@@ -18,6 +18,8 @@ public:
     SoundPlayerHandle* GetBasicSoundPlayerHandle();
 
 private:
+    friend class nn::atk::SequenceSoundHandle;
+
     u8 _0[0x1f0];
     /* 0x1f0 */ SequenceSoundHandle* mTempSpecialHandle;
     u8 _1f8[0x208 - 0x1f8];

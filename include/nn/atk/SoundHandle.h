@@ -18,8 +18,13 @@ class SoundHandle {
 public:
     SoundHandle() : m_pSound(nullptr) {}
 
-    /// 0x71033c3b0 (declared only)
+    /// 0x710133c3b0: clears the sound's general and temporary general handle slots that point
+    /// at this handle.
     void DetachSound();
+    /// 0x710133c3ec
+    void detail_AttachSound(detail::BasicSound* sound);
+
+    bool IsAttachedSound() const { return m_pSound != nullptr; }
 
     detail::BasicSound* m_pSound;
 };
