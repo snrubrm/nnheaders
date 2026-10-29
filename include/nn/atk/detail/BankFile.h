@@ -16,8 +16,11 @@ public:
         // 0x71013600bc: block type 0x5800
         const InfoBlock* GetInfoBlock() const;
 
-    private:
-        u8 _0[0x10];
+    public:
+        u32 mSignature;
+        u32 _4;
+        u32 mVersion;
+        u32 _c;
         u16 mBlockCount;  // +0x10
         u16 _12;
         Util::ReferenceWithSize mBlocks[1];  // +0x14
@@ -50,6 +53,12 @@ public:
         s32 mWaveIdTableOffset;  // +0x4
         u8 _8[4];
         s32 mInstrumentReferenceTableOffset;  // +0xc
+    };
+
+    struct InfoBlock {
+        u32 mSignature;
+        u32 mSize;
+        InfoBlockBody mBody;
     };
 };
 

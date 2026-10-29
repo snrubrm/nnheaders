@@ -179,6 +179,7 @@ add_library(NintendoSDK OBJECT
   include/nn/atk/detail/StreamSound.h
   include/nn/atk/detail/StreamSoundFile.h
   include/nn/atk/detail/BankFile.h
+  include/nn/atk/detail/BankFileReader.h
   include/nn/atk/detail/WaveSoundFile.h
   include/nn/atk/detail/AdvancedWaveSoundFile.h
   include/nn/atk/detail/WaveSound.h
@@ -385,6 +386,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_SoundArchiveFile.cpp
   src/NintendoSDK/atk/atk_StreamSoundFile.cpp
   src/NintendoSDK/atk/atk_BankFile.cpp
+  src/NintendoSDK/atk/atk_BankFileReader.cpp
   src/NintendoSDK/atk/atk_WaveSoundFile.cpp
   src/NintendoSDK/atk/atk_AdvancedWaveSoundFile.cpp
   src/NintendoSDK/atk/atk_HardwareManager.cpp
