@@ -9,8 +9,26 @@ namespace nn::atk::detail {
 // descriptors, info (0x6800) and file (0x6801), at +0x14.
 class WaveArchiveFile {
 public:
-    struct InfoBlock;
+    struct WaveFileReference {
+        u16 mType;
+        u16 _2;
+        u32 mOffset;
+        u32 mSize;
+    };
+    struct InfoBlockBody {
+        u32 mCount;
+        WaveFileReference mFiles[1];
+    };
+    struct InfoBlock {
+        u32 mSignature;
+        u32 mSize;
+        InfoBlockBody mBody;
+    };
     struct FileBlock;
+    struct FileTableEntry {
+        const void* mFile;
+        u64 _8;
+    };
 
     struct FileHeader {
         // 0x7101343940 / 0x7101343970 / 0x7101343998 / 0x71013439c8
@@ -29,7 +47,11 @@ public:
             return nullptr;
         }
 
-        u8 _0[0x14];
+    public:
+        u32 mSignature;
+        u32 _4;
+        u32 mVersion;
+        u8 _c[8];
         SoundArchiveFile::BlockDescriptor mBlocks[2];  // +0x14
     };
 };

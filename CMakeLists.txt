@@ -283,6 +283,7 @@ add_library(NintendoSDK OBJECT
   include/nn/atk/detail/StreamSoundPrefetchFile.h
   include/nn/atk/detail/Task.h
   include/nn/atk/detail/WaveArchiveFile.h
+  include/nn/atk/detail/WaveArchiveFileReader.h
   include/nn/atk/detail/WaveFile.h
   include/nn/atk/detail/WaveFileReader.h
   include/nn/atk/OutputMode.h
@@ -371,6 +372,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_CurveLfo.cpp
   src/NintendoSDK/atk/atk_CurveAdshr.cpp
   src/NintendoSDK/atk/atk_WaveArchiveFile.cpp
+  src/NintendoSDK/atk/atk_WaveArchiveFileReader.cpp
   src/NintendoSDK/atk/atk_WaveFile.cpp
   src/NintendoSDK/atk/atk_WaveFileReader.cpp
   src/NintendoSDK/atk/atk_SoundStartable.cpp
