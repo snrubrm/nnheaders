@@ -186,6 +186,8 @@ struct SoundArchiveFile {
     /// The file id every item record starts with, and the sound id a sound group starts with.
     struct BankInfo {
         u32 mItemFileId;  // +0
+        u32 _4;
+        s32 mWaveArchiveTableOffset;  // +0x8, relative to this record
     };
 
     struct SoundGroupInfo {
@@ -194,6 +196,8 @@ struct SoundArchiveFile {
         u16 _8;
         u16 _a;
         s32 mTableOffset;  // +0xc, relative to this record
+        u32 _10;
+        s32 mWaveArchiveReferenceOffset;  // +0x14, relative to this record
     };
 
     struct GroupInfo {

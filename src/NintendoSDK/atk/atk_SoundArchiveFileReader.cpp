@@ -1,4 +1,5 @@
 #include <nn/atk/detail/SoundArchiveFileReader.h>
+#include <nn/atk/detail/Util.h>
 #include <nn/util/util_BytePtr.h>
 
 #include <cstring>
@@ -8,6 +9,36 @@ namespace atk {
 namespace detail {
 
 // NON_MATCHING: the version-dependent default uses the opposite branch layout.
+// NON_MATCHING: the item-type branches are emitted in a different order.
+const u32* SoundArchiveFileReader::GetWaveArchiveIdTable(u32 item_id) const {
+    const u32 type = item_id >> 24;
+    if (type == 3) {
+        const auto* bank = mInfoBlock->GetBankInfo(item_id);
+        return nn::util::ConstBytePtr(bank, bank->mWaveArchiveTableOffset).Get<u32>();
+    }
+
+    const SoundArchiveFile::SoundGroupInfo* group;
+    if (type == 2) {
+        group = mInfoBlock->GetSoundGroupInfo(item_id);
+    } else if (type == 1 && mInfoBlock->GetSoundInfo(item_id)->GetSoundType() == 3) {
+        group = nullptr;
+        for (u32 i = 0; i < *mInfoBlock->GetSoundGroupInfoReferenceTable(); ++i) {
+            const auto* candidate = mInfoBlock->GetSoundGroupInfo(i | 0x02000000);
+            if (candidate->mSoundId <= item_id && item_id <= candidate->_4) {
+                group = candidate;
+                break;
+            }
+        }
+        if (!group)
+            return nullptr;
+    } else {
+        return nullptr;
+    }
+    const auto* ref = nn::util::ConstBytePtr(group, group->mWaveArchiveReferenceOffset)
+                          .Get<Util::Reference>();
+    return nn::util::ConstBytePtr(ref, ref->offset).Get<u32>();
+}
+
 bool SoundArchiveFileReader::ReadSoundInfo(u32 sound_id, SoundArchive::SoundInfo* info) const {
     const auto* record = mInfoBlock->GetSoundInfo(sound_id);
     if (!record)
