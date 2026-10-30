@@ -44,6 +44,7 @@ public:
     void ReplaceTextureInfo(const TextureInfo* info) { mTextureInfo = info; }
 
 private:
+    friend class Material;
     union {
         u8 mFlags;
         struct {
@@ -150,7 +151,8 @@ private:
     /* 0x34 */ u32 mPixelShaderConstantBufferOffset;
     /* 0x38 */ UserShaderConstantBufferInformation* mUserShaderConstantBufferInformation;
     /* 0x40 */ void* _40;
-    /* 0x48 */ u8 _48[2];
+    /* 0x48 */ s8 _48;
+    /* 0x49 */ u8 _49;
     /* 0x4a */ u8 mFlags;
     /* 0x4b */ u8 _4b;
 };
