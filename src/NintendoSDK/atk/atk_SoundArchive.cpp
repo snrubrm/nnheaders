@@ -8,6 +8,9 @@ SoundArchive::SoundArchive() : mFileReader(nullptr), _10(nullptr), mFileVersion(
 // NON_MATCHING: the compiler inlines SoundArchive's constructor.
 MemorySoundArchive::MemorySoundArchive() : mData(nullptr) {}
 
+// NON_MATCHING: the compiler inlines the empty SoundArchive destructor, including in D0.
+MemorySoundArchive::~MemorySoundArchive() {}
+
 // NON_MATCHING: the compiler inlines SoundArchive::Initialize.
 bool MemorySoundArchive::Initialize(const void* data) {
     mReader.Initialize(data);
