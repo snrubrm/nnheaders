@@ -13,6 +13,11 @@ namespace nn::atk::detail::driver {
 // channel and tick state of the track is not modelled.
 class SequenceTrack {
 public:
+    SequenceTrack();
+    virtual ~SequenceTrack();
+    // The full-word comparison in ParseNextTick supports a numeric status; int is inferred.
+    virtual int Parse(bool flag) = 0;
+
     void Open();
     void SetMute(SequenceMute mute);
     void SetSilence(bool silence, int fade_frames);
@@ -41,7 +46,6 @@ public:
 private:
     friend class SequenceSoundPlayer;
 
-    u8 _0[8];
     /* 0x8 */ u8 mPlayerTrackNo;
     bool mIsOpen;
     u8 _a[0xc - 0xa];
@@ -75,6 +79,8 @@ private:
     /* 0x1b0 */ f32 mBiquadFilterFrequency;
     /* 0x1b4 */ u32 mOutputLine;
     /* 0x1b8 */ s16 mTrackVariables[16];
+    u8 _1d8[0x10];
 };
+static_assert(sizeof(SequenceTrack) == 0x1e8);
 
 }  // namespace nn::atk::detail::driver

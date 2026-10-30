@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <nn/atk/SoundArchive.h>
 #include <nn/atk/detail/SoundInstanceManager.h>
 #include <nn/types.h>
 
@@ -19,6 +20,9 @@ class SequenceSoundRuntime : public SoundInstanceManager<SequenceSound> {
 public:
     SequenceSoundRuntime();
     ~SequenceSoundRuntime();
+
+    static size_t GetRequiredSequenceTrackMemorySize(
+        const SoundArchive::SoundArchivePlayerInfo& info, int alignment);
 
     void Initialize(s32, void**, void const*);
     void Finalize();

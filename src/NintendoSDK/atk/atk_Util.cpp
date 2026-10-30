@@ -2,6 +2,14 @@
 
 namespace nn::atk::detail::Util {
 
+// The native mutable seed at 0x710252d7e8 is referenced by CalcRandom.
+static u32 sUnk_710252D7E8 = 0x12345678;
+
+u32 CalcRandom() {
+    sUnk_710252D7E8 = sUnk_710252D7E8 * 1664525u + 1013904223u;
+    return sUnk_710252D7E8 >> 16;
+}
+
 // NON_MATCHING: format-case ordering and return-block placement differ.
 size_t GetByteBySample(size_t sampleCount, SampleFormat format) {
     if (static_cast<int>(format) == 0)

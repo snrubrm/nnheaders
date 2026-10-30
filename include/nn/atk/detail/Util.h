@@ -10,7 +10,7 @@ namespace Util {
 
 size_t GetByteBySample(size_t sampleCount, SampleFormat format);
 bool IsValidMemoryForDsp(const void* memory, size_t size);
-u32 sub_71013548CC();
+u32 CalcRandom();
 
 /// A typed reference inside a resource block: the item type and its offset from the reference's
 /// base (the containing table or structure).
