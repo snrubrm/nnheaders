@@ -2,6 +2,10 @@
 
 namespace nn::atk::detail::fnd {
 
+Thread::RunArgs::RunArgs()
+    : name(""), stack(nullptr), stackSize(0), core(-1), affinity{}, priority(16),
+      argument(nullptr), handler(nullptr) {}
+
 // 0x710135d798
 Thread::Thread() = default;
 
