@@ -3,12 +3,92 @@
 #include <nn/gfx/gfx_CommandBuffer.h>
 #include <nn/gfx/gfx_GpuAddress.h>
 #include <nn/gfx/gfx_StateInfo.h>
+#include <nn/gfx/gfx_BufferInfo.h>
+#include <nn/gfx/gfx_MemoryPoolInfo.h>
+#include <nn/ui2d/Layout.h>
+#include <nn/util/util_BitUtil.h>
+#include <algorithm>
+#include <new>
 
 namespace nn::ui2d {
 
 GraphicsResource::GraphicsResource() = default;
 
 GraphicsResource::~GraphicsResource() = default;
+
+// NON_MATCHING: alignment widths, payload store packing and info-object stack slots differ.
+// 0x7100ac0c84
+void GraphicsResource::InitializeVertexBuffer(gfx::Device* device, gfx::MemoryPool*, s64, u64) {
+    gfx::BufferInfo vertex_alignment_info;
+    vertex_alignment_info.SetDefault();
+    vertex_alignment_info.SetGpuAccessFlags(gfx::GpuAccess_VertexBuffer);
+    size_t vertex_alignment = gfx::Buffer::GetBufferAlignment(device, vertex_alignment_info);
+    gfx::MemoryPoolInfo vertex_pool_alignment;
+    vertex_pool_alignment.SetDefault();
+    vertex_pool_alignment.SetMemoryPoolProperty(0x22);
+    vertex_alignment = std::max(vertex_alignment,
+        gfx::detail::MemoryPoolImpl<gfx::DefaultApi>::GetPoolMemoryAlignment(
+            device, vertex_pool_alignment));
+    gfx::MemoryPoolInfo vertex_pool_granularity;
+    vertex_pool_granularity.SetDefault();
+    vertex_pool_granularity.SetMemoryPoolProperty(0x22);
+    const size_t vertex_pool_size = util::align_up(static_cast<size_t>(32),
+        gfx::detail::MemoryPoolImpl<gfx::DefaultApi>::GetPoolMemorySizeGranularity(
+            device, vertex_pool_granularity));
+    mVertexData = new (Layout::AllocateMemory(vertex_pool_size, vertex_alignment)) util::Float2[4];
+    mVertexData[0] = {{0.0f, 0.0f}};
+    mVertexData[1] = {{1.0f, 0.0f}};
+    mVertexData[2] = {{0.0f, 1.0f}};
+    mVertexData[3] = {{1.0f, 1.0f}};
+
+    gfx::BufferInfo index_alignment_info;
+    index_alignment_info.SetDefault();
+    index_alignment_info.SetGpuAccessFlags(gfx::GpuAccess_IndexBuffer);
+    size_t index_alignment = gfx::Buffer::GetBufferAlignment(device, index_alignment_info);
+    gfx::MemoryPoolInfo index_pool_alignment;
+    index_pool_alignment.SetDefault();
+    index_pool_alignment.SetMemoryPoolProperty(0x22);
+    index_alignment = std::max(index_alignment,
+        gfx::detail::MemoryPoolImpl<gfx::DefaultApi>::GetPoolMemoryAlignment(
+            device, index_pool_alignment));
+    gfx::MemoryPoolInfo index_pool_granularity;
+    index_pool_granularity.SetDefault();
+    index_pool_granularity.SetMemoryPoolProperty(0x22);
+    const size_t index_pool_size = util::align_up(static_cast<size_t>(12),
+        gfx::detail::MemoryPoolImpl<gfx::DefaultApi>::GetPoolMemorySizeGranularity(
+            device, index_pool_granularity));
+    mIndexData = new (Layout::AllocateMemory(index_pool_size, index_alignment)) u16[6];
+    mIndexData[0] = 1;
+    mIndexData[1] = 0;
+    mIndexData[2] = 3;
+    mIndexData[3] = 0;
+    mIndexData[4] = 2;
+    mIndexData[5] = 3;
+
+    gfx::BufferInfo vertex_info;
+    vertex_info.SetDefault();
+    vertex_info.SetSize(32);
+    vertex_info.SetGpuAccessFlags(gfx::GpuAccess_VertexBuffer);
+    gfx::MemoryPoolInfo vertex_pool;
+    vertex_pool.SetDefault();
+    vertex_pool.SetMemoryPoolProperty(0x22);
+    vertex_pool.SetPoolMemory(mVertexData, vertex_pool_size);
+    mMemoryPool0.gfx::detail::MemoryPoolImpl<gfx::DefaultApi>::Initialize(device, vertex_pool);
+    mBuffer0.gfx::detail::BufferImpl<gfx::DefaultApi>::Initialize(
+        device, vertex_info, &mMemoryPool0, 0, 32);
+
+    gfx::BufferInfo index_info;
+    index_info.SetDefault();
+    index_info.SetSize(12);
+    index_info.SetGpuAccessFlags(gfx::GpuAccess_IndexBuffer);
+    gfx::MemoryPoolInfo index_pool;
+    index_pool.SetDefault();
+    index_pool.SetMemoryPoolProperty(0x22);
+    index_pool.SetPoolMemory(mIndexData, index_pool_size);
+    mMemoryPool1.gfx::detail::MemoryPoolImpl<gfx::DefaultApi>::Initialize(device, index_pool);
+    mBuffer1.gfx::detail::BufferImpl<gfx::DefaultApi>::Initialize(
+        device, index_info, &mMemoryPool1, 0, 12);
+}
 
 // Native readonly resource-code conversion tables at 0x7101e7f6b0 and 0x7101e7f6f0.
 const gfx::LogicOperation sUnk_7101E7F6B0[16] = {

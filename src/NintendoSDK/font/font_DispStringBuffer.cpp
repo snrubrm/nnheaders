@@ -65,4 +65,52 @@ size_t DispStringBuffer::sub_71013240B4(gfx::Device* device, const InitializeArg
     return header_size + characters_size + (arg._14 == 0 ? 0 : characters_size);
 }
 
+// NON_MATCHING: scalar matrix loops and compiler-generated copies differ from native SIMD.
+// 0x7101324354
+void DispStringBuffer::BuildCommonConstantBufferData(
+    ShaderParam& param, const util::MatrixT4x4fType& projection,
+    const ConstantBufferAdditionalContent& content) const {
+    if (mCapacity < 1)
+        return;
+
+    util::MatrixT4x4fType matrix = projection;
+    if (content._18) {
+        util::MatrixT4x4fType transformed;
+        for (int row = 0; row < 4; ++row) {
+            for (int column = 0; column < 4; ++column) {
+                transformed.m[row][column] =
+                    content._18->m[0][column] * matrix.m[row][0] +
+                    content._18->m[1][column] * matrix.m[row][1] +
+                    content._18->m[2][column] * matrix.m[row][2] +
+                    (column == 3 ? 1.0f : 0.0f) * matrix.m[row][3];
+            }
+        }
+        matrix = transformed;
+    }
+    if (content._20) {
+        util::MatrixT4x4fType transformed;
+        for (int row = 0; row < 4; ++row) {
+            for (int column = 0; column < 4; ++column) {
+                transformed.m[row][column] =
+                    content._20->m[0][column] * matrix.m[row][0] +
+                    content._20->m[1][column] * matrix.m[row][1] +
+                    content._20->m[2][column] * matrix.m[row][2] +
+                    (column == 3 ? 1.0f : 0.0f) * matrix.m[row][3];
+            }
+        }
+        matrix = transformed;
+    }
+    param.matrix = matrix;
+    param._40 = {{content._38.x - content._28.x,
+                  content._38.y - content._28.y,
+                  content._38.z - content._28.z,
+                  content._38.w * (static_cast<f32>(content._48) * (1.0f / 255.0f))}};
+    param._50 = {{content._28.x, content._28.y, content._28.z, 0.0f}};
+    param._60 = {{content._5c.x - content._4c.x,
+                  content._5c.y - content._4c.y,
+                  content._5c.z - content._4c.z,
+                  content._5c.w * (static_cast<f32>(content._6c) * (1.0f / 255.0f))}};
+    param._70 = {{content._4c.x, content._4c.y, content._4c.z, 0.0f}};
+}
+
 }  // namespace nn::font
