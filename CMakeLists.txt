@@ -403,6 +403,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_BasicSoundPlayer.cpp
   src/NintendoSDK/atk/atk_Channel.cpp
   src/NintendoSDK/atk/atk_CommandManager.cpp
+  src/NintendoSDK/atk/atk_PlayerHeap.cpp
   src/NintendoSDK/atk/atk_DisposeCallbackManager.cpp
   src/NintendoSDK/atk/atk_Debug.cpp
   src/NintendoSDK/atk/atk_WaveSoundFile.cpp
