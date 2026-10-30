@@ -47,7 +47,7 @@ public:
     };
 
     struct DspAdpcmChannelInfo;
-    struct StreamSoundInfo;
+    struct StreamSoundInfo { u8 _0[0x4c]; };
     struct TrackInfo;
     struct ChannelInfo;
 

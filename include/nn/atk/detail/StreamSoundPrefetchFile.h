@@ -1,6 +1,7 @@
 #pragma once
 
 #include <nn/atk/detail/Util.h>
+#include <nn/atk/detail/StreamSoundFile.h>
 #include <nn/types.h>
 
 namespace nn::atk::detail {
@@ -18,8 +19,11 @@ public:
         // 0x71013642d4: block type 0x4004
         const PrefetchDataBlock* GetPrefetchDataBlock() const;
 
-    private:
-        u8 _0[0x10];
+    public:
+        u32 mSignature;
+        u32 _4;
+        u32 mVersion;
+        u32 _c;
         u16 mBlockCount;  // +0x10
         u16 _12;
         Util::ReferenceWithSize mBlocks[2];  // +0x14
@@ -32,6 +36,17 @@ public:
     private:
         u8 _0[0xc];
         Util::Reference mPrefetchSample;  // +0xc
+    };
+
+    struct InfoBlock {
+        u32 mSignature;
+        u32 mSize;
+        StreamSoundFile::InfoBlockBody mBody;
+    };
+    struct PrefetchDataBlock {
+        u32 mSignature;
+        u32 mSize;
+        PrefetchData mBody[1];
     };
 };
 

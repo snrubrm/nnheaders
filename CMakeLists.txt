@@ -284,6 +284,7 @@ add_library(NintendoSDK OBJECT
   include/nn/atk/detail/GroupFile.h
   include/nn/atk/detail/GroupFileReader.h
   include/nn/atk/detail/StreamSoundPrefetchFile.h
+  include/nn/atk/detail/StreamSoundPrefetchFileReader.h
   include/nn/atk/detail/Task.h
   include/nn/atk/detail/WaveArchiveFile.h
   include/nn/atk/detail/WaveArchiveFileReader.h
@@ -369,6 +370,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_GroupFile.cpp
   src/NintendoSDK/atk/atk_GroupFileReader.cpp
   src/NintendoSDK/atk/atk_StreamSoundPrefetchFile.cpp
+  src/NintendoSDK/atk/atk_StreamSoundPrefetchFileReader.cpp
   src/NintendoSDK/atk/atk_Task.cpp
   src/NintendoSDK/atk/atk_SoundHandle.cpp
   src/NintendoSDK/atk/atk_SoundHeap.cpp
