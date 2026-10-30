@@ -20,12 +20,13 @@ namespace nn::font {
 struct GlyphNode;
 
 // The glyph index of the cache (constructor 0x7100ab3704, Initialize 0x7100ab3714: it allocates
-// `count` fixed 0x58-byte nodes and chains them; only the root / array / count fields are known).
+// `count` fixed 0x58-byte nodes and chains them through their first object-pointer slot).
 class GlyphTreeMap {
 public:
     GlyphTreeMap();
 
     void Initialize(void* (*allocate)(size_t, size_t, void*), void* user_data, u32 count);
+    void Reset();
     GlyphNode* Find(u32 code, u16 size, u16 face) const;
     void Erase(u32 code, u16 size, u16 face);
     static void UpdateFlagsForCompleteTextureCacheRecursive(GlyphNode* node);
@@ -35,8 +36,8 @@ private:
     GlyphNode* Erase(GlyphNode* node, u64 key);
 
     /* 0x00 */ GlyphNode* _0;
-    /* 0x08 */ void* mNodes;
-    /* 0x10 */ void* _10;
+    /* 0x08 */ GlyphNode* mFreeNodes;
+    /* 0x10 */ GlyphNode* mNodeBuffer;
     /* 0x18 */ u32 mCount;
 };
 static_assert(sizeof(GlyphTreeMap) == 0x20);
@@ -124,7 +125,7 @@ private:
     friend class ScalableFont;
     void SetFontFaceNoPlot(u32 font, u32 core);
 
-    // The four intrusive list heads of a face node and the head of a list; the constructor
+    // Intrusive list heads of the cache and each atlas line; the constructor
     // (0x7100ab0d24) self-links all of them. Names are guesses.
     struct ListHead {
         // Inline-only; name is a guess. TextureCache's constructor self-links every head.
@@ -134,18 +135,17 @@ private:
         /* 0x08 */ void* next;
     };
 
-    // One glyph management node of the cache (0x60 bytes, 64 of them at +0x80). Name is a guess.
-    struct FaceNode {
-        /* 0x00 */ ListHead head0;
-        /* 0x10 */ u64 _10;
-        /* 0x18 */ ListHead head18;
-        /* 0x28 */ u64 _28;
-        /* 0x30 */ ListHead head30;
-        /* 0x40 */ u64 _40;
-        /* 0x48 */ ListHead head48;
-        /* 0x58 */ u64 _58;
+    // Atlas line records: UpdateTextureCache writes these fields at 0x18 stride;
+    // FindAndReserveEraseGlyph and CompleteTextureCache independently consume them. Names are guesses.
+    struct LineNode {
+        /* 0x00 */ ListHead head;
+        /* 0x10 */ u16 y;
+        /* 0x12 */ u16 usedWidth;
+        /* 0x14 */ u8 kind;
+        /* 0x15 */ u8 index;
+        /* 0x16 */ u8 _16[2];
     };
-    static_assert(sizeof(FaceNode) == 0x60);
+    static_assert(sizeof(LineNode) == 0x18);
 
     /* 0x08 */ fontll::ScalableFontEngine* mScalableFontEngine;
     /* 0x10 */ fontll::ScalableFontEngine* mScalableFontEngines;
@@ -156,8 +156,8 @@ private:
     /* 0x2c */ u32 mTextureHeight;
     /* 0x30 */ GlyphTreeMap mGlyphTreeMap;
     /* 0x50 */ ListHead _50[3];
-    /* 0x80 */ FaceNode mFaceNodes[64];
-    /* 0x1880 */ u32 _1880;
+    /* 0x80 */ LineNode mLineNodes[256];
+    /* 0x1880 */ u32 mLineCount;
     /* 0x1884 */ u32 mFontFaceCount;  // Initialize stores arg.fontFaceCount here
     /* 0x1888 */ u8 _1888[32];
     /* 0x18a8 */ u8 _18a8[32];

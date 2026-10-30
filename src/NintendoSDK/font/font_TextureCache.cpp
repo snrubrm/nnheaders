@@ -20,7 +20,7 @@ bool TextureCache::IsBorderEffectEnabled(u16 font_face) const {
 // 0x7100ab0d24
 TextureCache::TextureCache()
     : mScalableFontEngine(nullptr), mScalableFontEngines(nullptr), mFontData(nullptr),
-      mTextureData(nullptr), mTextureWidth(0), mTextureHeight(0), _1880(0), mFontFaceCount(0),
+      mTextureData(nullptr), mTextureWidth(0), mTextureHeight(0), mLineCount(0), mFontFaceCount(0),
       mFontFace(0), _18ec(0),
       _18f0(0), _18f4(1), _18f8(nullptr), mFontMetrics(nullptr), _1938(1), mPool(nullptr),
       mPoolOffset(0) {

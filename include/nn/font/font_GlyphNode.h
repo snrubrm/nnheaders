@@ -9,7 +9,10 @@ namespace nn::font {
 struct GlyphNode {
     static u8 CalculateLineKind(u16 height);
 
-    u8 _0[0x20];
+    // The live-list previous link and next free node share this object-pointer slot.
+    // The live-list interface and remaining prefix are not established.
+    void* _0;
+    u8 _8[0x18];
     GlyphNode* left;
     GlyphNode* right;
     u64 key;
