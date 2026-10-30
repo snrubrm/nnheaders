@@ -7,12 +7,25 @@
 #include <nn/os.h>
 #include <nn/os/os_Mutex.h>
 #include <nn/types.h>
+#include <atomic>
 
 namespace nn::atk::detail {
 
+class LowLevelVoice;
+
 class LowLevelVoiceAllocator {
 public:
+    LowLevelVoiceAllocator();
     static size_t GetRequiredMemSize(int max_voices);
+
+private:
+    LowLevelVoice* mVoices;        // +0x00
+    LowLevelVoice** mFreeVoices;   // +0x08
+    s32 mActiveVoiceCount;         // +0x10
+    u8 _14[4];
+    s32* mVoiceIndices;            // +0x18
+    s32 mVoiceCapacity;            // +0x20
+    std::atomic<u32> _24;          // +0x24: UpdateAllVoiceState publishes this count.
 };
 
 }  // namespace nn::atk::detail

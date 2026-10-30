@@ -3,6 +3,11 @@
 
 namespace nn::atk::detail {
 
+LowLevelVoiceAllocator::LowLevelVoiceAllocator()
+    : mVoices(nullptr), mFreeVoices(nullptr), mActiveVoiceCount(0), mVoiceIndices(nullptr),
+      mVoiceCapacity(0), _24(0) {
+}
+
 bool LowLevelVoice::IsAvailable() const {
     return mAvailable;
 }
