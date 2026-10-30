@@ -9,9 +9,13 @@ namespace atk {
 
 enum SequenceMute : int;
 
-/// The parameters the sequence player passes to the user's per-tick callback. The layout is not
-/// known; the callback only receives a pointer to it.
-struct SequenceUserProcCallbackParam;
+/// The parameters the sequence player passes to the user's per-tick callback.
+struct SequenceUserProcCallbackParam {
+    s16* mPlayerVariables;
+    s16* mGlobalVariables;
+    s16* mTrackVariables;
+    u8 _18;
+};
 
 namespace detail {
 namespace driver {
@@ -33,6 +37,7 @@ public:
     };
 
     void Skip(StartOffsetType type, int amount);
+    void CallSequenceUserprocCallback(u16 value, SequenceTrack* track);
     void SetTrackMute(u32 track_mask, SequenceMute mute);
     void SetTrackSilence(u64 track_mask, bool silence, int fade_frames);
     bool SetTrackBankIndex(u32 track_mask, int bank_index);

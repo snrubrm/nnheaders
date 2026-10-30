@@ -16,6 +16,15 @@ void SequenceSoundPlayer::Skip(StartOffsetType type, int amount) {
     }
 }
 
+void SequenceSoundPlayer::CallSequenceUserprocCallback(u16 value, SequenceTrack* track) {
+    if (mUserProcCallback) {
+        SequenceUserProcCallbackParam parameter{mLocalVariables, sGlobalVariable,
+                                                track->GetVariablePtr(0), track->_78};
+        mUserProcCallback(value, &parameter, mUserProcArg);
+        track->_78 = parameter._18;
+    }
+}
+
 void SequenceSoundPlayer::SetTrackMute(u32 track_mask, SequenceMute mute) {
     for (s32 i = 0; i < 16 && track_mask != 0; ++i, track_mask >>= 1) {
         if ((track_mask & 1) != 0) {

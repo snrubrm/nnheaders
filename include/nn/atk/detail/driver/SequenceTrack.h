@@ -38,6 +38,8 @@ public:
     void SetTvFxSend(nn::atk::AuxBus bus, f32 send) { mTvFxSend[u32(bus)] = send; }
 
 private:
+    friend class SequenceSoundPlayer;
+
     u8 _0[8];
     /* 0x8 */ u8 mPlayerTrackNo;
     u8 _9[0xc - 0x9];
@@ -52,7 +54,8 @@ private:
     /* 0x5c */ f32 mTvFxSend[3];
     /* 0x68 */ const void* mSeqData;
     /* 0x70 */ const void* mSeqDataEnd;
-    u8 _78[0x12b - 0x78];
+    u8 _78;
+    u8 _79[0x12b - 0x79];
     /* 0x12b */ u8 mBankIndex;
     u8 _12c[0x198 - 0x12c];
     /* 0x198 */ u8 mVelocityRange;
