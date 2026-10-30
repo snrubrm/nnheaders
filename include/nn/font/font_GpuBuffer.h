@@ -17,6 +17,8 @@ class Picture;
 
 namespace nn::font {
 
+class RectDrawer;
+
 // Partial layout (0x40 bytes): eui::ConstantBuffer embeds two of these at +0x120 / +0x160 and its map()
 // (0x7100bf42f8) is the only caller of Map / Unmap (0x7101324c88 / 0x7101324ce0). Map selects element `index` of the
 // 0x48-byte gfx buffer array at +0x8 and caches the mapped pointer at +0x30; Unmap undoes that and resets the mapped
@@ -53,6 +55,7 @@ private:
     // Material constant-buffer accessors 0x7100ac391c / 0x7100ac4ab0 read the mapped pointer.
     friend class nn::ui2d::Material;
     friend class nn::ui2d::Picture;
+    friend class RectDrawer;
 
     /* 0x00 */ u32 mFlags;
     /* 0x08 */ gfx::Buffer* mBuffers;
