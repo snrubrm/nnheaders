@@ -6,6 +6,12 @@ namespace atk {
 namespace detail {
 namespace driver {
 
+// NON_MATCHING: the compiler combines the individual variable stores into wider stores.
+void SequenceSoundPlayer::InitSequenceSoundPlayer() {
+    for (s16& variable : sGlobalVariable)
+        variable = -1;
+}
+
 // NON_MATCHING: the compiler selects the two offset cases in the opposite order.
 void SequenceSoundPlayer::Skip(StartOffsetType type, int amount) {
     if (_30) {
