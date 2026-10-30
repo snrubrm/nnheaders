@@ -1,6 +1,7 @@
 #include <nn/ui2d/Window.h>
 #include <nn/ui2d/Material.h>
 #include <nn/ui2d/Layout.h>
+#include <nn/ui2d/ResPane.h>
 
 namespace nn::ui2d {
 
@@ -8,6 +9,36 @@ namespace nn::ui2d {
 // destructor. Keep it as in GameDataFlagSelector (commit 96101229).
 Window::~Window() {
     ;
+}
+
+// 0x7100abd038
+// NON_MATCHING: native orders the mode branches differently and retains a width self-store.
+void Window::InitializeSize(const ResWindow* resource) {
+    for (s32 i = 0; i < 4; ++i)
+        mFrameMargins[i] = resource->mFrameMargins[i];
+    if (mFrameMargins[0] || mFrameMargins[1] || mFrameMargins[2] || mFrameMargins[3])
+        mWindowFlags |= 8;
+
+    switch (mWindowKind) {
+    case 1:
+        mContentMargins[0] = resource->mContentMargins[0];
+        mContentMargins[1] = resource->mContentMargins[1];
+        mContentMargins[2] = 0;
+        mContentMargins[3] = 0;
+        SetSize({GetSize().width, static_cast<f32>(resource->mContentMargins[2])});
+        break;
+    case 2:
+        mContentMargins[0] = static_cast<s32>(GetSize().width) - resource->mContentMargins[1];
+        mContentMargins[1] = resource->mContentMargins[1];
+        mContentMargins[2] = 0;
+        mContentMargins[3] = 0;
+        SetSize({GetSize().width, static_cast<f32>(resource->mContentMargins[2])});
+        break;
+    default:
+        for (s32 i = 0; i < 4; ++i)
+            mContentMargins[i] = resource->mContentMargins[i];
+        break;
+    }
 }
 
 // 0x7100abd3cc

@@ -47,6 +47,13 @@ struct ResParts : ResPane {
 };
 static_assert(sizeof(ResParts) == 0x60);
 
+// Window resource prefix (InitializeSize 0xabd038). Further resource fields and total extent
+// are not established by these margin reads.
+struct ResWindow : ResPane {
+    u16 mFrameMargins[4];
+    u16 mContentMargins[4];
+};
+
 // Fixed text-box resource header, read by TextBox's constructor (0xaba5b8).
 // The string, its ID and optional arrays are addressed by relative offsets.
 struct ResTextBox : ResPane {

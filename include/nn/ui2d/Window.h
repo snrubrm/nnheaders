@@ -31,6 +31,8 @@ public:
     void DrawSelf(DrawInfo&, gfx::CommandBuffer&) override;
 
 protected:
+    void InitializeSize(const ResWindow* resource);
+
     struct Frame {
         u8 mTextureFlip;
         Material* mMaterial;
