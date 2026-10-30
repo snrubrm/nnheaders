@@ -28,6 +28,7 @@ public:
     void Initialize(void* (*allocate)(size_t, size_t, void*), void* user_data, u32 count);
     GlyphNode* Find(u32 code, u16 size, u16 face) const;
     static void UpdateFlagsForCompleteTextureCacheRecursive(GlyphNode* node);
+    static GlyphNode* EraseMin(GlyphNode* node);
 
 private:
     /* 0x00 */ GlyphNode* _0;
@@ -116,6 +117,8 @@ public:
     GlyphNode* FindGlyphNode(u32 code, u32 font_size, u16 font_face);
 
 private:
+    friend class ScalableFont;
+
     // The four intrusive list heads of a face node and the head of a list; the constructor
     // (0x7100ab0d24) self-links all of them. Names are guesses.
     struct ListHead {
@@ -137,7 +140,10 @@ private:
     static_assert(sizeof(FaceNode) == 0x60);
 
     /* 0x08 */ fontll::ScalableFontEngine* mScalableFontEngine;
-    /* 0x10 */ u64 _10[4];
+    /* 0x10 */ u64 _10[2];
+    /* 0x20 */ void* mTextureData;
+    /* 0x28 */ u32 mTextureWidth;
+    /* 0x2c */ u32 mTextureHeight;
     /* 0x30 */ GlyphTreeMap mGlyphTreeMap;
     /* 0x50 */ ListHead _50[3];
     /* 0x80 */ FaceNode mFaceNodes[64];

@@ -36,7 +36,7 @@ public:
     };
     struct InitializeArg {
         UnkA0* _0 = nullptr;
-        void* _8 = nullptr;
+        GpuBuffer* _8 = nullptr;
         s32 mCapacity = 0;
         bool _14 = false;
         bool _15 = false;
@@ -61,17 +61,23 @@ public:
     };
     static_assert(sizeof(TextureEntry) == 0x10);
 
+    // Draw and AddDrawCommand consume the texture groups and their count as a record.
+    struct VertexBufferData {
+        TextureEntry mTextures[8]{};
+        s32 mTextureCount = 0;
+        u8 _84[4]{};
+    };
+    static_assert(sizeof(VertexBufferData) == 0x88);
+
     /* 0x00 */ u32 mConstantBufferOffset = 0;
     /* 0x04 */ u32 mVertexBufferOffset = 0;
     /* 0x08 */ u32 mFlags = 0;
-    /* 0x10 */ TextureEntry mTextures[8]{};
-    /* 0x90 */ s32 mTextureCount = 0;
-    /* 0x94 */ u8 _94[4]{};
+    /* 0x10 */ VertexBufferData mVertexBufferData{};
     /* 0x98 */ s32 mCapacity = 0;
     /* 0x9c */ s32 mCharCount = 0;
     /* 0xa0 */ UnkA0* _a0 = nullptr;
     /* 0xa8 */ u8* _a8 = nullptr;
-    /* 0xb0 */ void* _b0 = nullptr;
+    /* 0xb0 */ GpuBuffer* _b0 = nullptr;
     /* 0xb8 */ bool _b8 = false;
     /* 0xb9 */ bool _b9 = false;
     /* 0xba */ bool _ba = false;

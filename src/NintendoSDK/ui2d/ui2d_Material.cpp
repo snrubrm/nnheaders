@@ -7,6 +7,8 @@
 #include <nn/ui2d/DrawInfo.h>
 #include <nn/ui2d/GraphicsResource.h>
 #include <nn/ui2d/ShaderInfo.h>
+#include <nn/ui2d/TextureInfo.h>
+#include <algorithm>
 #include <nn/util/util_BytePtr.h>
 
 namespace nn::ui2d {
@@ -131,6 +133,23 @@ void Material::sub_7100AC4AD0(const DrawInfo& info) {
             info.mUi2dConstantBuffer->mOffset += size;
             mUserShaderConstantBufferInformation->geometryOffset = offset;
         }
+    }
+}
+
+// 0x7100ac49d4
+void Material::SetupSubmaterialOf_Texture(DrawInfo& draw_info,
+                                          gfx::CommandBuffer& command_buffer) const {
+    if (!mMemCount.texMap)
+        return;
+    const s32 count = std::min<s32>(mMemCount.texMap, _48);
+    for (ptrdiff_t i = 0; i < count; ++i) {
+        const TexMap& tex_map = GetTexMapArray()[i];
+        const s32 slot = mShaderInfo->mTextureSlots[_4b * 3 + i];
+        const gfx::DescriptorSlot sampler = *draw_info.mGraphicsResource->sub_7100AC1B30(
+            static_cast<TexWrap>(tex_map.mWrapS), static_cast<TexWrap>(tex_map.mWrapT),
+            static_cast<TexFilter>(tex_map.mMinFilter), static_cast<TexFilter>(tex_map.mMagFilter));
+        command_buffer.gfx::detail::CommandBufferImpl<gfx::DefaultApi>::SetTextureAndSampler(
+            slot, gfx::ShaderStage_Pixel, tex_map.GetTextureInfo()->GetDescriptorSlot(), sampler);
     }
 }
 

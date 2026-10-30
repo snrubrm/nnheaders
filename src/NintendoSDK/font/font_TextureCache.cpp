@@ -36,6 +36,60 @@ const TextureCache::FontMetrics* TextureCache::GetFontMetrics(u16 font_face) con
     return &metrics[selected];
 }
 
+// NON_MATCHING: the compiler merges the final child checks and returns.
+// 0x7100ab3e70
+GlyphNode* GlyphTreeMap::EraseMin(GlyphNode* node) {
+    if (!node->left)
+        return nullptr;
+
+    if (node->left->color != 1 &&
+        (!node->left->left || node->left->left->color != 1)) {
+        node->color = !node->color;
+        node->left->color = !node->left->color;
+        node->right->color = !node->right->color;
+        GlyphNode* right = node->right;
+        if (right->left && right->left->color == 1) {
+            GlyphNode* left = right->left;
+            right->left = left->right;
+            left->right = right;
+            left->color = right->color;
+            right->color = 1;
+            node->right = left->left;
+            left->left = node;
+            left->color = node->color;
+            node->color = 1;
+            node = left;
+            node->color = !node->color;
+            node->left->color = !node->left->color;
+            node->right->color = !node->right->color;
+        }
+    }
+    node->left = EraseMin(node->left);
+    if (node->right && node->right->color == 1) {
+        GlyphNode* right = node->right;
+        node->right = right->left;
+        right->left = node;
+        right->color = node->color;
+        node->color = 1;
+        node = right;
+    }
+    if (node->left && node->left->color == 1 && node->left->left &&
+        node->left->left->color == 1) {
+        GlyphNode* left = node->left;
+        node->left = left->right;
+        left->right = node;
+        left->color = node->color;
+        node->color = 1;
+        node = left;
+    }
+    if (node->left && node->left->color == 1 && node->right && node->right->color == 1) {
+        node->color = !node->color;
+        node->left->color = !node->left->color;
+        node->right->color = !node->right->color;
+    }
+    return node;
+}
+
 GlyphNode* GlyphTreeMap::Find(u32 code, u16 size, u16 face) const {
     const u64 key = (static_cast<u64>(size) << 48) | (static_cast<u64>(face) << 32) | code;
     GlyphNode* node = _0;

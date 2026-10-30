@@ -1,10 +1,28 @@
 #include <nn/ui2d/Util.h>
 #include <nn/ui2d/AnimTransform.h>
+#include <nn/gfx/gfx_CommandBuffer.h>
+#include <nn/gfx/gfx_GpuAddress.h>
+#include <nn/ui2d/DrawInfo.h>
+#include <nn/ui2d/GraphicsResource.h>
+#include <nn/ui2d/Material.h>
 #include <nn/ui2d/ShaderInfo.h>
 #include <nn/util/util_BytePtr.h>
 #include <cstring>
 
 namespace nn::ui2d {
+
+namespace detail {
+// 0x7100ac045c
+void DrawQuad(gfx::CommandBuffer& command_buffer, DrawInfo& draw_info, Material& material) {
+    material.sub_7100AC50CC(&command_buffer);
+    draw_info.sub_7100AC0720(&command_buffer);
+    material.SetCommandBuffer(command_buffer, draw_info);
+    gfx::GpuAddress address;
+    draw_info.mGraphicsResource->mBuffer1.GetGpuAddress(&address);
+    command_buffer.gfx::detail::CommandBufferImpl<gfx::DefaultApi>::DrawIndexed(
+        gfx::PrimitiveTopology_TriangleList, gfx::IndexFormat_Uint16, address, 6, 0);
+}
+}  // namespace detail
 
 void LoadArchiveShader(ShaderInfo* info, gfx::Device* device, void* shader_file,
                        const void* archive_data, gfx::MemoryPool* memory_pool,

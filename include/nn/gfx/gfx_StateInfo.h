@@ -75,7 +75,7 @@ public:
 
 class BlendTargetStateInfo : public detail::DataContainer<BlendTargetStateInfoData> {
 public:
-    BlendTargetStateInfo();
+    BlendTargetStateInfo() {}
     void SetDefault();
 
     void SetBlendEnabled(bool b) { flag.SetBit(Flag_BlendEnable, b); }

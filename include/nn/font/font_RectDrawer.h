@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <nn/font/font_DispStringBuffer.h>
 #include <nn/gfx/gfx_Buffer.h>
 #include <nn/gfx/gfx_DescriptorSlot.h>
 #include <nn/gfx/gfx_MemoryPool.h>
@@ -10,6 +11,7 @@
 
 namespace nn::gfx {
 class ResShaderFile;
+class GpuAddress;
 }
 
 namespace nn::font {
@@ -21,14 +23,19 @@ public:
     RectDrawer();
     virtual ~RectDrawer();
     virtual void Finalize(gfx::Device* device);
+    static size_t GetWorkBufferSize(gfx::Device*, u32);
 
     using SamplerRegistrationCallback = bool (*)(gfx::DescriptorSlot*, const gfx::Sampler&, void*);
     using SamplerDescriptorCallback = void (*)(gfx::DescriptorSlot*, const gfx::Sampler&, void*);
     // Native neighbours 0x71013252fc / 0x7101325310 pass the sampler and descriptor to the callback.
     void RegisterSamplerSlot(SamplerRegistrationCallback callback, void* user_data);
     void UnregisterSamplerSlot(SamplerDescriptorCallback callback, void* user_data);
+    void Draw(gfx::CommandBuffer&, const DispStringBuffer&) const;
 
 private:
+    void AddDrawCommand(gfx::CommandBuffer&, const DispStringBuffer::VertexBufferData&, u32,
+                        const gfx::GpuAddress&, const gfx::GpuAddress&) const;
+
     // Initialize copies the BNSH shader file at 0x7102524000, then stores shader selection
     // and five six-entry slot arrays. ResCast at 0x7101320d70 has a shared relocation-only body.
     gfx::ResShaderFile* mResShaderFile;
