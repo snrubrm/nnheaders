@@ -36,16 +36,16 @@ public:
     u16 GetFormat() const { return mFormat; }
     gfx::DescriptorSlot* GetDescriptorSlot() { return &mDescriptorSlot; }
 
-protected:
-    friend class RectDrawer;
-
-    // inline-only in the original (constructor, destructor and ResourceTextureObject's constructor all run it); name is
-    // a guess
+    // inline-only in the original (constructors, destructor and ResFontBase::UnloadTexture run it);
+    // name is a guess; resource owners also reset the texture state
     void Reset() {
         Set(nullptr, 0xc, 0, 0, 0, true);
         mDescriptorSlot.Invalidate();
         _18 = false;
     }
+
+protected:
+    friend class RectDrawer;
 
     /* 0x08 */ const void* mData;
     /* 0x10 */ u16 mHeight;
@@ -76,6 +76,10 @@ public:
     ResourceTextureObject() { Reset(); }
 
     void Initialize(gfx::Device* device, gfx::MemoryPool* pool, s64 pool_offset, u64 pool_size);
+
+    // inline-only in the original; name is a guess. Initialize stores this resource,
+    // and both GetTextureView overloads and ResFontBase::UnloadTexture consume it.
+    gfx::ResTexture* GetResTexture() const { return mResTexture; }
 
     const gfx::TextureView* GetTextureView() const override { return mResTexture->GetTextureView(); }
     gfx::TextureView* GetTextureView() override { return mResTexture->GetTextureView(); }

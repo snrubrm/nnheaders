@@ -189,7 +189,8 @@ protected:
     /* 0x10 */ void* mResource;
     /* 0x18 */ detail::BinaryFileHeader* mFileHeader;
     /* 0x20 */ FontInformation* mFontInfo;
-    /* 0x28 */ ResourceTextureObject mTexture;
+    // The const UnloadTexture operation changes the embedded GPU-resource state.
+    /* 0x28 */ mutable ResourceTextureObject mTexture;
     /* 0x58 */ u32 mTextureWrapFilter;  // bit 2: linear filter at small sizes, bit 1: at large sizes
     /* 0x60 */ FontKerningTable* mKerningTable;
     /* 0x68 */ gfx::MemoryPool* mMemoryPool;
