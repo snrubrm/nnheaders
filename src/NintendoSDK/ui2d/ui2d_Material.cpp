@@ -73,11 +73,11 @@ void Material::UnbindAnimation(AnimTransform* transform) {
 }
 
 // 0x7100ac391c
-void* Material::GetConstantBufferForVertexShader(const DrawInfo& info) const {
+Material::ConstantBufferForVertexShader* Material::GetConstantBufferForVertexShader(const DrawInfo& info) const {
     void* mapped = info.mUi2dConstantBuffer->mMappedPtr;
     if (!mapped)
         return nullptr;
-    return util::BytePtr(mapped, mVertexShaderConstantBufferOffset).Get();
+    return util::BytePtr(mapped, mVertexShaderConstantBufferOffset).Get<ConstantBufferForVertexShader>();
 }
 
 // 0x7100ac4ab0

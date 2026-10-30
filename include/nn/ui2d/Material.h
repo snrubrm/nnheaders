@@ -60,6 +60,15 @@ static_assert(sizeof(TexMap) == 0x10);
 
 class Material {
 public:
+    // Only the fields consumed by CalculateQuad are known; the full record extent is unknown.
+    struct ConstantBufferForVertexShader {
+        u8 _0[0x40];
+        util::Matrix4x3fType matrix;
+        u8 _70[0x1a0];
+        Size size;
+        util::Float2 position;
+    };
+
     Material();
     Material(const Material&, gfx::Device*);
     Material(BuildResultInformation*, gfx::Device*, const ResMaterial*, const ResMaterial*,
@@ -72,7 +81,7 @@ public:
     void SetCommandBufferOnlyBlend(gfx::CommandBuffer&) const;
     void SetCommandBuffer(gfx::CommandBuffer&, DrawInfo&) const;
     void SetupUserShaderConstantBufferInformation(nn::ui2d::UserShaderInformation const&);
-    void* GetConstantBufferForVertexShader(const DrawInfo&) const;
+    ConstantBufferForVertexShader* GetConstantBufferForVertexShader(const DrawInfo&) const;
     void* GetConstantBufferForPixelShader(const DrawInfo&) const;
     void sub_7100AC4AD0(const DrawInfo&);
     void sub_7100AC4E54(gfx::CommandBuffer*, const DrawInfo&);
