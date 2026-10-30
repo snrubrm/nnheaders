@@ -76,6 +76,15 @@ u32 SoundArchiveFile::SequenceSoundInfo::GetStartOffset() const {
     return mStartOffset;
 }
 
+// NON_MATCHING: the compiler omits the redundant zero-signature selection.
+u32 SoundArchiveFile::FileInfo::GetFileLocationType() const {
+    if (mSignature == 0x220c)
+        return 0;
+    if (mSignature == 0x220d)
+        return 1;
+    return 2;
+}
+
 const SoundArchiveFile::InternalFileInfo* SoundArchiveFile::FileInfo::GetInternalFileInfo() const {
     if (mSignature != 0x220c)
         return nullptr;

@@ -165,10 +165,15 @@ struct SoundArchiveFile {
 
     /// A file record: the signature names the internal (0x220c) or external (0x220d) file info
     /// that the offset at +4 points at.
-    struct InternalFileInfo;
+    struct InternalFileInfo {
+        u32 _0;
+        s32 mOffset;
+        u32 mSize;
+    };
     struct ExternalFileInfo;
 
     struct FileInfo {
+        u32 GetFileLocationType() const;
         const InternalFileInfo* GetInternalFileInfo() const;
         const ExternalFileInfo* GetExternalFileInfo() const;
 
@@ -318,6 +323,15 @@ public:
         bool isAdvancedWaveSoundEnabled;
     };
 
+    struct GroupInfo {
+        u32 mFileId;
+        u32 mFileSize;
+    };
+    struct FileInfo {
+        u32 mFileSize;
+        s32 mFileOffset;
+        const void* _8;
+    };
     struct StreamSoundInfo2 {
         bool _0;
         u32 _4;

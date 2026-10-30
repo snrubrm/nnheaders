@@ -28,6 +28,8 @@ public:
     bool ReadWaveArchiveInfo(u32 id, SoundArchive::WaveArchiveInfo* info) const;
     bool ReadSequenceSoundInfo(u32 id, SoundArchive::SequenceSoundInfo* info) const;
     bool ReadWaveSoundInfo(u32 id, SoundArchive::WaveSoundInfo* info) const;
+    bool ReadGroupInfo(u32 group_id, SoundArchive::GroupInfo* info) const;
+    bool ReadFileInfo(u32 file_id, SoundArchive::FileInfo* info, int) const;
     bool ReadBankInfo(u32 bank_id, SoundArchive::BankInfo* info) const;
     bool ReadPlayerInfo(u32 player_id, SoundArchive::PlayerInfo* info) const;
     bool ReadSoundGroupInfo(u32 sound_group_id, SoundArchive::SoundGroupInfo* info) const;

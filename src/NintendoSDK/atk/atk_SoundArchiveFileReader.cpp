@@ -72,6 +72,43 @@ bool SoundArchiveFileReader::ReadWaveSoundInfo(u32 id, SoundArchive::WaveSoundIn
     return true;
 }
 
+bool SoundArchiveFileReader::ReadGroupInfo(u32 group_id, SoundArchive::GroupInfo* info) const {
+    const auto* group = mInfoBlock->GetGroupInfo(group_id);
+    if (!group)
+        return false;
+    info->mFileId = group->mItemFileId;
+    const auto* file = mInfoBlock->GetFileInfo(info->mFileId);
+    if (!file)
+        return false;
+    const u32 type = file->GetFileLocationType();
+    if (type == 0) {
+        info->mFileSize = file->GetInternalFileInfo()->mSize;
+    } else if (type == 1) {
+        file->GetExternalFileInfo();
+        info->mFileSize = 0xffffffff;
+    } else {
+        return false;
+    }
+    return true;
+}
+
+bool SoundArchiveFileReader::ReadFileInfo(u32 file_id, SoundArchive::FileInfo* info, int) const {
+    const auto* file = mInfoBlock->GetFileInfo(file_id);
+    if (!file)
+        return false;
+    const u32 type = file->GetFileLocationType();
+    if (type == 0) {
+        const auto* internal = file->GetInternalFileInfo();
+        info->mFileSize = internal->mSize;
+        info->mFileOffset = internal->mOffset == -1 ? -1 : internal->mOffset + 8;
+    } else if (type == 1) {
+        info->_8 = file->GetExternalFileInfo();
+    } else {
+        return false;
+    }
+    return true;
+}
+
 bool SoundArchiveFileReader::ReadBankInfo(u32 bank_id, SoundArchive::BankInfo* info) const {
     const auto* record = mInfoBlock->GetBankInfo(bank_id);
     if (!record)
