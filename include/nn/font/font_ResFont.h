@@ -210,6 +210,7 @@ public:
     // Named nonvirtual API; native validation returns false and successful setup returns true.
     bool SetResource(gfx::Device* device, void* resource, gfx::MemoryPool* pool,
                      s64 pool_offset, u64 pool_size);
+    static void Unrelocate(void* resource);
     void Finalize(gfx::Device* device) override;
 };
 
