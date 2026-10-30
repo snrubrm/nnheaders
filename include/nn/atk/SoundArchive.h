@@ -317,6 +317,7 @@ struct SoundArchiveFile {
 /// TODO: only what sead::AudioSoundDataMgrCafe and its archives use is declared (the class is 0x2a0 bytes).
 class SoundArchive {
 public:
+    SoundArchive();
     virtual ~SoundArchive();
 
     virtual const void* detail_GetFileAddress(u32 file_id) const = 0;
@@ -422,7 +423,8 @@ public:
 protected:
     // IsAvailable tests it and every accessor above forwards to it.
     detail::SoundArchiveFileReader* mFileReader;  // +0x8
-    u8 _10[0x18 - 0x10];
+    // Nullable polymorphic object used by both label lookup paths; its type is not yet recovered.
+    void* _10;
     // Finalize 0x7101339f40 stores the constant 47 here after it releases the reader.
     u16 mFileVersion;  // +0x18
     u8 _1a[0x298 - 0x1a];

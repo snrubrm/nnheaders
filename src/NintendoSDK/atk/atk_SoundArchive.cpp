@@ -3,6 +3,8 @@
 
 namespace nn::atk {
 
+SoundArchive::SoundArchive() : mFileReader(nullptr), _10(nullptr), mFileVersion(0x2f) {}
+
 // The original destructor only restores the vtable; the reader is owned by Initialize/Finalize.
 SoundArchive::~SoundArchive() {}
 
