@@ -28,6 +28,7 @@ public:
     void Initialize(void* (*allocate)(size_t, size_t, void*), void* user_data, u32 count);
     GlyphNode* Find(u32 code, u16 size, u16 face) const;
     static void UpdateFlagsForCompleteTextureCacheRecursive(GlyphNode* node);
+    static GlyphNode* EraseMin(GlyphNode* node);
 
 private:
     /* 0x00 */ GlyphNode* _0;

@@ -14,7 +14,8 @@ struct GlyphNode {
     GlyphNode* right;
     u64 key;
     u8 flags;
-    u8 _39[3];
+    u8 color;
+    u8 _3a[2];
     u32 requestMask;
     u16 _40;
     u16 _42;
