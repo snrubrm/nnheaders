@@ -5,6 +5,30 @@
 
 namespace nn::atk::detail {
 
+void LowLevelVoiceAllocator::Finalize() {
+    mVoiceIndices = nullptr;
+    mVoiceCapacity = 0;
+    mActiveVoiceCount = 0;
+    mVoices = nullptr;
+    mVoiceOrder = nullptr;
+    _24.store(0, std::memory_order_release);
+}
+
+void LowLevelVoiceAllocator::UpdateAllVoiceState(OutputMode mode) {
+    u32 droppedCount = 0;
+    for (int i = 0; i < mActiveVoiceCount; ++i) {
+        nn::audio::VoiceType* voice = &mVoiceOrder[i]->mVoice;
+        if (nn::audio::IsVoiceValid(voice) && nn::audio::IsVoiceDroppedFlagOn(voice) &&
+            mVoiceOrder[i]->mAvailable) {
+            mVoiceOrder[i]->mAvailable = false;
+            ++droppedCount;
+        } else {
+            mVoiceOrder[i]->UpdateState(mode);
+        }
+    }
+    _24.store(droppedCount, std::memory_order_release);
+}
+
 LowLevelVoiceAllocator::LowLevelVoiceAllocator()
     : mVoices(nullptr), mVoiceOrder(nullptr), mActiveVoiceCount(0), mVoiceIndices(nullptr),
       mVoiceCapacity(0), _24(0) {

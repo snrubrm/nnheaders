@@ -12,6 +12,17 @@ Thread::Thread() = default;
 // 0x710135d698
 Thread::~Thread() {}
 
+// NON_MATCHING: OnRun and OnExit inline; the compiler also loads the callback
+// fields earlier and saves an additional register.
+void Thread::ThreadMain::Run(void* arg) {
+    auto* thread = static_cast<Thread*>(arg);
+    thread->_1e8 = false;
+    thread->OnRun();
+    thread->mHandler->Run(thread->mArgument);
+    thread->OnExit();
+    thread->_1e8 = true;
+}
+
 // NON_MATCHING: SetName and SetAffinityMask inline, and the empty Resume call is
 // eliminated; native keeps all three calls and uses a smaller stack frame.
 bool Thread::Run(const RunArgs& args) {

@@ -16,6 +16,10 @@ class LowLevelVoice;
 class LowLevelVoiceAllocator {
 public:
     LowLevelVoiceAllocator();
+    // Native only clears state; void return is inferred.
+    void Finalize();
+    // The sound thread discards the native result; void is inferred.
+    void UpdateAllVoiceState(OutputMode mode);
     static size_t GetRequiredMemSize(int max_voices);
     LowLevelVoice* AllocVoice();
     void FreeVoice(LowLevelVoice* voice);
@@ -100,6 +104,9 @@ public:
     /// Inline-only, name guessed: the renderer's sample count at +0x64c.
     u32 GetRendererSampleCount() const { return mRendererParameter.sampleCount; }
     OutputMode GetOutputMode() const { return mOutputMode; }
+    // Inline-only, name guessed: SoundThread update/run and voice-command dispatch
+    // independently obtain the allocator at +0x600.
+    LowLevelVoiceAllocator& GetLowLevelVoiceAllocator() { return mLowLevelVoiceAllocator; }
     // Inline-only, name guessed: aal::FinalOutputMeasure::updateActivation 0x7100baa290 compares +0x648
     // with 48000.
     u32 GetRendererSampleRate() const { return mRendererParameter.sampleRate; }
@@ -128,7 +135,9 @@ private:
     s32 mMasterVolumeCurrentFrame;
     u8 _ec[0x368 - 0xec];
     /* 0x368 */ nn::os::MutexType mEffectAuxMutex;
-    u8 _388[0x648 - 0x388];
+    u8 _388[0x600 - 0x388];
+    LowLevelVoiceAllocator mLowLevelVoiceAllocator;  // +0x600
+    u8 _628[0x648 - 0x628];
     nn::audio::AudioRendererParameter mRendererParameter;  // +0x648
     u8 _684[0x758 - 0x684];
     // +0x758: GetChannelCountMax returns 2 when it is set and 6 otherwise; what it means is not
