@@ -33,7 +33,13 @@ public:
             return nullptr;
         }
 
-        u8 _0[0x10];
+    public:
+        u32 mSignature;
+        u32 _4;
+        u32 mVersion;
+        u32 _c;
+
+    private:
         u16 mBlockCount;  // +0x10
         u16 _12;
         SoundArchiveFile::BlockDescriptor mBlocks[3];
@@ -90,6 +96,12 @@ public:
         Reference mStreamSoundInfo;   // +0x0
         Reference mTrackInfoTable;    // +0x8
         Reference mChannelInfoTable;  // +0x10
+    };
+
+    struct InfoBlock {
+        u32 mSignature;
+        u32 mSize;
+        InfoBlockBody mBody;
     };
 };
 
