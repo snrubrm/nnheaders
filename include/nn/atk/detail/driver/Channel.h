@@ -3,12 +3,12 @@
 #include <nn/atk/detail/CurveAdshr.h>
 #include <nn/atk/detail/CurveLfo.h>
 #include <nn/atk/detail/driver/DisposeCallback.h>
+#include <nn/atk/detail/driver/MultiVoice.h>
 #include <nn/types.h>
 #include <nn/util/util_IntrusiveList.h>
 
 namespace nn::atk::detail::driver {
 
-class MultiVoice;
 class SequenceTrack;
 
 // Partial real Channel: opaque spans retain the still-unmodeled members.
@@ -25,6 +25,13 @@ public:
     void Release();
     void NoteOff();
     void UpdateSweep(int milliseconds);
+    // Inline-only, name guessed: wave Pause and sequence PauseAllChannel repeat this transition.
+    void Pause(bool pause) {
+        if (mActive && (mPaused != 0) != pause) {
+            mPaused = pause;
+            mVoice->Pause(pause);
+        }
+    }
     void SetSweepParam(float value, int duration, bool flag);
     void Stop();
     void CallChannelCallback(ChannelCallbackStatus status);
