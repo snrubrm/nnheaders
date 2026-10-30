@@ -26,7 +26,8 @@ private:
     u8 _0[0x20];
     nn::audio::VoiceType mVoice;  // +0x20
     /* 0x28 */ bool mAvailable;
-    u8 _29[0xa4 - 0x29];
+    bool mHasVoiceSlot;             // +0x29
+    u8 _2a[0xa4 - 0x2a];
     s32 mPriority;                 // +0xa4: SetPriority 0x7101355f78
     u32 _a8;
     s32 mSampleRate;               // +0xac

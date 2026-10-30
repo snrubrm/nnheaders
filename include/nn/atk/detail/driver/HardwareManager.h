@@ -18,6 +18,7 @@ public:
     LowLevelVoiceAllocator();
     static size_t GetRequiredMemSize(int max_voices);
     LowLevelVoice* AllocVoice();
+    void FreeVoice(LowLevelVoice* voice);
 
 private:
     LowLevelVoice* mVoices;        // +0x00

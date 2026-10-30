@@ -77,4 +77,26 @@ LowLevelVoice* LowLevelVoiceAllocator::AllocVoice() {
     return voice;
 }
 
+// NON_MATCHING: the compiler reloads allocator fields and uses signed pointer differences;
+// the voices belong to the same initialized array.
+void LowLevelVoiceAllocator::FreeVoice(LowLevelVoice* voice) {
+    voice->FreeAllWaveBuffer();
+    if (voice->mHasVoiceSlot) {
+        auto& manager = Util::Singleton<driver::HardwareManager>::GetInstance();
+        nn::audio::ReleaseVoiceSlot(manager.GetAudioRendererConfig(), &voice->mVoice);
+        voice->mHasVoiceSlot = false;
+    }
+    voice->mSourceVoice = nullptr;
+    voice->mAvailable = false;
+    voice->_a8 = 1;
+
+    const s32 index = mVoiceIndices[voice - mVoices];
+    --mActiveVoiceCount;
+    LowLevelVoice* last_voice = mVoiceOrder[mActiveVoiceCount];
+    mVoiceOrder[index] = last_voice;
+    mVoiceOrder[mActiveVoiceCount] = voice;
+    mVoiceIndices[last_voice - mVoices] = index;
+    mVoiceIndices[voice - mVoices] = -1;
+}
+
 }  // namespace nn::atk::detail
