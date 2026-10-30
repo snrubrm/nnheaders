@@ -5,6 +5,19 @@ namespace nn::font {
 
 GlyphTreeMap::GlyphTreeMap() : _0(), mNodes(), _10(), mCount(0) {}
 
+// NON_MATCHING: the loop uses a widened index and hoists the per-face base.
+bool TextureCache::IsBorderEffectEnabled(u16 font_face) const {
+    const u32 count = _1888[font_face];
+    if (!count)
+        return false;
+    const u32 first = _18a8[font_face];
+    for (u32 i = 0; i < count; ++i) {
+        if (mBorderFlags[first + i])
+            return true;
+    }
+    return false;
+}
+
 GlyphNode* GlyphTreeMap::Find(u32 code, u16 size, u16 face) const {
     const u64 key = (static_cast<u64>(size) << 48) | (static_cast<u64>(face) << 32) | code;
     GlyphNode* node = _0;

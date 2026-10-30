@@ -143,7 +143,9 @@ private:
     /* 0x18f4 */ u32 _18f4;
     /* 0x18f8 */ void (*_18f8)();
     /* 0x1900 */ void* _1900;
-    /* 0x1908 */ void* _1908[6];
+    /* 0x1908 */ void* _1908;
+    /* 0x1910 */ u8* mBorderFlags;
+    /* 0x1918 */ void* _1918[4];
     /* 0x1938 */ u8 _1938;
     /* 0x1940 */ gfx::detail::TextureImpl<gfx::ApiVariationNvn8> mTexture;
     /* 0x1a18 */ gfx::TextureView mTextureView;
