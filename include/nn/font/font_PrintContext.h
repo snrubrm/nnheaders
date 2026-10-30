@@ -24,8 +24,13 @@ struct PrintContext {
     f32 yOrigin;
     f32 scaleX;
     f32 scaleY;
-    void* userData;
+    // PrintImpl and CalculateLineRectImpl pass flags and the previous code separately.
+    u32 flags;
+    u32 previousChar;
 };
+
+static_assert(sizeof(PrintContext<char>) == 0x30);
+static_assert(sizeof(PrintContext<u16>) == 0x30);
 
 // Rectangle of a text (CalculateRect writes the four edges and normalises them).
 class Rectangle {
