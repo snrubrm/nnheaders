@@ -24,6 +24,7 @@ public:
     void Release();
     void NoteOff();
     void UpdateSweep(int milliseconds);
+    void SetSweepParam(float value, int duration, bool flag);
     void CallChannelCallback(ChannelCallbackStatus status);
 
 private:
@@ -55,7 +56,11 @@ private:
     u8 mBiquadType;           // +0xc6
     u8 _c7[0xd4 - 0xc7];
     f32 mBiquadFrequency;     // +0xd4
-    u8 _d8[0x158 - 0xd8];
+    u8 _d8[0x130 - 0xd8];
+    f32 _130;
+    s32 _134;
+    s32 _138;
+    u8 _13c[0x158 - 0x13c];
     s32 _158;
     u8 _15c[0x170 - 0x15c];
     Callback mCallback;       // +0x170
