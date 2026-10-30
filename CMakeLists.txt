@@ -450,6 +450,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/font/font_TextureCache.cpp
   src/NintendoSDK/font/font_TextureObject.cpp
   src/NintendoSDK/font/font_TextWriterBase.cpp
+  src/NintendoSDK/font/font_WordWrapping.cpp
   src/NintendoSDK/ui2d/ui2d_AnimTransform.cpp
   src/NintendoSDK/ui2d/ui2d_AnimPaneTree.cpp
   src/NintendoSDK/ui2d/ui2d_Allocator.cpp
