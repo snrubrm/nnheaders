@@ -173,7 +173,7 @@ u32 SoundArchiveFile::FileHeader::GetStringBlockSize() const {
     return findBlock(0x2000)->mSize;
 }
 
-u32 SoundArchiveFile::FileHeader::GetStringBlockOffset() const {
+s32 SoundArchiveFile::FileHeader::GetStringBlockOffset() const {
     return findBlock(0x2000)->mOffset;
 }
 
@@ -181,7 +181,7 @@ u32 SoundArchiveFile::FileHeader::GetInfoBlockSize() const {
     return findBlock(0x2001)->mSize;
 }
 
-u32 SoundArchiveFile::FileHeader::GetInfoBlockOffset() const {
+s32 SoundArchiveFile::FileHeader::GetInfoBlockOffset() const {
     return findBlock(0x2001)->mOffset;
 }
 

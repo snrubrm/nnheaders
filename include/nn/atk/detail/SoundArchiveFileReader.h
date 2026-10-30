@@ -1,6 +1,6 @@
 #pragma once
 
-#include <nn/atk/SoundArchive.h>
+#include <nn/atk/detail/SoundArchiveBase.h>
 
 namespace nn::atk::detail {
 

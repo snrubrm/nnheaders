@@ -5,6 +5,29 @@ namespace nn::atk {
 
 SoundArchive::SoundArchive() : mFileReader(nullptr), _10(nullptr), mFileVersion(0x2f) {}
 
+// NON_MATCHING: the compiler inlines SoundArchive's constructor.
+MemorySoundArchive::MemorySoundArchive() : mData(nullptr) {}
+
+// NON_MATCHING: the compiler inlines SoundArchive::Initialize.
+bool MemorySoundArchive::Initialize(const void* data) {
+    mReader.Initialize(data);
+    SoundArchive::Initialize(&mReader);
+    const auto* bytes = static_cast<const u8*>(data);
+    mReader.SetInfoBlock(bytes + mReader.GetInfoBlockOffset());
+    const s32 string_offset = mReader.GetStringBlockOffset();
+    if (mReader.GetStringBlockSize() != 0xffffffffu)
+        mReader.SetStringBlock(bytes + string_offset);
+    mData = data;
+    return true;
+}
+
+// NON_MATCHING: the compiler inlines SoundArchive::Finalize.
+void MemorySoundArchive::Finalize() {
+    mData = nullptr;
+    mReader.Finalize();
+    SoundArchive::Finalize();
+}
+
 // The original destructor only restores the vtable; the reader is owned by Initialize/Finalize.
 SoundArchive::~SoundArchive() {}
 
