@@ -2,11 +2,22 @@
 
 namespace nn::atk::detail::driver {
 
-// NON_MATCHING: the compiler reshapes the count and mask loop.
+void StreamSoundPlayer::OnUpdateFrameSoundThreadWithAudioFrameFrequency() {
+    if (_11040 == 0)
+        Update();
+}
+
+// NON_MATCHING: the compiler folds the count load and sign extension together.
 void StreamSoundPlayer::SetTrackVolume(u32 track_mask, f32 volume) {
-    for (int i = 0; track_mask && i < mTrackCount; ++i, track_mask >>= 1)
+    if (!track_mask || mTrackCount <= 0)
+        return;
+    int i = 0;
+    do {
         if (track_mask & 1)
             mTracks[i].mVolume = volume;
+        track_mask >>= 1;
+        ++i;
+    } while (track_mask && i < mTrackCount);
 }
 
 // NON_MATCHING: the compiler reshapes the count and mask loop.

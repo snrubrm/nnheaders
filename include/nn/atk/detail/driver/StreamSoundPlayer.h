@@ -36,6 +36,7 @@ public:
     void Start() override;
     void Stop() override;
     void Pause(bool pause) override;
+    void Update();
     void OnUpdateFrameSoundThread() override;
     void OnUpdateFrameSoundThreadWithAudioFrameFrequency() override;
     void OnShutdownSoundThread() override;
@@ -55,6 +56,7 @@ private:
     s32 mTrackCount;  // +0x43c; Setup clamps it to eight
     u8 _440[0x10c40 - 0x440];
     StreamTrack mTracks[8];  // +0x10c40
+    u32 _11040;
 };
 
 }  // namespace nn::atk::detail::driver
