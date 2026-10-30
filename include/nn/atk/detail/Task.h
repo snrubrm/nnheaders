@@ -21,6 +21,7 @@ public:
     virtual void Execute(TaskProfileLogger& logger) = 0;
 
 private:
+    friend class TaskManager;
     util::IntrusiveListNode m_TaskLink;  // +0x8
     os::Event m_Event;                   // +0x18
     u32 m_Status;                        // +0x40
