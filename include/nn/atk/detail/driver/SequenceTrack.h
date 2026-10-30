@@ -2,6 +2,7 @@
 
 #include <nn/types.h>
 #include <nn/atk/AuxBus.h>
+#include <nn/atk/MixParameter.h>
 
 namespace nn::atk {
 enum SequenceMute : int;
@@ -62,7 +63,8 @@ private:
     /* 0x10 */ f32 mPitch;
     /* 0x14 */ u32 _14;
     /* 0x18 */ f32 mTvVolume;
-    u8 _1c[0x50 - 0x1c];
+    u8 _1c[4];
+    nn::atk::MixParameter mChannelMix[2];  // +0x20
     /* 0x50 */ f32 mTvPan;
     /* 0x54 */ f32 mTvSurroundPan;
     /* 0x58 */ f32 mTvMainSend;

@@ -28,6 +28,8 @@ public:
     void SetSweepParam(float value, int duration, bool flag);
     void Stop();
     void CallChannelCallback(ChannelCallbackStatus status);
+    // Signed width inferred from the native sample arithmetic and full-width callers.
+    s64 GetCurrentPlayingSample(bool flag) const;
 
 private:
     friend class SequenceTrack;

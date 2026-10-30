@@ -2,6 +2,7 @@
 
 #include <nn/types.h>
 #include <nn/atk/AuxBus.h>
+#include <nn/atk/MixParameter.h>
 #include <nn/atk/detail/BankFileReader.h>
 
 namespace nn {
@@ -56,6 +57,8 @@ public:
     void SetTrackPitch(u32 track_mask, f32 pitch);
     void SetTrackLpfFreq(u32 track_mask, f32 frequency);
     void SetTrackTvVolume(u32 track_mask, f32 volume);
+    void SetTrackChannelTvMixParameter(u32 track_mask, u32 channel,
+                                       const nn::atk::MixParameter& mix);
     void SetTrackTvPan(u32 track_mask, f32 pan);
     void SetTrackTvSurroundPan(u32 track_mask, f32 pan);
     void SetTrackTvMainSend(u32 track_mask, f32 send);
