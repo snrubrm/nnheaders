@@ -21,10 +21,18 @@ static_assert(sizeof(PerCharacterTransformInfo) == 0x2c);
 
 // BuildConstantBuffer copies 0x78 bytes. TextBox::BuildConstantBuffer supplies the two
 // matrices; SetupConstantBufferAdditionalContent supplies the float colors and byte alphas.
-// Unknown prefix semantics and padding remain unnamed; no default lifetime is implied.
+// Unknown prefix semantics and padding remain unnamed.
 struct ConstantBufferAdditionalContent {
     // The native enum argument uses 32-bit values; meanings of its values are unclaimed.
     enum PerCharacterTransformCenter : int;
+
+    // Inline-only in the original: BuildConstantBuffer's guarded default and the
+    // TextBox stack record initialize these fields, leaving padding untouched.
+    ConstantBufferAdditionalContent()
+        : _0(nullptr), _8(nullptr), _10(static_cast<PerCharacterTransformCenter>(0)),
+          _18(nullptr), _20(nullptr), _28{{0.0f, 0.0f, 0.0f, 0.0f}},
+          _38{{1.0f, 1.0f, 1.0f, 1.0f}}, _48(255), _4c{{0.0f, 0.0f, 0.0f, 0.0f}},
+          _5c{{1.0f, 1.0f, 1.0f, 1.0f}}, _6c(255), _70(0) {}
 
     /* 0x00 */ const ShadowParameter* _0;
     /* 0x08 */ const PerCharacterTransformInfo* _8;
@@ -102,6 +110,10 @@ public:
 
     void BuildCommonConstantBufferData(ShaderParam&, const util::MatrixT4x4fType&,
                                        const ConstantBufferAdditionalContent&) const;
+    void BuildConstantBuffer(const util::MatrixT4x4fType&,
+                             const ConstantBufferAdditionalContent*);
+    // Return type inferred as void from the caller's discarded result.
+    void BuildPerCharacterAttributeConstantBuffer(const ConstantBufferAdditionalContent&);
 
     // BuildConstantBuffer and the drawing helper keep byte offsets at 0/4, flags at8,
     // and up to eight texture/count/flag records at10. Names are inferred from those uses.

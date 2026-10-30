@@ -1,6 +1,8 @@
 #include <nn/font/font_DispStringBuffer.h>
+#include <nn/font/font_GpuBuffer.h>
 #include <nn/gfx/gfx_Buffer.h>
 #include <nn/gfx/gfx_BufferInfo.h>
+#include <nn/util/util_BytePtr.h>
 
 namespace nn::font {
 
@@ -111,6 +113,53 @@ void DispStringBuffer::BuildCommonConstantBufferData(
                   content._5c.z - content._4c.z,
                   content._5c.w * (static_cast<f32>(content._6c) * (1.0f / 255.0f))}};
     param._70 = {{content._4c.x, content._4c.y, content._4c.z, 0.0f}};
+}
+
+// NON_MATCHING: default initialization, component-copy widths and shared-call flow differ.
+// 0x7101324170
+void DispStringBuffer::BuildConstantBuffer(const util::MatrixT4x4fType& projection,
+                                         const ConstantBufferAdditionalContent* content) {
+    static const ConstantBufferAdditionalContent sDefaultContent;
+    if (!_b0 || mCapacity < 1)
+        return;
+
+    const size_t alignment = _b0->mBufferAlignment;
+    const size_t aligned_size = (sizeof(ShaderParam) + alignment - 1) & -alignment;
+    const size_t allocation_size = aligned_size << _b9;
+    if (!content)
+        content = &sDefaultContent;
+    u64 offset;
+    if (_b0->mFlags & 1) {
+        offset = _b0->mSharedOffset->fetch_add(allocation_size, std::memory_order_acq_rel);
+    } else {
+        offset = _b0->mOffset;
+        _b0->mOffset += allocation_size;
+    }
+    mConstantBufferOffset = u32(offset);
+
+    if (_b0->mMappedPtr) {
+        ShaderParam* param = util::BytePtr(_b0->mMappedPtr, mConstantBufferOffset).Get<ShaderParam>();
+        if (_b9) {
+            ConstantBufferAdditionalContent first_content = *content;
+            first_content._38.x = content->_28.x;
+            first_content._38.y = content->_28.y;
+            first_content._38.z = content->_28.z;
+            first_content._48 = 255;
+            first_content._5c.x = content->_4c.x;
+            first_content._5c.y = content->_4c.y;
+            first_content._5c.z = content->_4c.z;
+            BuildCommonConstantBufferData(*param, projection, first_content);
+            param = util::BytePtr(_b0->mMappedPtr, mConstantBufferOffset + aligned_size)
+                        .Get<ShaderParam>();
+        }
+        BuildCommonConstantBufferData(*param, projection, *content);
+    }
+    BuildPerCharacterAttributeConstantBuffer(*content);
+    mFlags = content->_70;
+    if (content->_0)
+        mFlags |= 2;
+    if (content->_8)
+        mFlags |= 4;
 }
 
 }  // namespace nn::font
