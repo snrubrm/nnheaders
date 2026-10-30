@@ -9,6 +9,8 @@ enum SequenceMute : int;
 
 namespace nn::atk::detail::driver {
 
+class Channel;
+
 // TODO: incomplete. Only the fields written by the modelled sequencer setters are named; the
 // channel and tick state of the track is not modelled.
 class SequenceTrack {
@@ -17,12 +19,19 @@ public:
     virtual ~SequenceTrack();
     // The full-word comparison in ParseNextTick supports a numeric status; int is inferred.
     virtual int Parse(bool flag) = 0;
+    int ParseNextTick(bool flag);
+    void FreeAllChannel();
+    void Close();
+    void PauseAllChannel(bool pause);
+    void ReleaseAllChannel(int release);
+    void UpdateChannelLength();
+    void UpdateChannelParam();
 
     void Open();
     void SetMute(SequenceMute mute);
     void SetSilence(bool silence, int fade_frames);
     void SetPlayerTrackNo(int track_no);
-    void SetSeqData(const void* data, int size);
+    void SetSeqData(const void* data, int start_offset);
     void SetTrackVariable(int index, s16 value);
     // 0x710134b540
     s16* GetVariablePtr(int index);
@@ -59,16 +68,32 @@ private:
     /* 0x58 */ f32 mTvMainSend;
     /* 0x5c */ f32 mTvFxSend[3];
     /* 0x68 */ const void* mSeqData;
-    /* 0x70 */ const void* mSeqDataEnd;
+    /* 0x70 */ const void* mSequenceCursor;
     u8 _78;
     u8 _79[0x120 - 0x79];
     u8 _120;
     u8 _121[3];
     s32 _124;
     u8 _128;
-    u8 _129[2];
+    u8 _129;
+    u8 _12a;
     /* 0x12b */ u8 mBankIndex;
-    u8 _12c[0x198 - 0x12c];
+    u8 _12c[0x136 - 0x12c];
+    s16 _136;
+    s16 _138;
+    u8 _13a[2];
+    s16 _13c;
+    s16 _13e;
+    u8 _140[2];
+    s16 _142;
+    s16 _144;
+    u8 _146[2];
+    s16 _148;
+    s16 _14a;
+    u8 _14c[2];
+    s16 _14e;
+    s16 _150;
+    u8 _152[0x198 - 0x152];
     /* 0x198 */ u8 mVelocityRange;
     u8 _199[0x19c - 0x199];
     /* 0x19c */ u8 mTranspose;
@@ -79,7 +104,8 @@ private:
     /* 0x1b0 */ f32 mBiquadFilterFrequency;
     /* 0x1b4 */ u32 mOutputLine;
     /* 0x1b8 */ s16 mTrackVariables[16];
-    u8 _1d8[0x10];
+    u8 _1d8[8];
+    Channel* mChannelHead;  // +0x1e0
 };
 static_assert(sizeof(SequenceTrack) == 0x1e8);
 
