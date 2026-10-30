@@ -6,7 +6,15 @@
 
 namespace nn::atk::detail {
 
-class Command;
+// FlushCommand allocates this 0x18-byte command header, and the driver dispatches
+// the linked commands by the value at +0x8.
+struct Command {
+    Command* next;
+    u32 _8;
+    u32 _c;
+    u64 _10;
+};
+static_assert(sizeof(Command) == 0x18);
 
 // Partial native model: both queues, their buffers, and the observed state are represented.
 class CommandManager {
@@ -16,6 +24,8 @@ public:
     // Native DriverCommand caller discards the result; void is inferred.
     void Initialize(void* memory, size_t size, void (*process)(Command*));
     void Finalize();
+    // Native returns the current 32-bit sequence; unsigned return is inferred.
+    u32 PushCommand(Command* command);
 
 private:
     u8 _0;

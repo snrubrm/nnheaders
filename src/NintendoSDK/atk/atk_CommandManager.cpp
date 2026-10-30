@@ -45,4 +45,14 @@ void CommandManager::Finalize() {
     _0 = 0;
 }
 
+u32 CommandManager::PushCommand(Command* command) {
+    if (_2c8)
+        _2c8->next = command;
+    else
+        _2c0 = command;
+    _2c8 = command;
+    command->next = nullptr;
+    return _2d4;
+}
+
 }  // namespace nn::atk::detail
