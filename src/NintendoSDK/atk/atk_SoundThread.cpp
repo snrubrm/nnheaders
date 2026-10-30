@@ -3,6 +3,14 @@
 
 namespace nn::atk::detail::driver {
 
+void SoundThread::RegisterPlayerCallback(PlayerCallback* callback) {
+    mPlayerCallbacks.push_back(callback->mNode);
+}
+
+void SoundThread::UnregisterPlayerCallback(PlayerCallback* callback) {
+    mPlayerCallbacks.erase(mPlayerCallbacks.iterator_to(callback->mNode));
+}
+
 void SoundThread::ForceWakeup() {
 }
 

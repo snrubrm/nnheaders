@@ -9,7 +9,27 @@ namespace nn::atk::detail::fnd {
 // (1 while the body runs, 2 when it has exited); the os thread object follows at +8.
 class Thread {
 public:
+    class Handler {
+    public:
+        virtual ~Handler();
+        // Native ThreadMain ignores the result; void is inferred. Purity is unresolved.
+        virtual void Run(void* arg);
+    };
+
     enum AffinityMask : u32 {};
+
+    struct RunArgs {
+        RunArgs();
+
+        const char* name;
+        void* stack;
+        size_t stackSize;
+        s32 core;
+        AffinityMask affinity;
+        s32 priority;
+        void* argument;
+        Handler* handler;
+    };
 
     Thread();
     // 0x710135d698
@@ -38,5 +58,6 @@ private:
     /* 0x1e0 */ u64 _1e0 = 0;
     /* 0x1e8 */ bool _1e8 = false;
 };
+static_assert(sizeof(Thread::RunArgs) == 0x38);
 
 }  // namespace nn::atk::detail::fnd
