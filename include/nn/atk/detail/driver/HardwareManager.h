@@ -26,6 +26,7 @@ namespace nn::atk::detail::driver {
 
 class HardwareManager {
 public:
+    struct HardwareManagerParameter;
     /// The master volume, which is faded linearly from the previous to the target volume over the frames that
     /// were given to SetMasterVolume (see sead::AudioResetterCafe::calc, 0x7100bb9858).
     f32 GetMasterVolume() const {
@@ -52,6 +53,7 @@ public:
     /// 0x7101344564: forwards the voice count to LowLevelVoiceAllocator::GetRequiredMemSize.
     int GetRequiredMemSizeForMemoryPool(int max_voices) const;
     size_t GetRequiredEffectAuxBufferSize(const EffectAux* effect) const;
+    size_t GetRequiredPerformanceFramesBufferSize(const HardwareManagerParameter& parameter) const;
     bool IsFinishedClearEffect(AuxBus bus, OutputDevice device, int index) const;
     /// 0x71013450b8 (declared only)
     void SetOutputMode(OutputMode mode, OutputDevice device);
@@ -70,6 +72,10 @@ public:
     bool TimedWaitAudioRendererEvent(nn::TimeSpan span);
 
 private:
+    // 0x71013443f0: native setup routine, declared only.
+    void SetupAudioRendererParameter(nn::audio::AudioRendererParameter* renderer_parameter,
+                                     const HardwareManagerParameter& parameter) const;
+
     bool mIsInitialized;
     u8 _1[0x18 - 1];
     nn::audio::AudioRendererConfig mAudioRendererConfig;

@@ -18,6 +18,15 @@ size_t HardwareManager::GetRequiredEffectAuxBufferSize(const EffectAux* effect) 
     return effect->GetRequiredMemSize(mRendererParameter);
 }
 
+// NON_MATCHING: the compiler places the renderer parameter at a different stack offset.
+size_t HardwareManager::GetRequiredPerformanceFramesBufferSize(
+    const HardwareManagerParameter& parameter) const {
+    nn::audio::AudioRendererParameter renderer_parameter;
+    SetupAudioRendererParameter(&renderer_parameter, parameter);
+    const size_t size = nn::audio::GetRequiredBufferSizeForPerformanceFrames(renderer_parameter);
+    return (size + 63) & ~63ULL;
+}
+
 }  // namespace driver
 }  // namespace detail
 }  // namespace atk
