@@ -19,6 +19,11 @@ bool SoundArchiveLoader::IsAvailable() const {
     return mArchive->IsAvailable();
 }
 
+bool SoundArchiveLoader::LoadData(const char* label, SoundMemoryAllocatable* allocator,
+                                  u32 load_flag, size_t unknown) {
+    return LoadData(mArchive->GetItemId(label), allocator, load_flag, unknown);
+}
+
 const void* SoundArchiveLoader::GetFileAddressFromSoundArchive(u32 file_id) const {
     if (!mArchive)
         return nullptr;

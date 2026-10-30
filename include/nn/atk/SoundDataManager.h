@@ -11,6 +11,7 @@
 
 namespace nn {
 namespace atk {
+class SoundMemoryAllocatable;
 namespace detail {
 
 /// TODO: only what SoundDataManager uses is declared.
@@ -27,8 +28,8 @@ public:
     void SetSoundArchive(const SoundArchive* archive);
     bool IsAvailable() const;
     const void* GetFileAddressFromSoundArchive(u32 file_id) const;
-    /// 0x13427fc (declared only)
-    bool LoadData(const char* label, SoundHeap* heap, u32 load_flag, u32 unknown);
+    bool LoadData(u32 item_id, SoundMemoryAllocatable* allocator, u32 load_flag, size_t unknown);
+    bool LoadData(const char* label, SoundMemoryAllocatable* allocator, u32 load_flag, size_t unknown);
 
 protected:
     const SoundArchive* mArchive;  // _8
