@@ -72,6 +72,8 @@ public:
     static size_t GetCircularBufferSinkBufferSize();
     /// 0x710133e0e0 (declared only): aal::System::calc passes its frame count when it is positive.
     static void VoiceCommandProcess(u32 frame_count);
+    // Native callers discard the result; void is inferred.
+    static void VoiceCommandUpdate();
 };
 
 }  // namespace nn::atk

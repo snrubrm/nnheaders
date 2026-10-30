@@ -1,11 +1,24 @@
 #include <nn/atk/SoundSystem.h>
 #include <nn/atk/detail/Util.h>
 #include <nn/atk/detail/driver/HardwareManager.h>
+#include <nn/atk/detail/driver/SoundThread.h>
 
 namespace nn::atk {
 
 // 0x7102662aa8: the flag IsInitialized returns and Finalize clears, both through the GOT.
 bool sIsInitialized = false;
+
+// SoundSystem initialization writes this native byte from SoundSystemParam +0x63.
+u8 sUnk_710252D024 = 1;
+
+void SoundSystem::VoiceCommandUpdate() {
+    if (sUnk_710252D024)
+        return;
+    detail::driver::SoundThread::GetInstance().UpdateLowLevelVoices();
+    detail::driver::SoundThread::GetInstance().EffectFrameProcess();
+    detail::Util::Singleton<detail::driver::HardwareManager>::GetInstance()
+        .RequestUpdateAudioRenderer();
+}
 
 // NON_MATCHING: the compiler combines adjacent 32-bit defaults into 64-bit stores.
 SoundSystem::SoundSystemParam::SoundSystemParam() {
