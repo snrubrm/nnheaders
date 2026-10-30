@@ -59,7 +59,7 @@ public:
     static size_t GetRequiredMemSize(const SoundArchive* archive, size_t unknown);
     static size_t GetRequiredMemSize(const SoundArchive* archive, size_t unknown, s32 count);
     /// 0x133af24 / 0x133af2c (the second is const but forwards statically)
-    u32 GetRequiredStreamBufferSize(const SoundArchive* archive) const;
+    size_t GetRequiredStreamBufferSize(const SoundArchive* archive) const;
     u32 GetRequiredStreamBufferTimes(const SoundArchive* archive) const;
     // AAL BA05EC passes a size_t cache size; complete 1350678 retains x1.
     static size_t GetRequiredStreamCacheSize(const SoundArchive* archive, size_t unknown);
