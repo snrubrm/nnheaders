@@ -11,6 +11,44 @@
 
 namespace nn::ui2d {
 
+// 0x7100abc98c
+// NON_MATCHING: search branch layout and floating-point instruction scheduling differ.
+f32 GetHermiteCurveValue(f32 frame, const ResHermiteKey* keys, s32 count) {
+    const s32 last = count - 1;
+    if (count == 1 || frame <= keys[0].frame)
+        return keys[0].value;
+    if (keys[last].frame <= frame)
+        return keys[last].value;
+
+    s32 low = 0;
+    s32 high = last;
+    while (low != high - 1 && low != high) {
+        const s32 middle = (low + high) / 2;
+        if (frame <= keys[middle].frame)
+            high = middle;
+        else
+            low = middle;
+    }
+
+    const f32 distance_to_high = frame - keys[high].frame;
+    if (distance_to_high > -0.001f && distance_to_high < 0.001f) {
+        if (high < last && keys[high].frame == keys[high + 1].frame)
+            return keys[high + 1].value;
+        return keys[high].value;
+    }
+
+    const f32 distance = frame - keys[low].frame;
+    const f32 inverse_span = 1.0f / (keys[high].frame - keys[low].frame);
+    const f32 square = distance * distance * inverse_span;
+    const f32 cube = distance * (inverse_span * square);
+    const f32 triple = (inverse_span * square) * 3.0f;
+    const f32 twice = inverse_span * cube + inverse_span * cube;
+    return keys[low].value * ((twice - triple) + 1.0f) +
+           keys[high].value * (triple - twice) +
+           keys[low].tangent * (distance + (cube - (square + square))) +
+           keys[high].tangent * (cube - square);
+}
+
 namespace detail {
 // 0x7100ac0214
 void CalculateQuad(DrawInfo& draw_info, Material::ConstantBufferForVertexShader* buffer,

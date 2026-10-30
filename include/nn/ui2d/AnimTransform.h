@@ -24,6 +24,14 @@ class ResourceAccessor;
 class TextureInfo;
 struct ResExtUserData;
 
+// Hermite animation key: 12-byte stride and fields read by GetHermiteCurveValue.
+struct ResHermiteKey {
+    f32 frame;
+    f32 value;
+    f32 tangent;
+};
+static_assert(sizeof(ResHermiteKey) == 0xc);
+
 // UI resource-file prefix read by AnimResource::Set (0x7100ab5ad0) and
 // Layout::BuildImpl (0x7100ab6bcc). headerSize locates the first block;
 // only these consumed fields are known, without a full file-header extent.
