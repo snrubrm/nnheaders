@@ -24,6 +24,8 @@ public:
     // Native DriverCommand caller discards the result; void is inferred.
     void Initialize(void* memory, size_t size, void (*process)(Command*));
     void Finalize();
+    // Native returns a normalized 0/1 status; bool is inferred.
+    bool ProcessCommand();
     // Native returns the current 32-bit sequence; unsigned return is inferred.
     u32 PushCommand(Command* command);
     bool IsFinishCommand(u32 sequence) const;

@@ -38,6 +38,8 @@ public:
     // 0x7101352740: the native body is empty.
     void ForceWakeup();
     void EffectFrameProcess();
+    // Native caller discards the result; void is inferred.
+    void UpdateLowLevelVoices();
 
 private:
     fnd::Thread mThread;  // +0x8

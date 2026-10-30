@@ -1,7 +1,17 @@
 #include <nn/atk/detail/driver/SoundThread.h>
 #include <nn/atk/detail/driver/HardwareManager.h>
+#include <nn/atk/detail/CommandManager.h>
+#include <nn/atk/detail/LowLevelVoiceCommand.h>
+#include <nn/atk/detail/VirtualVoiceManager.h>
 
 namespace nn::atk::detail::driver {
+
+void SoundThread::UpdateLowLevelVoices() {
+    LowLevelVoiceCommand::GetInstance().ProcessCommand();
+    const OutputMode mode = Util::Singleton<HardwareManager>::GetInstance().GetOutputMode();
+    Util::Singleton<HardwareManager>::GetInstance().GetLowLevelVoiceAllocator().UpdateAllVoiceState(mode);
+    VirtualVoiceManager::GetInstance().UpdateVoiceInfo();
+}
 
 // NON_MATCHING: the normalized Run result is stored from w8 instead of w0.
 void SoundThread::CreateSoundThread(int priority, void* stack, size_t stackSize, int core,
