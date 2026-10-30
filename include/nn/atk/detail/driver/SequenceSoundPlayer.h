@@ -2,6 +2,7 @@
 
 #include <nn/types.h>
 #include <nn/atk/AuxBus.h>
+#include <nn/atk/detail/BankFileReader.h>
 
 namespace nn {
 namespace atk {
@@ -25,6 +26,7 @@ using SequenceUserProcCallback = void (*)(u16, SequenceUserProcCallbackParam*, v
 /// only the fields the setters below write are placed, at the offsets their bodies give.
 class SequenceSoundPlayer {
 public:
+    SequenceSoundPlayer();  // 0x7101347490, declared only
     enum StartOffsetType {
         StartOffsetType_0,
         StartOffsetType_1,
@@ -33,6 +35,7 @@ public:
     void Skip(StartOffsetType type, int amount);
     void SetTrackMute(u32 track_mask, SequenceMute mute);
     void SetTrackSilence(u64 track_mask, bool silence, int fade_frames);
+    bool SetTrackBankIndex(u32 track_mask, int bank_index);
     void SetTempoRatio(f32 ratio);
     void SetChannelPriority(int priority);
     void SetReleasePriorityFix(bool fix);
@@ -83,7 +86,9 @@ private:
     void* mUserProcArg;                          // +0x128
     SequenceTrack* mTracks[16];  // +0x130
     s16 mLocalVariables[0x20];                   // +0x1b0, indexed by the variable number
-    u8 _1f0[0x350 - 0x1f0];
+    u8 _1f0[0x258 - 0x1f0];
+    BankFileReader mBankReaders[4];  // +0x258, constructed/finalized individually in the native player
+    u8 _2b8[0x350 - 0x2b8];
     u32 mAudioFrameFrequency;                    // +0x350, zero means one update per frame
 
     // The variables shared by every player; variable numbers 16..31 select an entry here.

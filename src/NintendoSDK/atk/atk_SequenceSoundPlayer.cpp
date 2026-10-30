@@ -35,6 +35,19 @@ void SequenceSoundPlayer::SetTrackSilence(u64 track_mask, bool silence, int fade
     }
 }
 
+// NON_MATCHING: the compiler orders the track-mask and loop-bound tests differently.
+bool SequenceSoundPlayer::SetTrackBankIndex(u32 track_mask, int bank_index) {
+    if (!mBankReaders[bank_index].IsInitialized())
+        return false;
+    for (s32 i = 0; i < 16 && track_mask != 0; ++i, track_mask >>= 1) {
+        if ((track_mask & 1) != 0) {
+            if (SequenceTrack* track = mTracks[i])
+                track->SetBankIndex(bank_index);
+        }
+    }
+    return true;
+}
+
 void SequenceSoundPlayer::SetTempoRatio(f32 ratio) {
     mTempoRatio = ratio;
 }
