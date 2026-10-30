@@ -2,6 +2,7 @@
 
 #include <nn/os/os_MessageQueue.h>
 #include <nn/types.h>
+#include <atomic>
 
 namespace nn::atk::detail {
 
@@ -12,6 +13,8 @@ class CommandManager {
 public:
     CommandManager();
     ~CommandManager();
+    // Native DriverCommand caller discards the result; void is inferred.
+    void Initialize(void* memory, size_t size, void (*process)(Command*));
     void Finalize();
 
 private:
@@ -26,7 +29,12 @@ private:
     nn::os::MessageQueueType mReplyQueue;     // +0x168
     u64 mReplyBuffer[33];                    // +0x1b0
     u8 _2b8;
-    u8 _2b9[0x2e0 - 0x2b9];
+    u8 _2b9[7];
+    Command* _2c0;
+    Command* _2c8;
+    std::atomic<u32> _2d0;
+    u32 _2d4;
+    u8 _2d8[8];
     void* _2e0;
     u64 _2e8;
     u64 _2f0;

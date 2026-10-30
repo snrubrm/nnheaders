@@ -10,6 +10,29 @@ CommandManager::~CommandManager() {
     Finalize();
 }
 
+void CommandManager::Initialize(void* memory, size_t size, void (*process)(Command*)) {
+    _2e8 = size / sizeof(u32);
+    mProcessCommand = process;
+    mRequestProcessCommand = nullptr;
+    _300 = 0;
+    _2f8 = 0;
+    _2f0 = 0;
+    _2e0 = memory;
+    _2d4 = 0;
+    _2c8 = nullptr;
+    _2c0 = nullptr;
+    if (!_160) {
+        nn::os::InitializeMessageQueue(&mCommandQueue, mCommandBuffer, 32);
+        _160 = 1;
+    }
+    if (!_2b8) {
+        nn::os::InitializeMessageQueue(&mReplyQueue, mReplyBuffer, 33);
+        _2b8 = 1;
+    }
+    _2d0.store(0, std::memory_order_release);
+    _0 = 1;
+}
+
 void CommandManager::Finalize() {
     if (_160) {
         nn::os::FinalizeMessageQueue(&mCommandQueue);
