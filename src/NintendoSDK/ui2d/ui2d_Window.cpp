@@ -2,8 +2,69 @@
 #include <nn/ui2d/Material.h>
 #include <nn/ui2d/Layout.h>
 #include <nn/ui2d/ResPane.h>
+#include <new>
 
 namespace nn::ui2d {
+
+// 0x7100abd120
+// NON_MATCHING: native copies margin groups as whole values and schedules sizing branches differently.
+Window::Window(const Window& source, gfx::Device* device) : Pane(source) {
+    for (s32 i = 0; i < 4; ++i) {
+        mContentMargins[i] = source.mContentMargins[i];
+        mFrameMargins[i] = source.mFrameMargins[i];
+    }
+    mTexCoordArray.Initialize();
+    mWindowKind = source.mWindowKind;
+    mFrameCount = source.mFrameCount;
+    mWindowFlags = source.mWindowFlags;
+    mFrameConstantBufferCount = 0;
+    for (s32 i = 0; i < 4; ++i)
+        mVertexColors[i] = source.mVertexColors[i];
+
+    const u8 coordinate_count = source.mTexCoordArray.mSize;
+    if (coordinate_count) {
+        mTexCoordArray.Reserve(coordinate_count);
+        mTexCoordArray.SetSize(coordinate_count);
+        for (s32 i = 0; i < coordinate_count; ++i)
+            mTexCoordArray.SetCoord(i, source.mTexCoordArray.mCoords[i]);
+    }
+
+    // Allocators can call user code, so preserve each source material across the call.
+    const Material* content_material = source.mContentMaterial;
+    void* memory = Layout::AllocateMemory(sizeof(Material), 4);
+    mContentMaterial = memory ? new (memory) Material(*content_material, device) : nullptr;
+
+    const s8 frame_count = mFrameCount;
+    mFrameCount = 0;
+    void* frame_memory = Layout::AllocateMemory(sizeof(Frame) * frame_count, 4);
+    if (frame_memory) {
+        Frame* frames = static_cast<Frame*>(frame_memory);
+        for (s32 i = 0; i < frame_count; ++i) {
+            new (&frames[i]) Frame;
+            frames[i].mTextureFlip = 0;
+            frames[i].mMaterial = nullptr;
+        }
+        mFrames = frames;
+        mFrameCount = frame_count;
+    } else {
+        mFrames = nullptr;
+    }
+    for (s32 i = 0; i < mFrameCount; ++i) {
+        mFrames[i].mTextureFlip = source.mFrames[i].mTextureFlip;
+        const Material* frame_material = source.mFrames[i].mMaterial;
+        memory = Layout::AllocateMemory(sizeof(Material), 4);
+        mFrames[i].mMaterial = memory ? new (memory) Material(*frame_material, device) : nullptr;
+    }
+
+    if (source.mFrameConstantBufferOffsets) {
+        const u32 offset_count = mWindowKind == 1 || mWindowKind == 2 ? 1 : 3;
+        mFrameConstantBufferOffsets = static_cast<u32*>(
+            Layout::AllocateMemory(sizeof(u32) * offset_count, 4));
+        mFrameConstantBufferCount = offset_count;
+    } else {
+        mFrameConstantBufferOffsets = nullptr;
+    }
+}
 
 // The original preserves Window's vtable store before calling Pane's own
 // destructor. Keep it as in GameDataFlagSelector (commit 96101229).
