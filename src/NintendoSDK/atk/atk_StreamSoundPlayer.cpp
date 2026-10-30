@@ -2,6 +2,10 @@
 
 namespace nn::atk::detail::driver {
 
+void StreamSoundPlayer::OnUpdateFrameSoundThread() {
+    Update();
+}
+
 void StreamSoundPlayer::OnUpdateFrameSoundThreadWithAudioFrameFrequency() {
     if (_11040 == 0)
         Update();
