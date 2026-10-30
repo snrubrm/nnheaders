@@ -37,4 +37,13 @@ void TaskManager::CancelWaitTask() {
     nn::os::SendMessageQueue(&mQueue, 0);
 }
 
+void TaskManager::AppendTask(Task* task, TaskPriority priority) {
+    task->m_Event.Clear();
+    task->m_Status = 1;
+    nn::os::LockMutex(&mMutex);
+    mTaskLists[priority].push_back(task->m_TaskLink);
+    nn::os::UnlockMutex(&mMutex);
+    nn::os::TrySendMessageQueue(&mQueue, 0);
+}
+
 }  // namespace nn::atk::detail
