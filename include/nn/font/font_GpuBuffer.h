@@ -18,6 +18,7 @@ class Picture;
 namespace nn::font {
 
 class RectDrawer;
+class DispStringBuffer;
 
 // Partial layout (0x40 bytes): eui::ConstantBuffer embeds two of these at +0x120 / +0x160 and its map()
 // (0x7100bf42f8) is the only caller of Map / Unmap (0x7101324c88 / 0x7101324ce0). Map selects element `index` of the
@@ -56,6 +57,7 @@ private:
     friend class nn::ui2d::Material;
     friend class nn::ui2d::Picture;
     friend class RectDrawer;
+    friend class DispStringBuffer;
 
     /* 0x00 */ u32 mFlags;
     /* 0x08 */ gfx::Buffer* mBuffers;
