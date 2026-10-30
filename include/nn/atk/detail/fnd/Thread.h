@@ -50,6 +50,12 @@ public:
     void Resume();
 
 private:
+    // The native symbol establishes this nested scope; its class spelling is inferred.
+    class ThreadMain {
+    public:
+        static void Run(void* arg);
+    };
+
     // Native Create returns 0 or 1; bool is inferred from its callers.
     bool Create(nn::os::ThreadType& thread, s64& handle, const RunArgs& args);
 
