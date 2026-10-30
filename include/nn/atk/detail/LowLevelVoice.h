@@ -1,6 +1,7 @@
 #pragma once
 
 #include <nn/types.h>
+#include <nn/audio.h>
 
 namespace nn::atk::detail {
 
@@ -8,10 +9,12 @@ namespace nn::atk::detail {
 class LowLevelVoice {
 public:
     bool IsAvailable() const;
+    void SetPriority(int priority);
 
 private:
     friend class LowLevelVoiceAllocator;
-    u8 _0[0x28];
+    u8 _0[0x20];
+    nn::audio::VoiceType mVoice;  // +0x20
     /* 0x28 */ bool mAvailable;
     u8 _29[0xa4 - 0x29];
     s32 mPriority;                 // +0xa4: SetPriority 0x7101355f78

@@ -12,6 +12,12 @@ bool LowLevelVoice::IsAvailable() const {
     return mAvailable;
 }
 
+void LowLevelVoice::SetPriority(int priority) {
+    mPriority = priority;
+    if (nn::audio::IsVoiceValid(&mVoice))
+        nn::audio::SetVoicePriority(&mVoice, mPriority == 255 ? 0 : 255 - mPriority);
+}
+
 // NON_MATCHING: the compiler combines the array sizes before multiplying the voice count.
 size_t LowLevelVoiceAllocator::GetRequiredMemSize(int max_voices) {
     return max_voices * (sizeof(LowLevelVoice) + sizeof(LowLevelVoice*) + sizeof(s32)) + 0x40;
