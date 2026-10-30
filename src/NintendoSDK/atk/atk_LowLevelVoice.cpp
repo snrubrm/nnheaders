@@ -20,6 +20,21 @@ void LowLevelVoice::SetPriority(int priority) {
         nn::audio::SetVoicePriority(&mVoice, mPriority == 255 ? 0 : 255 - mPriority);
 }
 
+// NON_MATCHING: the compiler places the acquire branch after the release branch.
+void LowLevelVoice::SetState(VoiceState state) {
+    mState = state;
+    if (state == VoiceState_Released) {
+        if (mHasVoiceSlot) {
+            auto& manager = Util::Singleton<driver::HardwareManager>::GetInstance();
+            nn::audio::ReleaseVoiceSlot(manager.GetAudioRendererConfig(), &mVoice);
+            mHasVoiceSlot = false;
+        }
+    } else if (state == VoiceState_Acquired && !mHasVoiceSlot) {
+        AllocVoice();
+        mHasVoiceSlot = true;
+    }
+}
+
 // NON_MATCHING: the compiler swaps the two registers used to choose the list link.
 void LowLevelVoice::AppendWaveBuffer(WaveBuffer* buffer) {
     buffer->mNext = nullptr;
@@ -42,7 +57,7 @@ void LowLevelVoice::FreeAllWaveBuffer() {
 // NON_MATCHING: the compiler reloads the current buffer after writing the output state.
 void LowLevelVoice::UpdateVoiceInfo(VoiceInfo* info) const {
     info->mVoice = mSourceVoice;
-    info->_0 = _a8;
+    info->_0 = mState;
     if (mWaveBufferHead) {
         info->mWaveBufferState = mWaveBufferHead->_34;
         info->mWaveBuffer = mWaveBufferHead->mSource;
@@ -88,7 +103,7 @@ void LowLevelVoiceAllocator::FreeVoice(LowLevelVoice* voice) {
     }
     voice->mSourceVoice = nullptr;
     voice->mAvailable = false;
-    voice->_a8 = 1;
+    voice->mState = VoiceState_Released;
 
     const s32 index = mVoiceIndices[voice - mVoices];
     --mActiveVoiceCount;

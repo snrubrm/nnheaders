@@ -12,24 +12,32 @@ namespace nn::atk::detail {
 class Voice;
 struct VoiceInfo;
 
+// Partial names inferred from SetState's acquire and release behavior.
+enum VoiceState : s32 {
+    VoiceState_Acquired = 0,
+    VoiceState_Released = 1,
+};
+
 // TODO: incomplete. Only the available flag at +0x28 is modelled.
 class LowLevelVoice {
 public:
     bool IsAvailable() const;
     void SetPriority(int priority);
+    void SetState(VoiceState state);
     void AppendWaveBuffer(WaveBuffer* buffer);
     void FreeAllWaveBuffer();
     void UpdateVoiceInfo(VoiceInfo* info) const;
 
 private:
     friend class LowLevelVoiceAllocator;
+    void AllocVoice();
     u8 _0[0x20];
     nn::audio::VoiceType mVoice;  // +0x20
     /* 0x28 */ bool mAvailable;
     bool mHasVoiceSlot;             // +0x29
     u8 _2a[0xa4 - 0x2a];
     s32 mPriority;                 // +0xa4: SetPriority 0x7101355f78
-    u32 _a8;
+    VoiceState mState;             // +0xa8
     s32 mSampleRate;               // +0xac
     s32 _b0;
     u8 _b4[4];
