@@ -190,6 +190,7 @@ add_library(NintendoSDK OBJECT
   include/nn/atk/detail/BasicSoundPlayerHandle.h
   include/nn/atk/detail/SequenceSoundFile.h
   include/nn/atk/StreamSoundHandle.h
+  include/nn/atk/WaveSoundHandle.h
   include/nn/atk/SequenceSoundHandle.h
   include/nn/atk/detail/SoundInstanceManager.h
   include/nn/vfx/System.h
@@ -428,6 +429,8 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_AdvancedWaveSound.cpp
   src/NintendoSDK/atk/atk_SequenceSound.cpp
   src/NintendoSDK/atk/atk_SequenceSoundHandle.cpp
+  src/NintendoSDK/atk/atk_StreamSoundHandle.cpp
+  src/NintendoSDK/atk/atk_WaveSoundHandle.cpp
   src/NintendoSDK/g3d/g3d_ResFile.cpp
   src/NintendoSDK/g3d/g3d_ResShaderFile.cpp
   src/NintendoSDK/g3d/g3d_ResModel.cpp

@@ -16,6 +16,8 @@ public:
     SoundPlayerHandle* GetBasicSoundPlayerHandle();
 
 private:
+    friend class nn::atk::StreamSoundHandle;
+
     u8 _0[0x1f0];
     /* 0x1f0 */ StreamSoundHandle* mTempSpecialHandle;
     u8 _1f8[0x2c0 - 0x1f8];

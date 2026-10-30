@@ -69,6 +69,8 @@ public:
     int GetChannelCountMax() const;
     /// 0x7101344564: forwards the voice count to LowLevelVoiceAllocator::GetRequiredMemSize.
     int GetRequiredMemSizeForMemoryPool(int max_voices) const;
+    void AttachMemoryPool(nn::audio::MemoryPoolType* pool, void* address, size_t size, bool wait);
+    void DetachMemoryPool(nn::audio::MemoryPoolType* pool, bool wait);
     size_t GetRequiredMemSize(const HardwareManagerParameter& parameter) const;
     size_t GetRequiredEffectAuxBufferSize(const EffectAux* effect) const;
     size_t GetRequiredPerformanceFramesBufferSize(const HardwareManagerParameter& parameter) const;

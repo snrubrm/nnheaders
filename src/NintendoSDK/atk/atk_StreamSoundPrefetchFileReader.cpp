@@ -17,11 +17,20 @@ void StreamSoundPrefetchFileReader::Initialize(const void* file) {
     if (data->mSignature != 0x54414450)
         return;
     mInfo = &info->mBody;
-    mPrefetchData = data->mBody;
+    mPrefetchData = &data->mBody;
 }
 
 bool StreamSoundPrefetchFileReader::ReadStreamSoundInfo(StreamSoundFile::StreamSoundInfo* info) const {
     *info = *mInfo->GetStreamSoundInfo();
+    return true;
+}
+
+// NON_MATCHING: the original computes the record offset with an unsigned index.
+bool StreamSoundPrefetchFileReader::ReadPrefetchDataInfo(PrefetchDataInfo* info, int index) const {
+    const auto& data = mPrefetchData->mData[index];
+    info->_0 = data._0;
+    info->_4 = data._4;
+    info->mSampleAddress = data.GetPrefetchSample()->GetSampleAddress();
     return true;
 }
 

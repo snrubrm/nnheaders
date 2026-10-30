@@ -1,6 +1,7 @@
 #pragma once
 
 #include <nn/atk/detail/BasicSoundPlayerHandle.h>
+#include <nn/atk/WaveSoundHandle.h>
 #include <nn/types.h>
 
 namespace nn::atk::detail {
@@ -17,8 +18,10 @@ public:
     SoundPlayerHandle* GetBasicSoundPlayerHandle();
 
 private:
+    friend class nn::atk::WaveSoundHandle;
+
     u8 _0[0x1f0];
-    /* 0x1f0 */ const void* mTempSpecialHandle;
+    /* 0x1f0 */ WaveSoundHandle* mTempSpecialHandle;
     u8 _1f8[0x210 - 0x1f8];
     /* 0x210 */ BasicSoundPlayerHandle mBasicSoundPlayerHandle;
 };
