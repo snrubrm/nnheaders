@@ -6,6 +6,7 @@
 #pragma once
 
 #include <nn/types.h>
+#include <nn/atk/detail/AddonSoundArchiveContainer.h>
 #include <nn/util/util_IntrusiveList.h>
 
 namespace nn {
@@ -16,7 +17,6 @@ class SoundDataManager;
 class SoundPlayer;
 
 namespace detail {
-class AddonSoundArchiveContainer;
 
 /// The sound archive (and the data manager) that a SoundArchivePlayer plays from (0x40 bytes).
 class SoundArchiveManager {
@@ -33,7 +33,9 @@ public:
     const nn::atk::SoundArchive* mSoundArchive;
     const nn::atk::SoundDataManager* mSoundDataManager;
     /// The list of the addon archives.
-    nn::util::detail::IntrusiveListImplementation mAddons;  // +0x10
+    nn::util::IntrusiveList<AddonSoundArchiveContainer,
+                            nn::util::IntrusiveListBaseNodeTraits<AddonSoundArchiveContainer>>
+        mAddons;  // +0x10
     /// The archive that is used (the main archive or the one of an addon).
     const nn::atk::SoundArchive* mTargetSoundArchive;
     const nn::atk::SoundDataManager* mTargetSoundDataManager;
