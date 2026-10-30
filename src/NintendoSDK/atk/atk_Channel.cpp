@@ -1,6 +1,17 @@
 #include <nn/atk/detail/driver/Channel.h>
+#include <nn/atk/detail/driver/MultiVoice.h>
 
 namespace nn::atk::detail::driver {
+
+void Channel::Stop() {
+    if (mVoice) {
+        mVoice->Stop();
+        mVoice->Free();
+        mVoice = nullptr;
+        mPaused = 0;
+        mActive = 0;
+    }
+}
 
 void Channel::UpdateSweep(int milliseconds) {
     _134 += milliseconds;

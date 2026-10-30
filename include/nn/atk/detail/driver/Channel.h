@@ -25,6 +25,7 @@ public:
     void NoteOff();
     void UpdateSweep(int milliseconds);
     void SetSweepParam(float value, int duration, bool flag);
+    void Stop();
     void CallChannelCallback(ChannelCallbackStatus status);
 
 private:
