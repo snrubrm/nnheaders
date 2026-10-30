@@ -22,4 +22,19 @@ void TaskManager::ExecuteTask() {
     }
 }
 
+void TaskManager::WaitTask() {
+    _38 = 0;
+    while (!PeekTask() && !_38) {
+        u64 message;
+        nn::os::ReceiveMessageQueue(&message, &mQueue);
+        if (message == 0)
+            break;
+    }
+}
+
+void TaskManager::CancelWaitTask() {
+    _38 = 1;
+    nn::os::SendMessageQueue(&mQueue, 0);
+}
+
 }  // namespace nn::atk::detail
