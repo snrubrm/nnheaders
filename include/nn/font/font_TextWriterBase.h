@@ -58,11 +58,16 @@ protected:
     /* 0x3c */ f32 mWidthLimit;
     /* 0x40 */ f32 mCharSpace;
     /* 0x44 */ f32 mLineSpace;
-    /* 0x48 */ u32 _48;
+    /* 0x48 */ f32 _48;  // Added in the line-width check; other meaning is unknown.
     /* 0x4c */ s32 mTabWidth;
     /* 0x50 */ u32 mDrawFlag;
     /* 0x58 */ TagProcessorBase<CharType>* mTagProcessor;
-    /* 0x60 */ u16 _60;
+    // Opaque bytes tested independently by alignment and line processing.
+    /* 0x60 */ u8 _60;
+    /* 0x61 */ u8 _61;
 };
+
+static_assert(sizeof(TextWriterBase<char>) == 0x68);
+static_assert(sizeof(TextWriterBase<u16>) == 0x68);
 
 }  // namespace nn::font

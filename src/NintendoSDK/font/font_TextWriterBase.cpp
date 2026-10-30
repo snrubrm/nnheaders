@@ -1,6 +1,7 @@
 #include <nn/font/font_TextWriterBase.h>
 #include <nn/font/font_TagProcessorBase.h>
 #include <nn/font/font_PrintContext.h>
+#include <nn/util/util_BytePtr.h>
 
 #include <limits>
 #include <algorithm>
@@ -13,8 +14,8 @@ TagProcessorBase<CharType> TextWriterBase<CharType>::sDefaultTagProcessor;
 
 template <typename CharType>
 TextWriterBase<CharType>::TextWriterBase()
-    : mWidthLimit(std::numeric_limits<f32>::max()), mCharSpace(0.0f), mLineSpace(0.0f), _48(0),
-      mTabWidth(4), mDrawFlag(0), mTagProcessor(&sDefaultTagProcessor), _60(0) {}
+    : mWidthLimit(std::numeric_limits<f32>::max()), mCharSpace(0.0f), mLineSpace(0.0f), _48(0.0f),
+      mTabWidth(4), mDrawFlag(0), mTagProcessor(&sDefaultTagProcessor), _60(0), _61(0) {}
 
 // 0x7101329100
 template <typename CharType>
@@ -121,6 +122,115 @@ f32 TextWriterBase<CharType>::AdjustCursor(f32* x, f32* y, const CharType* strin
         cursor_y += GetFontAscent();
     SetCursorY(cursor_y);
     return bounds_x;
+}
+
+// NON_MATCHING: bounds lowering, loop control flow and preview cleanup differ.
+// 0x7101327fac (char) / 0x7101329320 (u16)
+template <typename CharType>
+bool TextWriterBase<CharType>::CalculateLineRectImpl(Rectangle* rect, const CharType** string,
+                                                    s32 length) {
+    const CharType* begin = *string;
+    const CharType* end = begin + length;
+    const f32 width_limit = mWidthLimit;
+    const bool width_limited = width_limit < std::numeric_limits<f32>::max();
+    PrintContext<CharType> context{this, begin, end, 0.0f, 0.0f, mScaleX, mScaleY, 0, 0};
+    CharStrmReader reader = mFont->GetCharStrmReader(CharType{});
+    reader.mStream = static_cast<const char*>(static_cast<const void*>(begin));
+    const f32 line_height = GetLineHeight() - mLineSpace;
+    *rect = Rectangle(0.0f, std::min(0.0f, line_height), 0.0f,
+                      std::max(0.0f, line_height));
+    mTagProcessor->BeginCalculateRect(&context);
+
+    f32 cursor = 0.0f;
+    bool char_space = false;
+    bool wrapped = false;
+    const char* wrap_position = nullptr;
+    u32 code = reader.Next();
+    while (util::ConstBytePtr(reader.mStream).Get<CharType>() <= end) {
+        typename TagProcessorBase<CharType>::Operation operation;
+        if (code < 0x20) {
+            if (code == '\n' && _61 == 0) {
+                cursor += mFont->GetKerning(context.previousChar, 0) * mScaleX;
+                context.previousChar = 0;
+            }
+            Rectangle tag_rect(cursor, 0.0f, 0.0f, 0.0f);
+            context.str = util::ConstBytePtr(reader.mStream).Get<CharType>();
+            context.flags = char_space ? 0 : 1;
+            mCursorX = cursor;
+            bool wrap_tag = false;
+            if (width_limited && wrap_position && code != '\n') {
+                PrintContext<CharType> preview_context(context);
+                TextWriterBase preview_writer(*this);
+                preview_context.writer = &preview_writer;
+                Rectangle preview_rect{};
+                mTagProcessor->CalculateRect(&preview_rect, &preview_context, code);
+                wrap_tag = preview_rect.right - preview_rect.left > 0.0f &&
+                           preview_writer.mCursorX - context.xOrigin > mWidthLimit;
+            }
+            if (wrap_tag) {
+                code = '\n';
+                wrapped = true;
+                reader.mStream = wrap_position;
+                continue;
+            }
+            operation = mTagProcessor->CalculateRect(&tag_rect, &context, code);
+            reader.mStream = static_cast<const char*>(static_cast<const void*>(context.str));
+            rect->left = std::min(rect->left, tag_rect.left);
+            rect->top = std::min(rect->top, tag_rect.top);
+            rect->right = std::max(rect->right, tag_rect.right);
+            rect->bottom = std::max(rect->bottom, tag_rect.bottom);
+            cursor = mCursorX;
+        } else {
+            f32 position = cursor;
+            if (char_space)
+                position += mCharSpace;
+            f32 char_width;
+            if (mIsWidthFixed)
+                char_width = mFixedWidth;
+            else
+                char_width = mFont->GetCharWidth(code) * mScaleX;
+            position += char_width;
+            position += mFont->GetKerning(context.previousChar, code) * mScaleX;
+            const f32 trailing_kerning = mFont->GetKerning(code, 0) * mScaleX;
+            const f32 right = position + trailing_kerning;
+            if (width_limited && wrap_position && right + _48 > mWidthLimit) {
+                wrapped = true;
+                code = '\n';
+                reader.mStream = wrap_position;
+                continue;
+            }
+            rect->left = std::min(rect->left, right);
+            rect->right = std::max(rect->right, right);
+            cursor = right - trailing_kerning;
+            context.previousChar = code;
+            operation = TagProcessorBase<CharType>::Operation_CharSpace;
+        }
+        if (operation == TagProcessorBase<CharType>::Operation_NextLine)
+            break;
+        if (operation == TagProcessorBase<CharType>::Operation_EndDraw) {
+            *string += length;
+            return false;
+        }
+        switch (operation) {
+        case TagProcessorBase<CharType>::Operation_NoCharSpace:
+            char_space = false;
+            break;
+        case TagProcessorBase<CharType>::Operation_CharSpace:
+            char_space = true;
+            break;
+        default:
+            break;
+        }
+        if (width_limited)
+            wrap_position = reader.mStream;
+        code = reader.Next();
+    }
+    const f32 right = cursor + mFont->GetKerning(context.previousChar, 0) * mScaleX;
+    rect->left = std::min(rect->left, right);
+    rect->right = std::max(rect->right, right);
+    *string = util::ConstBytePtr(reader.mStream).Get<CharType>();
+    mTagProcessor->EndCalculateRect(&context);
+    return wrapped;
 }
 
 // 0x7101329190
