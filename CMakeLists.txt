@@ -399,6 +399,8 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_Bank.cpp
   src/NintendoSDK/atk/atk_BankFile.cpp
   src/NintendoSDK/atk/atk_BankFileReader.cpp
+  src/NintendoSDK/atk/atk_BasicSoundPlayer.cpp
+  src/NintendoSDK/atk/atk_Debug.cpp
   src/NintendoSDK/atk/atk_WaveSoundFile.cpp
   src/NintendoSDK/atk/atk_AdvancedWaveSoundFile.cpp
   src/NintendoSDK/atk/atk_AdvancedWaveSoundFileReader.cpp
@@ -416,6 +418,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_HeapBase.cpp
   src/NintendoSDK/atk/atk_Thread.cpp
   src/NintendoSDK/atk/atk_LowLevelVoice.cpp
+  src/NintendoSDK/atk/atk_MmlParser.cpp
   src/NintendoSDK/atk/atk_Voice.cpp
   src/NintendoSDK/atk/atk_MultiVoice.cpp
   src/NintendoSDK/atk/atk_SequenceTrack.cpp
