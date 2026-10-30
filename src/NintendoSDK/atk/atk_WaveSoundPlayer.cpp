@@ -2,6 +2,10 @@
 
 namespace nn::atk::detail::driver {
 
+void WaveSoundPlayer::Start() {
+    SetStarted(true);
+}
+
 void WaveSoundPlayer::SetChannelPriority(int priority) {
     mChannelPriority = priority;
 }
