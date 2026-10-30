@@ -4,6 +4,22 @@
 
 namespace nn::atk::detail::driver {
 
+// NON_MATCHING: the compiler assigns different registers for the duration and target byte.
+void SequenceTrack::SetSilence(bool silence, int fade_frames) {
+    _123 = silence;
+    for (Channel* channel = mChannelHead; channel; channel = channel->mNext) {
+        u8 value = channel->_149;
+        if (channel->_14c < channel->_14a) {
+            value = channel->_148 + (channel->_149 - channel->_148) * channel->_14c /
+                                        channel->_14a;
+        }
+        channel->_148 = value;
+        channel->_149 = silence ? 0 : 255;
+        channel->_14a = (static_cast<u32>(fade_frames) + 4) / 5;
+        channel->_14c = 0;
+    }
+}
+
 // NON_MATCHING: the compiler schedules the final head clear and flag setup in the opposite order.
 void SequenceTrack::SetMute(SequenceMute mute) {
     switch (mute) {
