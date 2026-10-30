@@ -11,6 +11,7 @@ public:
     void ClearSoundFrameUserCallback();
     // 0x7101352740: the native body is empty.
     void ForceWakeup();
+    void EffectFrameProcess();
 };
 
 }  // namespace nn::atk::detail::driver

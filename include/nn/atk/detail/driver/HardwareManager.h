@@ -64,6 +64,7 @@ public:
     nn::os::MutexType* GetAudioRendererMutex() { return &mAudioRendererMutex; }
 
     void SetMasterVolume(f32 volume, s32 frames);
+    void UpdateEffect();
     // Native 1344670 returns the renderer channel count (2 or 6). The private
     // configuration flag it reads remains outside this partial representation.
     int GetChannelCountMax() const;
