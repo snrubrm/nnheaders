@@ -67,6 +67,7 @@ public:
     void Initialize();
     void Finalize(gfx::Device*);
     void ReserveMem(s32, s32, s32, s32, bool, s32, bool, s32, bool, bool);
+    void SetupSubmaterialOf_Texture(DrawInfo&, gfx::CommandBuffer&) const;
     void SetupUserShaderConstantBufferInformation(nn::ui2d::UserShaderInformation const&);
     void* GetConstantBufferForVertexShader(const DrawInfo&) const;
     void* GetConstantBufferForPixelShader(const DrawInfo&) const;

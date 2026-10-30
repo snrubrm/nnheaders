@@ -20,6 +20,10 @@ class ShaderInfo;
 struct ResExtUserDataList;
 struct ResExtUserData;
 
+namespace detail {
+void DrawQuad(gfx::CommandBuffer&, DrawInfo&, Material&);
+}
+
 bool LoadTexture(ResourceTextureInfo*, gfx::Device*, const void*);
 void LoadArchiveShader(ShaderInfo*, gfx::Device*, void*, const void*, gfx::MemoryPool*, s64, u64);
 void FreeArchiveShader(gfx::Device*, ShaderInfo*);
