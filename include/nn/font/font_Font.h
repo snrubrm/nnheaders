@@ -66,7 +66,8 @@ struct Glyph {
         const TextureObject* pTextureObject;
         u64 textureObject;
     };
-    u16 _28;
+    // ScalableFont stores a baseline difference; both PrintImpl variants read it as signed.
+    s16 _28;
 };
 static_assert(sizeof(Glyph) == 0x30);
 

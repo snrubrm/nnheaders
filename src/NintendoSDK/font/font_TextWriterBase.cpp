@@ -53,6 +53,165 @@ f32 TextWriterBase<CharType>::Print(const CharType* string, s32 length, s32 arg3
     return width;
 }
 
+// NON_MATCHING: shared line-alignment measurement and control-flow scheduling differ.
+// 0x710132868c (char) / 0x7101329a04 (u16)
+template <typename CharType>
+f32 TextWriterBase<CharType>::PrintImpl(const CharType* string, s32 length, s32 arg3,
+                                       const f32* arg4, const f32* arg5) {
+    f32 origin_x = mCursorX;
+    const f32 original_y = mCursorY;
+    f32 origin_y = original_y;
+    const f32 width_limit = mWidthLimit;
+    f32 bounds_width = AdjustCursor(&origin_x, &origin_y, string, length);
+    const f32 adjusted_y = mCursorY;
+    PrintContext<CharType> context{this, string, string + length, origin_x, origin_y,
+                                  mScaleX, mScaleY, 0, 0};
+    if (arg3 != 0)
+        mCursorX = arg3 > 0 ? arg4[0] : 0.0f;
+    CharStrmReader reader = mFont->GetCharStrmReader(CharType{});
+    reader.mStream = static_cast<const char*>(static_cast<const void*>(string));
+    mTagProcessor->BeginPrint(&context);
+
+    const bool width_limited = width_limit < std::numeric_limits<f32>::max();
+    const char* line_start = static_cast<const char*>(static_cast<const void*>(string));
+    const char* wrap_position = line_start;
+    s32 line_index = 0;
+    bool char_space = false;
+    f32 advance = 0.0f;
+    u32 code = reader.Next();
+    while (util::ConstBytePtr(reader.mStream).Get<CharType>() - string <= length) {
+        const bool can_wrap = width_limited &&
+                              (line_index < arg3 || wrap_position != line_start);
+        if (code < 0x20) {
+            context.flags = char_space ? 0 : 1;
+            context.str = util::ConstBytePtr(reader.mStream).Get<CharType>();
+            bool wrap_tag = false;
+            if (can_wrap && code != '\n') {
+                PrintContext<CharType> preview_context(context);
+                TextWriterBase preview_writer(*this);
+                preview_context.writer = &preview_writer;
+                Rectangle preview_rect{};
+                mTagProcessor->CalculateRect(&preview_rect, &preview_context, code);
+                if (preview_rect.right - preview_rect.left > 0.0f) {
+                    const f32 allowance = line_index < arg3 ? arg5[line_index] : 0.0f;
+                    wrap_tag = preview_writer.mCursorX - context.xOrigin > mWidthLimit + allowance;
+                }
+            }
+            if (wrap_tag) {
+                code = '\n';
+                context.previousChar = 0;
+                reader.mStream = wrap_position;
+                continue;
+            }
+            const auto operation = mTagProcessor->Process(code, &context);
+            const f32 tag_x = mCursorX;
+            if (code == '\n' && _61 == 0)
+                context.previousChar = 0;
+            if (operation == TagProcessorBase<CharType>::Operation_EndDraw)
+                break;
+            switch (operation) {
+            case TagProcessorBase<CharType>::Operation_NoCharSpace:
+                char_space = false;
+                break;
+            case TagProcessorBase<CharType>::Operation_CharSpace:
+                char_space = true;
+                break;
+            case TagProcessorBase<CharType>::Operation_NextLine: {
+                ++line_index;
+                const f32 line_offset = line_index < arg3 ? arg4[line_index] : 0.0f;
+                const u32 alignment = mDrawFlag & 3;
+                f32 position;
+                if (alignment == 1 || alignment == 2) {
+                    f32 line_width;
+                    {
+                        const CharType* next = context.str;
+                        Rectangle line{};
+                        TextWriterBase writer(*this);
+                        writer.SetCursorX(0.0f);
+                        writer.SetCursorY(0.0f);
+                        writer.CalculateLineRectImpl(&line, &next,
+                            length - s32(context.str - string));
+                        line_width = line.right - line.left;
+                    }
+                    if (alignment == 1) {
+                        f32 bounds_half = bounds_width * 0.5f;
+                        f32 line_half = line_width * 0.5f;
+                        if (_60) {
+                            bounds_half = std::ceil(bounds_half);
+                            line_half = std::ceil(line_half);
+                        }
+                        position = context.xOrigin + (bounds_half - line_half);
+                    } else {
+                        position = context.xOrigin + (bounds_width - line_width);
+                    }
+                } else {
+                    bounds_width = std::max(bounds_width, tag_x - context.xOrigin);
+                    position = context.xOrigin;
+                }
+                mCursorX = line_offset + position;
+                char_space = false;
+                if (width_limited)
+                    line_start = reader.mStream;
+                break;
+            }
+            default:
+                break;
+            }
+            advance = tag_x - origin_x;
+            reader.mStream = static_cast<const char*>(static_cast<const void*>(context.str));
+        } else {
+            const f32 saved_y = mCursorY;
+            const s32 kerning_value = mFont->GetKerning(context.previousChar, code);
+            const f32 kerning = kerning_value * mScaleX;
+            Glyph glyph;
+            mFont->GetGlyph(&glyph, code);
+            if (glyph.height > glyph.texHeight) {
+                code = reader.Next();
+                continue;
+            }
+            f32 position = advance;
+            if (char_space)
+                position += mCharSpace;
+            position += mIsWidthFixed ? mFixedWidth : glyph.charWidth * mScaleX;
+            const s32 trailing_value = mFont->GetKerning(code, 0);
+            const f32 trailing_kerning = trailing_value * mScaleX;
+            const f32 right = (kerning + position) + trailing_kerning;
+            if (can_wrap) {
+                const f32 allowance = line_index < arg3 ? arg5[line_index] : 0.0f;
+                if (right > mWidthLimit + allowance) {
+                    context.previousChar = 0;
+                    code = '\n';
+                    reader.mStream = wrap_position;
+                    continue;
+                }
+            }
+            if (char_space)
+                mCursorX += mCharSpace;
+            advance = right - trailing_kerning;
+            mCursorX += kerning;
+            const s32 baseline = mFont->GetBaselinePos();
+            mCursorY += -(baseline + glyph._28) * mScaleY;
+            PrintGlyph(glyph);
+            mCursorY = saved_y;
+            char_space = true;
+            context.previousChar = code;
+        }
+        if (width_limited)
+            wrap_position = reader.mStream;
+        code = reader.Next();
+    }
+    const s32 end_kerning = mFont->GetKerning(context.previousChar, 0);
+    mCursorX += end_kerning * mScaleX;
+    bounds_width = std::max(bounds_width, mCursorX - context.xOrigin);
+    const u32 vertical = mDrawFlag & 0x300;
+    if (vertical == 0x100 || vertical == 0x200)
+        mCursorY = original_y;
+    else
+        mCursorY = (original_y - adjusted_y) + mCursorY;
+    mTagProcessor->EndPrint(&context);
+    return bounds_width;
+}
+
 // 0x7101328db4 (char) / 0x710132a13c (u16)
 // NON_MATCHING: natural shared alignment logic changes branch structure and local writer scheduling.
 template <typename CharType>
