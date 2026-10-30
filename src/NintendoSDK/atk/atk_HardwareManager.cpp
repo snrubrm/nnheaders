@@ -1,4 +1,5 @@
 #include <nn/atk/detail/driver/HardwareManager.h>
+#include <nn/atk/EffectAux.h>
 
 namespace nn {
 namespace atk {
@@ -11,6 +12,10 @@ int HardwareManager::GetChannelCountMax() const {
 
 int HardwareManager::GetRequiredMemSizeForMemoryPool(int max_voices) const {
     return LowLevelVoiceAllocator::GetRequiredMemSize(max_voices);
+}
+
+size_t HardwareManager::GetRequiredEffectAuxBufferSize(const EffectAux* effect) const {
+    return effect->GetRequiredMemSize(mRendererParameter);
 }
 
 }  // namespace driver

@@ -18,6 +18,10 @@ public:
 
 }  // namespace nn::atk::detail
 
+namespace nn::atk {
+class EffectAux;
+}
+
 namespace nn::atk::detail::driver {
 
 class HardwareManager {
@@ -47,17 +51,18 @@ public:
     int GetChannelCountMax() const;
     /// 0x7101344564: forwards the voice count to LowLevelVoiceAllocator::GetRequiredMemSize.
     int GetRequiredMemSizeForMemoryPool(int max_voices) const;
+    size_t GetRequiredEffectAuxBufferSize(const EffectAux* effect) const;
     bool IsFinishedClearEffect(AuxBus bus, OutputDevice device, int index) const;
     /// 0x71013450b8 (declared only)
     void SetOutputMode(OutputMode mode, OutputDevice device);
     /// 0x7101347174: the native body is empty on this platform.
     void FlushDataCache(void* address, size_t size);
     /// Inline-only, name guessed: the renderer's sample count at +0x64c.
-    u32 GetRendererSampleCount() const { return mRendererSampleCount; }
+    u32 GetRendererSampleCount() const { return mRendererParameter.sampleCount; }
     OutputMode GetOutputMode() const { return mOutputMode; }
     // Inline-only, name guessed: aal::FinalOutputMeasure::updateActivation 0x7100baa290 compares +0x648
     // with 48000.
-    u32 GetRendererSampleRate() const { return mRendererSampleRate; }
+    u32 GetRendererSampleRate() const { return mRendererParameter.sampleRate; }
     // 0x71013528ec / 0x71013528f4: the effect-aux list is guarded by the mutex at +0x368.
     void LockEffectAuxList();
     void UnlockEffectAuxList();
@@ -80,9 +85,8 @@ private:
     u8 _ec[0x368 - 0xec];
     /* 0x368 */ nn::os::MutexType mEffectAuxMutex;
     u8 _388[0x648 - 0x388];
-    u32 mRendererSampleRate;
-    u32 mRendererSampleCount;  // +0x64c
-    u8 _650[0x758 - 0x650];
+    nn::audio::AudioRendererParameter mRendererParameter;  // +0x648
+    u8 _684[0x758 - 0x684];
     // +0x758: GetChannelCountMax returns 2 when it is set and 6 otherwise; what it means is not
     // established, so it keeps a placeholder name.
     u8 _758;
