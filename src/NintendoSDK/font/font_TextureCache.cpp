@@ -18,6 +18,24 @@ bool TextureCache::IsBorderEffectEnabled(u16 font_face) const {
     return false;
 }
 
+// NON_MATCHING: the unrolled loop uses a precomputed remaining count for termination.
+const TextureCache::FontMetrics* TextureCache::GetFontMetrics(u16 font_face) const {
+    const u32 first = _18a8[font_face];
+    const u32 count = _1888[font_face];
+    const FontMetrics* metrics = mFontMetrics;
+    u32 selected = first;
+    if (count > 1) {
+        f32 largest = metrics[first]._c;
+        for (u32 i = 1; i < count; ++i) {
+            if (largest < metrics[first + i]._c) {
+                selected = first + i;
+                largest = metrics[selected]._c;
+            }
+        }
+    }
+    return &metrics[selected];
+}
+
 GlyphNode* GlyphTreeMap::Find(u32 code, u16 size, u16 face) const {
     const u64 key = (static_cast<u64>(size) << 48) | (static_cast<u64>(face) << 32) | code;
     GlyphNode* node = _0;
