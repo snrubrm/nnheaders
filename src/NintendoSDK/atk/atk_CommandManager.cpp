@@ -55,4 +55,11 @@ u32 CommandManager::PushCommand(Command* command) {
     return _2d4;
 }
 
+bool CommandManager::IsFinishCommand(u32 sequence) const {
+    constexpr u32 wrapWindow = 1u << 30;
+    if (_2d8 < sequence)
+        return sequence - _2d8 >= wrapWindow;
+    return _2d8 - sequence < wrapWindow;
+}
+
 }  // namespace nn::atk::detail

@@ -26,6 +26,7 @@ public:
     void Finalize();
     // Native returns the current 32-bit sequence; unsigned return is inferred.
     u32 PushCommand(Command* command);
+    bool IsFinishCommand(u32 sequence) const;
 
 private:
     u8 _0;
@@ -44,7 +45,8 @@ private:
     Command* _2c8;
     std::atomic<u32> _2d0;
     u32 _2d4;
-    u8 _2d8[8];
+    u32 _2d8;
+    u8 _2dc[4];
     void* _2e0;
     u64 _2e8;
     u64 _2f0;
