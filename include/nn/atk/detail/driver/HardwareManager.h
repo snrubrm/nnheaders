@@ -10,10 +10,9 @@
 
 namespace nn::atk::detail {
 
-/// Declared only: the voice allocator's required-size query 0x7101356d6c is still undecompiled.
 class LowLevelVoiceAllocator {
 public:
-    static int GetRequiredMemSize(int max_voices);
+    static size_t GetRequiredMemSize(int max_voices);
 };
 
 }  // namespace nn::atk::detail
@@ -69,7 +68,7 @@ public:
     // configuration flag it reads remains outside this partial representation.
     int GetChannelCountMax() const;
     /// 0x7101344564: forwards the voice count to LowLevelVoiceAllocator::GetRequiredMemSize.
-    int GetRequiredMemSizeForMemoryPool(int max_voices) const;
+    size_t GetRequiredMemSizeForMemoryPool(int max_voices) const;
     void AttachMemoryPool(nn::audio::MemoryPoolType* pool, void* address, size_t size, bool wait);
     void DetachMemoryPool(nn::audio::MemoryPoolType* pool, bool wait);
     size_t GetRequiredMemSize(const HardwareManagerParameter& parameter) const;
