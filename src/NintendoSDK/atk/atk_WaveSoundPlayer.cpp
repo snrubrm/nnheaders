@@ -10,6 +10,10 @@ void WaveSoundPlayer::SetReleasePriorityFix(bool fix) {
     mReleasePriorityFix = fix;
 }
 
+s64 WaveSoundPlayer::GetPlaySamplePosition(bool flag) const {
+    return mChannel ? mChannel->GetCurrentPlayingSample(flag) : 0;
+}
+
 void WaveSoundPlayer::ChannelCallbackFunc(Channel*, Channel::ChannelCallbackStatus, void* arg) {
     static_cast<WaveSoundPlayer*>(arg)->mChannel = nullptr;
 }

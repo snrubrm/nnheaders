@@ -28,6 +28,7 @@ public:
 
     void SetChannelPriority(int priority);
     void SetReleasePriorityFix(bool fix);
+    s64 GetPlaySamplePosition(bool flag) const;
     static void ChannelCallbackFunc(Channel*, Channel::ChannelCallbackStatus, void*);
 
 private:
