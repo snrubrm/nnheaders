@@ -7,6 +7,10 @@ void StreamSoundPlayer::OnUpdateFrameSoundThreadWithAudioFrameFrequency() {
         Update();
 }
 
+void StreamSoundPlayer::OnShutdownSoundThread() {
+    Stop();
+}
+
 // NON_MATCHING: the compiler folds the count load and sign extension together.
 void StreamSoundPlayer::SetTrackVolume(u32 track_mask, f32 volume) {
     if (!track_mask || mTrackCount <= 0)
