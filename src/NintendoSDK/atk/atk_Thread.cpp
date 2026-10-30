@@ -12,6 +12,25 @@ Thread::Thread() = default;
 // 0x710135d698
 Thread::~Thread() {}
 
+// NON_MATCHING: SetName and SetAffinityMask inline, and the empty Resume call is
+// eliminated; native keeps all three calls and uses a smaller stack frame.
+bool Thread::Run(const RunArgs& args) {
+    if (!args.stack || !args.stackSize || args.priority > 31 || !args.handler)
+        return false;
+
+    mArgument = args.argument;
+    mHandler = args.handler;
+    if (!Create(mThread, _1c8, args))
+        return false;
+
+    SetName(args.name);
+    if (args.affinity != 0)
+        SetAffinityMask(args.core, args.affinity);
+    _1d0 = args.priority;
+    Resume();
+    return true;
+}
+
 // 0x710135d780
 void Thread::OnRun() {
     mStatus = 1;

@@ -34,6 +34,7 @@ public:
     Thread();
     // 0x710135d698
     ~Thread();
+    bool Run(const RunArgs& args);
     // 0x710135d780 / 0x710135d78c: the state the thread body runs in.
     void OnRun();
     void OnExit();
@@ -49,13 +50,17 @@ public:
     void Resume();
 
 private:
+    // Native Create returns 0 or 1; bool is inferred from its callers.
+    bool Create(nn::os::ThreadType& thread, s64& handle, const RunArgs& args);
+
     /* 0x000 */ s32 mStatus = 0;
     u8 _4[4];
     /* 0x008 */ nn::os::ThreadType mThread;
-    /* 0x1c8 */ u64 _1c8 = 0xffffffff;
+    /* 0x1c8 */ s64 _1c8 = 0xffffffffLL;
     /* 0x1d0 */ u32 _1d0 = 0x10;
-    u8 _1d4[0xc];
-    /* 0x1e0 */ u64 _1e0 = 0;
+    u8 _1d4[4];
+    /* 0x1d8 */ void* mArgument;
+    /* 0x1e0 */ Handler* mHandler = nullptr;
     /* 0x1e8 */ bool _1e8 = false;
 };
 static_assert(sizeof(Thread::RunArgs) == 0x38);
