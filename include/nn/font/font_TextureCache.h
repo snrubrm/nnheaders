@@ -39,6 +39,18 @@ static_assert(sizeof(GlyphTreeMap) == 0x20);
 
 class TextureCache {
 public:
+    // Per-font normalized metrics produced by Initialize and read by ScalableFont.
+    struct FontMetrics {
+        f32 ascent;
+        f32 height;
+        f32 baseline;
+        f32 _c;
+        f32 _10;
+        f32 _14;
+        f32 _18;
+    };
+    static_assert(sizeof(FontMetrics) == 0x1c);
+
     // The allocator the font library uses for every cache allocation
     // (TextureCache::Initialize 0x7100ab0fa4 and GlyphTreeMap::Initialize both call it).
     using AllocateFunction = void* (*)(size_t size, size_t alignment, void* user_data);
@@ -96,6 +108,8 @@ public:
     void CompleteTextureCache();
     void ResetTextureCache();
     bool IsBorderEffectEnabled(u16 font_face) const;
+    const FontMetrics* GetFontMetrics(u16 font_face) const;
+    bool RegisterGlyph(u32 code, u32 font_size, u16 font_face, s32 index);
     bool IsGlyphExistInFont(u32 code, u16 font_face);
     s32 CalculateKerning(u32 first, u32 second, u32 font_size, u16 font_face);
     s32 CalculateCharWidth(u32 code, u32 font_size, u16 font_face);
@@ -141,8 +155,10 @@ private:
     /* 0x18f0 */ u8 _18f0;
     /* 0x18f4 */ u32 _18f4;
     /* 0x18f8 */ void (*_18f8)();
-    /* 0x1900 */ void* _1900;
-    /* 0x1908 */ void* _1908[6];
+    /* 0x1900 */ FontMetrics* mFontMetrics;
+    /* 0x1908 */ void* _1908;
+    /* 0x1910 */ u8* mBorderFlags;
+    /* 0x1918 */ void* _1918[4];
     /* 0x1938 */ u8 _1938;
     /* 0x1940 */ gfx::detail::TextureImpl<gfx::ApiVariationNvn8> mTexture;
     /* 0x1a18 */ gfx::TextureView mTextureView;

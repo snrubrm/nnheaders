@@ -12,6 +12,7 @@
 
 namespace nn::ui2d {
 class Material;
+class Picture;
 }
 
 namespace nn::font {
@@ -51,6 +52,7 @@ public:
 private:
     // Material constant-buffer accessors 0x7100ac391c / 0x7100ac4ab0 read the mapped pointer.
     friend class nn::ui2d::Material;
+    friend class nn::ui2d::Picture;
 
     /* 0x00 */ u32 mFlags;
     /* 0x08 */ gfx::Buffer* mBuffers;

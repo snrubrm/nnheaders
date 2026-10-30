@@ -1,6 +1,9 @@
 #include <nn/ui2d/Picture.h>
 
+#include <nn/font/font_GpuBuffer.h>
+#include <nn/ui2d/DrawInfo.h>
 #include <nn/ui2d/Material.h>
+#include <nn/ui2d/Util.h>
 #include <nn/ui2d/Layout.h>
 
 namespace nn::ui2d {
@@ -68,6 +71,14 @@ void Picture::sub_7100AB9FBC(util::Float2* coordinates, s32 index) const {
 // 0x7100ab9fc4
 void Picture::sub_7100AB9FC4(s32 index, const util::Float2* coordinates) {
     mTexCoordArray.SetCoord(index, coordinates);
+}
+
+// 0x7100aba44c
+void Picture::DrawSelf(DrawInfo& draw_info, gfx::CommandBuffer& command_buffer) {
+    if (mMaterial && !(draw_info.mUi2dConstantBuffer->mFlags & 2)) {
+        mMaterial->SetupSubmaterialOf_Texture(draw_info, command_buffer);
+        detail::DrawQuad(command_buffer, draw_info, *mMaterial);
+    }
 }
 
 }  // namespace nn::ui2d
