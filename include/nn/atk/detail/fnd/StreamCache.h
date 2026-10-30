@@ -9,6 +9,7 @@ namespace nn::atk::detail::fnd {
 class StreamCache {
 public:
     StreamCache();
+    virtual ~StreamCache() = default;
     void Initialize(Stream* stream, void* buffer, u64 size);
     void Finalize();
     s32 Read(void* data, u64 size, FndResult* result, FsAccessLog* log, void* unk);
@@ -20,7 +21,6 @@ public:
     u64 getPosition() const { return mPosition; }
 
 private:
-    u8 _0[8];
     Stream* mStream;       // +0x08
     u64 mPosition;         // +0x10
     void* mBuffer;         // +0x18

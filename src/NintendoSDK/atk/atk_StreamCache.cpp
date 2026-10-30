@@ -2,6 +2,11 @@
 
 namespace nn::atk::detail::fnd {
 
+StreamCache::StreamCache()
+    : mStream(nullptr), mPosition(0), mBuffer(nullptr), mSize(0), mCachePosition(0xffffffff),
+      mCacheSize(0), mCacheState(0) {
+}
+
 void StreamCache::Initialize(Stream* stream, void* buffer, u64 size) {
     mStream = stream;
     mPosition = 0;
