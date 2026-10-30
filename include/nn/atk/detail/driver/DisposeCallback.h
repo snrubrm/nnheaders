@@ -11,6 +11,7 @@ public:
     virtual void InvalidateData(const void* begin, const void* end);
 
 private:
+    friend class DisposeCallbackManager;
     nn::util::IntrusiveListNode mNode;  // +0x8
 };
 static_assert(sizeof(DisposeCallback) == 0x18);
