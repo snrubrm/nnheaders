@@ -6,6 +6,12 @@ void WaveSoundPlayer::Start() {
     SetStarted(true);
 }
 
+void WaveSoundPlayer::Pause(bool pause) {
+    SetPaused(pause);
+    if (mChannel)
+        mChannel->Pause(pause);
+}
+
 void WaveSoundPlayer::SetChannelPriority(int priority) {
     mChannelPriority = priority;
 }
