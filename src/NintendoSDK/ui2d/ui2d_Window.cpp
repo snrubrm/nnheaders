@@ -2,9 +2,115 @@
 #include <nn/ui2d/Material.h>
 #include <nn/ui2d/Layout.h>
 #include <nn/ui2d/ResPane.h>
+#include <nn/ui2d/BuildTypes.h>
+#include <nn/ui2d/TextBox.h>
+#include <nn/util/util_BytePtr.h>
 #include <new>
 
 namespace nn::ui2d {
+
+// 0x7100abcb70
+// NON_MATCHING: the compiler inlines InitializeSize and combines serialized color-byte copies.
+Window::Window(BuildResultInformation* result, gfx::Device* device, const ResWindow* resource,
+               const ResWindow* replacement, const BuildArgSet& args)
+    : Pane(resource, args) {
+    mTexCoordArray.Initialize();
+    mWindowKind = 0;
+    mWindowFlags = 0;
+    mFrameConstantBufferOffsets = nullptr;
+    mFrameConstantBufferCount = 0;
+
+    const ResWindow* selected = replacement && args._44 == 0 ? replacement : resource;
+    mWindowKind = (selected->mResourceFlags >> 2) & 3;
+    if (selected->mResourceFlags & 2)
+        mWindowFlags |= 1;
+    if (selected->mResourceFlags & 1)
+        mWindowFlags |= 2;
+    if (selected->mResourceFlags & 0x10)
+        mWindowFlags |= 4;
+
+    const auto* content = util::ConstBytePtr(selected, selected->mContentOffset).Get<ResWindowContent>();
+    const u8 coordinate_count = content->mCoordinateCount < 3 ? content->mCoordinateCount : 3;
+    if (coordinate_count)
+        mTexCoordArray.Reserve(coordinate_count);
+    InitializeSize(selected);
+    for (s32 i = 0; i < 4; ++i)
+        mVertexColors[i] = content->mColors[i];
+    if (coordinate_count && mTexCoordArray.mCapacity)
+        mTexCoordArray.Copy(util::ConstBytePtr(content, 0x14).Get(), coordinate_count);
+
+    const auto* original_content =
+        util::ConstBytePtr(resource, resource->mContentOffset).Get<ResWindowContent>();
+    const ResMaterial* original_material = detail::GetResMaterial(args.mResources, original_content->mMaterialIndex);
+    const ResMaterial* replacement_material = nullptr;
+    if (replacement) {
+        const auto* replacement_content =
+            util::ConstBytePtr(replacement, replacement->mContentOffset).Get<ResWindowContent>();
+        replacement_material = detail::GetResMaterial(args.mOverrideResources, replacement_content->mMaterialIndex);
+    }
+    void* memory = Layout::AllocateMemory(sizeof(Material), 4);
+    Material* content_material = memory ? new (memory) Material(result, device, original_material,
+                                                                replacement_material, args) : nullptr;
+    mFrames = nullptr;
+    mContentMaterial = content_material;
+    mFrameCount = 0;
+
+    const u8 requested_count = selected->mFrameCount;
+    if (requested_count) {
+        memory = Layout::AllocateMemory(sizeof(Frame) * requested_count, 4);
+        if (memory) {
+            Frame* frames = static_cast<Frame*>(memory);
+            for (s32 i = 0; i < requested_count; ++i) {
+                new (&frames[i]) Frame;
+                frames[i].mTextureFlip = 0;
+                frames[i].mMaterial = nullptr;
+            }
+            mFrames = frames;
+            mFrameCount = requested_count;
+        } else {
+            mFrames = nullptr;
+        }
+
+        const u32* selected_offsets =
+            util::ConstBytePtr(selected, selected->mFrameOffsetsOffset).Get<u32>();
+        const u32* original_offsets =
+            util::ConstBytePtr(resource, resource->mFrameOffsetsOffset).Get<u32>();
+        const u32* replacement_offsets = replacement ?
+            util::ConstBytePtr(replacement, replacement->mFrameOffsetsOffset).Get<u32>() : nullptr;
+        for (s32 i = 0; i < mFrameCount; ++i) {
+            const auto* selected_frame =
+                util::ConstBytePtr(selected, selected_offsets[i]).Get<ResWindowFrame>();
+            mFrames[i].mTextureFlip = selected_frame->mTextureFlip;
+            const ResMaterial* frame_material = nullptr;
+            if (i < resource->mFrameCount) {
+                const auto* original_frame =
+                    util::ConstBytePtr(resource, original_offsets[i]).Get<ResWindowFrame>();
+                frame_material = detail::GetResMaterial(args.mResources, original_frame->mMaterialIndex);
+            }
+            const ResMaterial* replacement_frame_material = nullptr;
+            if (replacement) {
+                const auto* replacement_frame =
+                    util::ConstBytePtr(replacement, replacement_offsets[i]).Get<ResWindowFrame>();
+                replacement_frame_material = detail::GetResMaterial(args.mOverrideResources,
+                                                                    replacement_frame->mMaterialIndex);
+            }
+            memory = Layout::AllocateMemory(sizeof(Material), 4);
+            Material* frame = memory ? new (memory) Material(result, device, frame_material,
+                                                            replacement_frame_material, args) : nullptr;
+            mFrames[i].mMaterial = frame;
+        }
+        if (selected->mFrameCount == 1) {
+            const u32 offset_count = mWindowKind == 1 || mWindowKind == 2 ? 1 : 3;
+            mFrameConstantBufferOffsets = static_cast<u32*>(
+                Layout::AllocateMemory(sizeof(u32) * offset_count, 4));
+            mFrameConstantBufferCount = offset_count;
+            if (result) {
+                const size_t buffer_size = sub_7100ABCB10(device, 0x10, 0x230);
+                result->mMaterialBufferSize += mFrameConstantBufferCount * buffer_size;
+            }
+        }
+    }
+}
 
 // 0x7100abd120
 // NON_MATCHING: native copies margin groups as whole values and schedules sizing branches differently.
