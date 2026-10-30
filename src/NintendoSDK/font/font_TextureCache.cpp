@@ -115,6 +115,132 @@ s32 TextureCache::CalculateCharWidth(u32 code, u32 font_size, u16 font_face) {
     return 0;
 }
 
+// NON_MATCHING: font-search exit bookkeeping and final status selection differ.
+// 0x7100ab2d58
+s32 TextureCache::CalculateKerning(u32 first, u32 second, u32 font_size, u16 font_face) {
+    if (first == 0) {
+        u32 font = _18a8[font_face];
+        for (s32 i = 0; i < _1888[font_face]; ++i, ++font) {
+            const s32 range_count = mRangeCounts[font];
+            if (range_count != 0) {
+                s32 range = 0;
+                for (; range < range_count; ++range) {
+                    if (mRangeStarts[font][range] <= second && second <= mRangeEnds[font][range])
+                        break;
+                }
+                if (range >= range_count)
+                    continue;
+            }
+            const u32 check_core = _18f0 ? _18f8() : 0;
+            SetFontFaceNoPlot(font, check_core);
+            if (!mScalableFontEngines[check_core].CheckGlyphExist(second))
+                continue;
+
+            const u32 core = _18f0 ? _18f8() : 0;
+            SetFontFaceNoPlot(font, core);
+            const s32 scale = s32(font_size << 16);
+            mScalableFontEngines[core].SetScale(scale, 0, 0, scale);
+            const fontll::OtfKerningTable* table = _1930[font];
+            if (table)
+                return mScalableFontEngines[core].AcquireOtfKerningFirst(table, second, font_size);
+            return 0;
+        }
+        return 0;
+    }
+    if (second == 0) {
+        u32 font = _18a8[font_face];
+        for (s32 i = 0; i < _1888[font_face]; ++i, ++font) {
+            const s32 range_count = mRangeCounts[font];
+            if (range_count != 0) {
+                s32 range = 0;
+                for (; range < range_count; ++range) {
+                    if (mRangeStarts[font][range] <= first && first <= mRangeEnds[font][range])
+                        break;
+                }
+                if (range >= range_count)
+                    continue;
+            }
+            const u32 check_core = _18f0 ? _18f8() : 0;
+            SetFontFaceNoPlot(font, check_core);
+            if (!mScalableFontEngines[check_core].CheckGlyphExist(first))
+                continue;
+
+            const u32 core = _18f0 ? _18f8() : 0;
+            SetFontFaceNoPlot(font, core);
+            const s32 scale = s32(font_size << 16);
+            mScalableFontEngines[core].SetScale(scale, 0, 0, scale);
+            const fontll::OtfKerningTable* table = _1930[font];
+            if (table)
+                return mScalableFontEngines[core].AcquireOtfKerningLast(table, first, font_size);
+            return 0;
+        }
+        return 0;
+    }
+
+    u32 first_font = _18a8[font_face];
+    bool first_found = false;
+    for (s32 i = 0; i < _1888[font_face]; ++i, ++first_font) {
+        const s32 range_count = mRangeCounts[first_font];
+        if (range_count != 0) {
+            s32 range = 0;
+            for (; range < range_count; ++range) {
+                if (mRangeStarts[first_font][range] <= first && first <= mRangeEnds[first_font][range])
+                    break;
+            }
+            if (range >= range_count)
+                continue;
+        }
+        const u32 core = _18f0 ? _18f8() : 0;
+        SetFontFaceNoPlot(first_font, core);
+        if (mScalableFontEngines[core].CheckGlyphExist(first)) {
+            first_found = true;
+            break;
+        }
+    }
+    if (!first_found)
+        return 0;
+
+    u32 second_font = _18a8[font_face];
+    bool second_found = false;
+    for (s32 i = 0; i < _1888[font_face]; ++i, ++second_font) {
+        const s32 range_count = mRangeCounts[second_font];
+        if (range_count != 0) {
+            s32 range = 0;
+            for (; range < range_count; ++range) {
+                if (mRangeStarts[second_font][range] <= second && second <= mRangeEnds[second_font][range])
+                    break;
+            }
+            if (range >= range_count)
+                continue;
+        }
+        const u32 core = _18f0 ? _18f8() : 0;
+        SetFontFaceNoPlot(second_font, core);
+        if (mScalableFontEngines[core].CheckGlyphExist(second)) {
+            second_found = true;
+            break;
+        }
+    }
+    if (!second_found || first_font != second_font)
+        return 0;
+
+    const u32 core = _18f0 ? _18f8() : 0;
+    SetFontFaceNoPlot(first_font, core);
+    const s32 scale = s32(font_size << 16);
+    mScalableFontEngines[core].SetScale(scale, 0, 0, scale);
+    const fontll::OtfKerningTable* table = _1930[first_font];
+    if (table) {
+        const s32 kerning = mScalableFontEngines[core].AcquireOtfKerning(
+            table, first, second, font_size);
+        if (kerning != 0)
+            return kerning;
+    }
+    s32 out0;
+    s32 out1;
+    if (mScalableFontEngines[core].GetKerning(&out0, &out1, first, second) != 0)
+        return 0;
+    return out0 >> 16;
+}
+
 // NON_MATCHING: the unrolled loop uses a precomputed remaining count for termination.
 const TextureCache::FontMetrics* TextureCache::GetFontMetrics(u16 font_face) const {
     const u32 first = _18a8[font_face];

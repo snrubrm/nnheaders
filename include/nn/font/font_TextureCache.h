@@ -13,6 +13,7 @@
 
 namespace nn::fontll {
 class ScalableFontEngine;
+struct OtfKerningTable;
 }
 
 namespace nn::font {
@@ -173,7 +174,9 @@ private:
     /* 0x1918 */ s32* mRangeCounts;
     /* 0x1920 */ u32 (*mRangeStarts)[4];
     /* 0x1928 */ u32 (*mRangeEnds)[4];
-    /* 0x1930 */ void* _1930;
+    // Initialize stores opaque per-font tables; AcquireOtfKerning consumers establish only
+    // this const interface, without a table extent or ownership model.
+    /* 0x1930 */ const fontll::OtfKerningTable** _1930;
     /* 0x1938 */ u8 _1938;
     /* 0x1940 */ gfx::detail::TextureImpl<gfx::ApiVariationNvn8> mTexture;
     /* 0x1a18 */ gfx::TextureView mTextureView;
