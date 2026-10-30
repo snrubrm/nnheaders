@@ -70,6 +70,7 @@ public:
     void ReserveMem(s32, s32, s32, s32, bool, s32, bool, s32, bool, bool);
     void SetupSubmaterialOf_Texture(DrawInfo&, gfx::CommandBuffer&) const;
     void SetCommandBufferOnlyBlend(gfx::CommandBuffer&) const;
+    void SetCommandBuffer(gfx::CommandBuffer&, DrawInfo&) const;
     void SetupUserShaderConstantBufferInformation(nn::ui2d::UserShaderInformation const&);
     void* GetConstantBufferForVertexShader(const DrawInfo&) const;
     void* GetConstantBufferForPixelShader(const DrawInfo&) const;
