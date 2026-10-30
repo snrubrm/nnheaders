@@ -18,7 +18,8 @@ enum VoiceState : s32 {
     VoiceState_Released = 1,
 };
 
-// TODO: incomplete. Only the available flag at +0x28 is modelled.
+// TODO: incomplete. The renderer voice, allocation state and wave-buffer links are modelled;
+// the remaining spans stay opaque.
 class LowLevelVoice {
 public:
     bool IsAvailable() const;
