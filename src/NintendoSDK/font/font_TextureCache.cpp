@@ -17,7 +17,6 @@ bool TextureCache::IsBorderEffectEnabled(u16 font_face) const {
     return false;
 }
 
-// 0x7100ab2910
 // 0x7100ab0d24
 TextureCache::TextureCache()
     : mScalableFontEngine(nullptr), mScalableFontEngines(nullptr), _18(0), mTextureData(nullptr),
@@ -30,6 +29,10 @@ TextureCache::TextureCache()
     }
 }
 
+// 0x7100ab0e7c
+TextureCache::~TextureCache() = default;
+
+// 0x7100ab2910
 // NON_MATCHING: native branches on an empty range list before testing its signed count;
 // this range search produces different branch flow and font-index allocation.
 bool TextureCache::IsGlyphExistInFont(u32 code, u16 font_face) {
