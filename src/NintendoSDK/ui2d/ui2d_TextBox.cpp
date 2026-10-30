@@ -7,6 +7,8 @@
 #include <nn/gfx/gfx_BufferInfo.h>
 #include <nn/util.h>
 #include <nn/ui2d/BuildTypes.h>
+#include <nn/ui2d/DrawInfo.h>
+#include <nn/ui2d/GraphicsResource.h>
 #include <nn/ui2d/Layout.h>
 #include <nn/ui2d/Material.h>
 #include <nn/ui2d/ResourceAccessor.h>
@@ -18,6 +20,15 @@
 #include <string>
 
 namespace nn::ui2d {
+
+// 0x7100abbdc0
+void TextBox::DrawSelf(DrawInfo& draw_info, gfx::CommandBuffer& command_buffer) {
+    if (mTextLength && mFont && mMaterial) {
+        mMaterial->SetCommandBufferOnlyBlend(command_buffer);
+        draw_info.mGraphicsResource->mRectDrawer.Draw(command_buffer, *mDispStringBuf);
+        draw_info._eb[4] = true;
+    }
+}
 
 // NON_MATCHING: natural text-alignment selection changes load order and conditional arithmetic.
 // 0x7100abc3d0
