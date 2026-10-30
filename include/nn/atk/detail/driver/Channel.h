@@ -20,11 +20,13 @@ public:
     Channel();
     ~Channel();
     static void DetachChannel(Channel* channel);
+    static void FreeChannel(Channel* channel);
     void SetBiquadFilter(int type, float frequency);
     void Release();
     void NoteOff();
     void UpdateSweep(int milliseconds);
     void SetSweepParam(float value, int duration, bool flag);
+    void Stop();
     void CallChannelCallback(ChannelCallbackStatus status);
 
 private:
@@ -60,7 +62,12 @@ private:
     f32 _130;
     s32 _134;
     s32 _138;
-    u8 _13c[0x158 - 0x13c];
+    u8 _13c[0x148 - 0x13c];
+    u8 _148;
+    u8 _149;
+    u16 _14a;
+    u16 _14c;
+    u8 _14e[0x158 - 0x14e];
     s32 _158;
     u8 _15c[0x170 - 0x15c];
     Callback mCallback;       // +0x170

@@ -23,6 +23,8 @@ public:
 
     // 0x71013572dc
     void Start();
+    void Stop();
+    void Free();
     // 0x7101357490
     void Pause(bool pause);
     // 0x7101357a9c
