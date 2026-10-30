@@ -27,6 +27,31 @@ void ScalableFont::InitializeArg::SetDefault() {
     alternateChar = '?';
 }
 
+// 0x71013271a0
+void ScalableFont::Initialize(const InitializeArg& arg) {
+    if (!arg.pTextureCache)
+        return;
+    mTextureCache = arg.pTextureCache;
+    mWidth = arg.fontSize;
+    mFontFace = arg._c;
+    const TextureCache::FontMetrics* metrics = mTextureCache->GetFontMetrics(mFontFace);
+    mAscent = metrics->ascent * mWidth + 0.5f;
+    mHeight = metrics->height * mWidth + 0.5f;
+    mBaselinePos = metrics->baseline * mWidth + 0.5f;
+    mLineFeed = mHeight;
+    mDefaultCharWidths.left = 0;
+    mDefaultCharWidths.glyphWidth = mWidth;
+    mDefaultCharWidths.charWidth = mWidth;
+    if (arg._e) {
+        mAlternateChar = ' ';
+        _2f = 0;
+    } else {
+        _2f = arg._f ? 1 : 2;
+    }
+    mAlternateChar = arg.alternateChar;
+    RegisterAlternateCharGlyph();
+}
+
 // 0x7101327328
 s32 ScalableFont::GetWidth() const {
     return mWidth;
