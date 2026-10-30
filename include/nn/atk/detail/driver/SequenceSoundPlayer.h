@@ -6,6 +6,8 @@
 namespace nn {
 namespace atk {
 
+enum SequenceMute : int;
+
 /// The parameters the sequence player passes to the user's per-tick callback. The layout is not
 /// known; the callback only receives a pointer to it.
 struct SequenceUserProcCallbackParam;
@@ -29,6 +31,8 @@ public:
     };
 
     void Skip(StartOffsetType type, int amount);
+    void SetTrackMute(u32 track_mask, SequenceMute mute);
+    void SetTrackSilence(u64 track_mask, bool silence, int fade_frames);
     void SetTempoRatio(f32 ratio);
     void SetChannelPriority(int priority);
     void SetReleasePriorityFix(bool fix);

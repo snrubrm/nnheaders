@@ -3,12 +3,18 @@
 #include <nn/types.h>
 #include <nn/atk/AuxBus.h>
 
+namespace nn::atk {
+enum SequenceMute : int;
+}
+
 namespace nn::atk::detail::driver {
 
 // TODO: incomplete. Only the fields written by the modelled sequencer setters are named; the
 // channel and tick state of the track is not modelled.
 class SequenceTrack {
 public:
+    void SetMute(SequenceMute mute);
+    void SetSilence(bool silence, int fade_frames);
     void SetPlayerTrackNo(int track_no);
     void SetSeqData(const void* data, int size);
     void SetTrackVariable(int index, s16 value);
