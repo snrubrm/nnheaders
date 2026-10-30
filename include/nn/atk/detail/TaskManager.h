@@ -1,6 +1,7 @@
 #pragma once
 
 #include <nn/atk/TaskProfileLogger.h>
+#include <nn/os/os_MessageQueue.h>
 #include <nn/types.h>
 
 namespace nn::atk::detail {
@@ -18,13 +19,20 @@ public:
     void Finalize();
     // TaskThread::Run discards the native result; void is inferred.
     void ExecuteTask();
+    // TaskThread callers discard the native results; void is inferred.
+    void WaitTask();
+    void CancelWaitTask();
 
 private:
     Task* PopTask();
+    Task* PeekTask();
 
     u8 _0[0x30];
     Task* mCurrentTask;  // +0x30
-    u8 _38[0x1a8 - 0x38];
+    u8 _38;
+    u8 _39[0x60 - 0x39];
+    nn::os::MessageQueueType mQueue;  // +0x60
+    u64 mQueueBuffer[32];             // +0xa8
     TaskProfileLogger mProfileLogger;
 };
 
