@@ -378,6 +378,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_StreamSoundPrefetchFileReader.cpp
   src/NintendoSDK/atk/atk_AddonSoundArchiveContainer.cpp
   src/NintendoSDK/atk/atk_Task.cpp
+  src/NintendoSDK/atk/atk_TaskManager.cpp
   src/NintendoSDK/atk/atk_TaskProfileLogger.cpp
   src/NintendoSDK/atk/atk_SoundHandle.cpp
   src/NintendoSDK/atk/atk_SoundHeap.cpp
