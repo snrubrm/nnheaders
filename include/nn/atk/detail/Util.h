@@ -91,6 +91,28 @@ inline bool ReadOptionParameter(const u32* option, int bit, T* value) {
     return true;
 }
 
+class WarningLogger {
+public:
+    WarningLogger() : mCurrent(&mBuffers[0]) {}
+    void Log(int type, int arg1, int arg2);
+    void SwapBuffer();
+    void Print();
+
+private:
+    struct Entry {
+        int mType;
+        int mArg1;
+        int mArg2;
+    };
+    struct Buffer {
+        Entry mEntries[64];
+        int mCount = 0;
+    };
+    Buffer mBuffers[2];
+    Buffer* mCurrent;
+};
+static_assert(sizeof(WarningLogger) == 0x610);
+
 /// Lazily constructed global instance (a function-local static in the sound library).
 template <typename T>
 class Singleton {
