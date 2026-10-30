@@ -6,6 +6,7 @@
 #pragma once
 
 #include <nn/types.h>
+#include <nn/util/util_IntrusiveList.h>
 
 namespace nn {
 namespace atk {
@@ -31,9 +32,8 @@ public:
 
     const nn::atk::SoundArchive* mSoundArchive;
     const nn::atk::SoundDataManager* mSoundDataManager;
-    /// The list of the addon archives (a node that points to itself when the list is empty).
-    u64* _10;
-    u64* _18;
+    /// The list of the addon archives.
+    nn::util::detail::IntrusiveListImplementation mAddons;  // +0x10
     /// The archive that is used (the main archive or the one of an addon).
     const nn::atk::SoundArchive* mTargetSoundArchive;
     const nn::atk::SoundDataManager* mTargetSoundDataManager;
