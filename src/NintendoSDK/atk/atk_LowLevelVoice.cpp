@@ -5,6 +5,15 @@
 
 namespace nn::atk::detail {
 
+void LowLevelVoiceAllocator::Finalize() {
+    mVoiceIndices = nullptr;
+    mVoiceCapacity = 0;
+    mActiveVoiceCount = 0;
+    mVoices = nullptr;
+    mVoiceOrder = nullptr;
+    _24.store(0, std::memory_order_release);
+}
+
 LowLevelVoiceAllocator::LowLevelVoiceAllocator()
     : mVoices(nullptr), mVoiceOrder(nullptr), mActiveVoiceCount(0), mVoiceIndices(nullptr),
       mVoiceCapacity(0), _24(0) {

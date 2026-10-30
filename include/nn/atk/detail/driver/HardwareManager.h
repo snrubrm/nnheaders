@@ -16,6 +16,8 @@ class LowLevelVoice;
 class LowLevelVoiceAllocator {
 public:
     LowLevelVoiceAllocator();
+    // Native only clears state; void return is inferred.
+    void Finalize();
     static size_t GetRequiredMemSize(int max_voices);
     LowLevelVoice* AllocVoice();
     void FreeVoice(LowLevelVoice* voice);
