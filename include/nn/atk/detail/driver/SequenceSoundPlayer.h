@@ -6,6 +6,8 @@
 namespace nn {
 namespace atk {
 
+enum SequenceMute : int;
+
 /// The parameters the sequence player passes to the user's per-tick callback. The layout is not
 /// known; the callback only receives a pointer to it.
 struct SequenceUserProcCallbackParam;
@@ -23,6 +25,14 @@ using SequenceUserProcCallback = void (*)(u16, SequenceUserProcCallbackParam*, v
 /// only the fields the setters below write are placed, at the offsets their bodies give.
 class SequenceSoundPlayer {
 public:
+    enum StartOffsetType {
+        StartOffsetType_0,
+        StartOffsetType_1,
+    };
+
+    void Skip(StartOffsetType type, int amount);
+    void SetTrackMute(u32 track_mask, SequenceMute mute);
+    void SetTrackSilence(u64 track_mask, bool silence, int fade_frames);
     void SetTempoRatio(f32 ratio);
     void SetChannelPriority(int priority);
     void SetReleasePriorityFix(bool fix);
@@ -56,13 +66,17 @@ public:
     void OnUpdateFrameSoundThreadWithAudioFrameFrequency();
 
 private:
-    u8 _0[0x31];
+    u8 _0[0x30];
+    bool _30;
     bool mStarted;  // +0x31
     u8 _32[0xe0 - 0x32];
     bool mReleasePriorityFix;  // +0xe0
     u8 _e1[0xe8 - 0xe1];
     f32 mTempoRatio;           // +0xe8
-    u8 _ec[0x100 - 0xec];
+    u8 _ec[4];
+    s32 _f0;
+    f32 _f4;
+    u8 _f8[8];
     u8 mChannelPriority;       // +0x100
     u8 _101[0x120 - 0x101];
     SequenceUserProcCallback mUserProcCallback;  // +0x120

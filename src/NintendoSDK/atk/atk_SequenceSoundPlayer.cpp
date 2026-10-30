@@ -6,6 +6,35 @@ namespace atk {
 namespace detail {
 namespace driver {
 
+// NON_MATCHING: the compiler selects the two offset cases in the opposite order.
+void SequenceSoundPlayer::Skip(StartOffsetType type, int amount) {
+    if (_30) {
+        if (type == StartOffsetType_1)
+            _f4 += amount;
+        else if (type == StartOffsetType_0)
+            _f0 += amount;
+    }
+}
+
+void SequenceSoundPlayer::SetTrackMute(u32 track_mask, SequenceMute mute) {
+    for (s32 i = 0; i < 16 && track_mask != 0; ++i, track_mask >>= 1) {
+        if ((track_mask & 1) != 0) {
+            if (SequenceTrack* track = mTracks[i])
+                track->SetMute(mute);
+        }
+    }
+}
+
+void SequenceSoundPlayer::SetTrackSilence(u64 track_mask, bool silence, int fade_frames) {
+    u32 mask = track_mask;
+    for (s32 i = 0; i < 16 && mask != 0; ++i, mask >>= 1) {
+        if ((mask & 1) != 0) {
+            if (SequenceTrack* track = mTracks[i])
+                track->SetSilence(silence, fade_frames);
+        }
+    }
+}
+
 void SequenceSoundPlayer::SetTempoRatio(f32 ratio) {
     mTempoRatio = ratio;
 }
