@@ -21,6 +21,11 @@ public:
     void SetBiquadFilter(int type, float frequency);
 
 protected:
+    // Inline-only, names guessed: advanced-wave Prepare, Finalize and frame updates
+    // repeatedly test or write the prepared and paused state bytes.
+    bool IsPrepared() const { return _30 != 0; }
+    void SetPrepared(bool prepared) { _30 = prepared; }
+    bool IsPaused() const { return _32 != 0; }
     // Inline-only, name guessed: stream Start, Stop and Update repeatedly test +0x31.
     bool IsStarted() const { return _31 != 0; }
     // Inline-only, name guessed: sequence, wave and advanced-wave Start write +0x31.
