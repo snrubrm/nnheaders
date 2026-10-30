@@ -10,6 +10,11 @@
 #include <nn/gfx/gfx_Types.h>
 #include <nn/ui2d/Types.h>
 
+namespace nn::gfx {
+class BlendStateInfo;
+class BlendTargetStateInfo;
+}
+
 namespace nn::ui2d {
 
 // The graphics objects shared by all layouts: common blend states and a pair of constant buffers
@@ -38,6 +43,8 @@ public:
     // 0x7100ac13a8
     void Finalize(gfx::Device* device);
     static int GetPresetBlendStateId(const ResBlendMode* color, const ResBlendMode* alpha);
+    static size_t SetupBlendStateInfo(gfx::BlendStateInfo* state, gfx::BlendTargetStateInfo* target,
+                                     const ResBlendMode* color, const ResBlendMode* alpha);
     // Native neighbours select a blend-state member and bind the common vertex buffer.
     const gfx::BlendState* sub_7100AC1158(u32 index) const;
     void sub_7100AC1244(gfx::CommandBuffer* command_buffer) const;
@@ -45,9 +52,9 @@ public:
                                      TexFilter mag_filter);
 
 private:
-    // Native AC0ECC returns the two six-entry preset arrays. The original
-    // helper name is unidentified; no array initialization is reconstructed here.
-    static void sub_7100AC0ECC(const ResBlendMode** color, const ResBlendMode** alpha);
+    // Native AC0ECC returns the two six-entry preset arrays. The name is established
+    // by the function map; array initialization remains undecompiled.
+    static void GetPresetBlendModeArray(const ResBlendMode** color, const ResBlendMode** alpha);
 
 public:
     void* _0 = nullptr;
