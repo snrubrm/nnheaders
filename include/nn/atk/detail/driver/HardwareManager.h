@@ -27,9 +27,22 @@ namespace nn::atk::detail::driver {
 class HardwareManager {
 public:
     struct HardwareManagerParameter {
-        u8 _0[0x14];
+        u32 mSampleRate;
+        u32 mEffectCount;
+        u8 _8;
+        u8 _9[3];
+        u32 mVoiceCount;
+        u8 _10;
+        u8 _11;
+        u8 _12;
+        u8 _13;
         s32 mRecorderFrameCount;
-        u8 _18[8];
+        u8 _18;
+        u8 _19;
+        u8 _1a;
+        u8 _1b;
+        bool mVoiceDropEnabled;
+        u8 _1d[3];
     };
     /// The master volume, which is faded linearly from the previous to the target volume over the frames that
     /// were given to SetMasterVolume (see sead::AudioResetterCafe::calc, 0x7100bb9858).
@@ -80,7 +93,7 @@ public:
     bool TimedWaitAudioRendererEvent(nn::TimeSpan span);
 
 private:
-    // 0x71013443f0: native setup routine, declared only.
+    // 0x71013443f0
     void SetupAudioRendererParameter(nn::audio::AudioRendererParameter* renderer_parameter,
                                      const HardwareManagerParameter& parameter) const;
 
