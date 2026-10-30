@@ -5,16 +5,16 @@
 
 namespace nn::atk::detail {
 
-// TODO: incomplete. Only the sequence data pointer at +0x8 is modelled; the file body classes are
-// not declared yet.
+// The reader holds the file header and the DATA and LABL block bodies.
 class SequenceSoundFileReader {
 public:
+    explicit SequenceSoundFileReader(const void* file);
     const void* GetSequenceData() const;
     // 0x7101361d04
     bool GetOffsetByLabel(const char* label, u32* offset) const;
 
 private:
-    u8 _0[8];
+    const SequenceSoundFile::FileHeader* mFile;
     /* 0x8 */ const void* mSequenceData;
     /* 0x10 */ const SequenceSoundFile::LabelBlockBody* mLabelBlock;
 };
