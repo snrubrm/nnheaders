@@ -23,6 +23,8 @@ public:
 protected:
     // Inline-only, name guessed: stream Start, Stop and Update repeatedly test +0x31.
     bool IsStarted() const { return _31 != 0; }
+    // Inline-only, name guessed: sequence, wave and advanced-wave Start write +0x31.
+    void SetStarted(bool started) { _31 = started; }
 
 private:
     nn::os::Event mEvent;  // +0x8
