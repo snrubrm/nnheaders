@@ -2,6 +2,13 @@
 
 namespace nn::atk::detail::driver {
 
+void SequenceTrack::Open() {
+    _128 = 0;
+    _120 = 0;
+    _124 = 0;
+    mIsOpen = true;
+}
+
 // 0x710134b540
 s16* SequenceTrack::GetVariablePtr(int index) {
     return index < 0x10 ? &mTrackVariables[index] : nullptr;
