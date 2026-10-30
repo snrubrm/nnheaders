@@ -396,6 +396,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_SoundArchiveFile.cpp
   src/NintendoSDK/atk/atk_StreamSoundFile.cpp
   src/NintendoSDK/atk/atk_StreamSoundFileReader.cpp
+  src/NintendoSDK/atk/atk_Bank.cpp
   src/NintendoSDK/atk/atk_BankFile.cpp
   src/NintendoSDK/atk/atk_BankFileReader.cpp
   src/NintendoSDK/atk/atk_WaveSoundFile.cpp
