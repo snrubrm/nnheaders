@@ -17,10 +17,12 @@ class LowLevelVoiceAllocator {
 public:
     LowLevelVoiceAllocator();
     static size_t GetRequiredMemSize(int max_voices);
+    LowLevelVoice* AllocVoice();
+    void FreeVoice(LowLevelVoice* voice);
 
 private:
     LowLevelVoice* mVoices;        // +0x00
-    LowLevelVoice** mFreeVoices;   // +0x08
+    LowLevelVoice** mVoiceOrder;   // +0x08
     s32 mActiveVoiceCount;         // +0x10
     u8 _14[4];
     s32* mVoiceIndices;            // +0x18
