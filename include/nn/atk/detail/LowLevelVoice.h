@@ -2,6 +2,7 @@
 
 #include <nn/types.h>
 #include <nn/audio.h>
+#include <nn/atk/OutputMode.h>
 
 namespace nn::atk {
 struct WaveBuffer;
@@ -32,6 +33,8 @@ public:
 private:
     friend class LowLevelVoiceAllocator;
     void AllocVoice();
+    // The allocator discards the native result; void is inferred.
+    void UpdateState(OutputMode mode);
     u8 _0[0x20];
     nn::audio::VoiceType mVoice;  // +0x20
     /* 0x28 */ bool mAvailable;

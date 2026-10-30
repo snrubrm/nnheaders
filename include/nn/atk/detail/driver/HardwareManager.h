@@ -18,6 +18,8 @@ public:
     LowLevelVoiceAllocator();
     // Native only clears state; void return is inferred.
     void Finalize();
+    // The sound thread discards the native result; void is inferred.
+    void UpdateAllVoiceState(OutputMode mode);
     static size_t GetRequiredMemSize(int max_voices);
     LowLevelVoice* AllocVoice();
     void FreeVoice(LowLevelVoice* voice);
