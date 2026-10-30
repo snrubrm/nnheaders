@@ -8,6 +8,31 @@ namespace atk {
 namespace detail {
 
 // NON_MATCHING: the version-dependent default uses the opposite branch layout.
+bool SoundArchiveFileReader::ReadSoundInfo(u32 sound_id, SoundArchive::SoundInfo* info) const {
+    const auto* record = mInfoBlock->GetSoundInfo(sound_id);
+    if (!record)
+        return false;
+    info->mFileId = record->mItemFileId;
+    info->_4 = record->_4;
+    info->_a = record->_8;
+    info->mPanMode = record->GetPanMode();
+    info->mPanCurve = record->GetPanCurve();
+    info->mPlayerPriority = record->GetPlayerPriority();
+    info->mActorPlayerId = record->GetActorPlayerId();
+    info->_b = record->_9;
+    info->mFrontBypass = record->IsFrontBypass();
+    return true;
+}
+
+bool SoundArchiveFileReader::ReadAdvancedWaveSoundInfo(
+    u32 sound_id, SoundArchive::AdvancedWaveSoundInfo* info) const {
+    const auto* sound = mInfoBlock->GetSoundInfo(sound_id);
+    if (!sound || sound->GetSoundType() != 3)
+        return false;
+    info->_0 = sound->GetAdvancedWaveSoundInfo()->_0;
+    return true;
+}
+
 bool SoundArchiveFileReader::ReadSoundArchivePlayerInfo(SoundArchive::SoundArchivePlayerInfo* info) const {
     const auto* record = mInfoBlock->GetSoundArchivePlayerInfo();
     if (!record)

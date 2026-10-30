@@ -84,7 +84,7 @@ struct SoundArchiveFile {
     /// the type-specific sub-info that follows the record body.
     struct StreamSoundTrackInfo;
     struct SequenceSoundInfo;
-    struct AdvancedWaveSoundInfo;
+    struct AdvancedWaveSoundInfo { u32 _0; };
     struct PlayerInfo;
     struct SoundArchivePlayerInfo {
         u16 mSequenceSoundCount;
@@ -234,11 +234,14 @@ struct SoundArchiveFile {
         u32 GetSoundType() const;
 
         u32 mItemFileId;  // +0
+        u32 _4;
+        u8 _8;
+        u8 _9;
+        u8 _a[2];
 
         u16 GetSignature() const { return mSignature; }
 
     private:
-        u8 _4[0x8];
         u16 mSignature;     // +0xc
         s32 mSubInfoOffset; // +0x10, relative to this
         u32 mOptionFlags;   // +0x14, followed by the present optional values
@@ -368,8 +371,18 @@ public:
         const void* _8;
     };
 
-    // Only the record pointer is needed by the wrappers below; the record layout is not modelled.
-    struct AdvancedWaveSoundInfo;
+    struct SoundInfo {
+        u32 mFileId;
+        u32 _4;
+        u8 mActorPlayerId;
+        u8 mPlayerPriority;
+        u8 _a;
+        u8 _b;
+        u32 mPanMode;
+        u32 mPanCurve;
+        bool mFrontBypass;
+    };
+    struct AdvancedWaveSoundInfo { u32 _0; };
 
     bool IsAvailable() const;
     void Initialize(detail::SoundArchiveFileReader* reader);
