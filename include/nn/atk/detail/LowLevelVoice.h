@@ -3,6 +3,10 @@
 #include <nn/types.h>
 #include <nn/audio.h>
 
+namespace nn::atk {
+struct WaveBuffer;
+}
+
 namespace nn::atk::detail {
 
 // TODO: incomplete. Only the available flag at +0x28 is modelled.
@@ -10,6 +14,8 @@ class LowLevelVoice {
 public:
     bool IsAvailable() const;
     void SetPriority(int priority);
+    void AppendWaveBuffer(WaveBuffer* buffer);
+    void FreeAllWaveBuffer();
 
 private:
     friend class LowLevelVoiceAllocator;
@@ -24,7 +30,11 @@ private:
     u8 _b4[4];
     u64 _b8;
     s32 _c0;
-    u8 _c4[0xe8 - 0xc4];
+    u8 _c4[4];
+    WaveBuffer* mWaveBufferHead;    // +0xc8
+    WaveBuffer* mWaveBufferTail;    // +0xd0
+    WaveBuffer* mWaveBufferCursor;  // +0xd8
+    u8 _e0[8];
     u32 _e8;
     u8 _ec;
     // The allocator's initialization loop at 0x7101356d84 uses a 0x100-byte stride.
