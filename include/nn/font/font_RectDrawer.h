@@ -23,6 +23,7 @@ public:
     RectDrawer();
     virtual ~RectDrawer();
     virtual void Finalize(gfx::Device* device);
+    static size_t GetWorkBufferSize(gfx::Device*, u32);
 
     using SamplerRegistrationCallback = bool (*)(gfx::DescriptorSlot*, const gfx::Sampler&, void*);
     using SamplerDescriptorCallback = void (*)(gfx::DescriptorSlot*, const gfx::Sampler&, void*);

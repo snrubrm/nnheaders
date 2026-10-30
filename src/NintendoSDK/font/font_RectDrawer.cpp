@@ -1,6 +1,12 @@
 #include <nn/font/font_RectDrawer.h>
 
+#include <algorithm>
 #include <nn/font/font_GpuBuffer.h>
+#include <nn/gfx/gfx_BufferInfo.h>
+#include <nn/gfx/gfx_MemoryPoolInfo.h>
+#include <nn/gfx/gfx_StateInfo.h>
+#include <nn/util/util_BinaryFormat.h>
+#include <nn/util/util_BitUtil.h>
 #include <nn/gfx/gfx_GpuAddress.h>
 
 #include <nn/gfx/gfx_ResShader.h>
@@ -8,7 +14,80 @@
 #include <nn/gfx/gfx_Shader.h>
 #include <nn/gfx/gfx_Device.h>
 
+// The native embedded BNSH resource starts here and occupies 0x8428 bytes. Its original
+// owning declaration and name are unknown; only its BinaryFileHeader is used by this query.
+extern nn::util::BinaryFileHeader sUnk_7102524000;
+
 namespace nn::font {
+
+// NON_MATCHING: embedded-header addressing and state/arithmetic scheduling differ.
+size_t RectDrawer::GetWorkBufferSize(gfx::Device* device, u32) {
+    size_t vertex_state_size;
+    {
+        gfx::VertexStateInfo vertex_state;
+        vertex_state.SetDefault();
+        gfx::VertexAttributeStateInfo attribute;
+        attribute.SetDefault();
+        attribute.SetNamePtr("aVertex");
+        attribute.SetBufferIndex(0);
+        attribute.SetOffset(0);
+        attribute.SetFormat(gfx::AttributeFormat_32_32_32_Float);
+        gfx::VertexBufferStateInfo vertex_buffer;
+        vertex_buffer.SetDefault();
+        vertex_buffer.SetStride(28);
+        vertex_state.SetVertexAttributeStateInfoArray(&attribute, 1);
+        vertex_state.SetVertexBufferStateInfoArray(&vertex_buffer, 1);
+        vertex_state_size =
+            gfx::detail::VertexStateImpl<gfx::DefaultApi>::GetRequiredMemorySize(vertex_state);
+    }
+
+    size_t blend_state_size;
+    {
+        gfx::BlendStateInfo blend_state;
+        blend_state.SetDefault();
+        gfx::BlendTargetStateInfo blend_target;
+        blend_target.SetDefault();
+        blend_target.SetBlendEnabled(true);
+        blend_target.SetSourceColorBlendFactor(gfx::BlendFactor_SourceAlpha);
+        blend_target.SetDestinationColorBlendFactor(gfx::BlendFactor_OneMinusSourceAlpha);
+        blend_target.SetColorBlendFunction(gfx::BlendFunction_Add);
+        blend_target.SetChannelMask(gfx::ChannelMask_Red | gfx::ChannelMask_Green |
+                                    gfx::ChannelMask_Blue);
+        blend_state.SetBlendTargetStateInfoArray(&blend_target, 1);
+        blend_state_size =
+            gfx::detail::BlendStateImpl<gfx::DefaultApi>::GetRequiredMemorySize(blend_state);
+    }
+
+    gfx::MemoryPoolInfo pool_info;
+    pool_info.SetDefault();
+    const size_t pool_granularity =
+        gfx::detail::MemoryPoolImpl<gfx::DefaultApi>::GetPoolMemorySizeGranularity(device, pool_info);
+    size_t index_pool_size;
+    {
+        gfx::BufferInfo index_info;
+        index_info.SetDefault();
+        index_info.SetGpuAccessFlags(gfx::GpuAccess_IndexBuffer);
+        const size_t index_alignment = gfx::Buffer::GetBufferAlignment(device, index_info);
+        const size_t index_size = util::align_up(size_t(112), index_alignment) + 12;
+        index_pool_size = util::align_up(index_size, pool_granularity);
+    }
+    const size_t constant_pool_size = util::align_up(size_t(4), pool_granularity);
+    const size_t shader_alignment = sUnk_7102524000.GetAlignment();
+    const size_t pool_alignment =
+        gfx::detail::MemoryPoolImpl<gfx::DefaultApi>::GetPoolMemoryAlignment(device, pool_info);
+    size_t constant_alignment;
+    {
+        gfx::BufferInfo constant_info;
+        constant_info.SetDefault();
+        constant_info.SetGpuAccessFlags(gfx::GpuAccess_ConstantBuffer);
+        constant_alignment = gfx::Buffer::GetBufferAlignment(device, constant_info);
+    }
+    const size_t alignment = std::max(pool_alignment, constant_alignment);
+
+    return util::align_up(vertex_state_size, 8) * 6 + util::align_up(blend_state_size, 8) +
+           shader_alignment + util::align_up(index_pool_size, pool_granularity) +
+           util::align_up(constant_pool_size, alignment) * 2 + 0x8428;
+}
 
 RectDrawer::RectDrawer() : mMaxCharCount(0) {}
 
