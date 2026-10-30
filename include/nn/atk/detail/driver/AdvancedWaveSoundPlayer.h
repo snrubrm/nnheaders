@@ -22,9 +22,15 @@ public:
     void OnShutdownSoundThread() override;
 
 private:
-    u8 _c8[0x764 - 0xc8];
+    // UpdateTracks returns a numeric 0/1 status in native code.
+    bool UpdateTracks();
+
+    u8 _c8[0x758 - 0xc8];
+    u32 _758;
+    u8 _75c[0x764 - 0x75c];
     u8 _764;
     u8 _765;
+    u8 _766;  // callback registration state
 };
 
 }  // namespace nn::atk::detail::driver
