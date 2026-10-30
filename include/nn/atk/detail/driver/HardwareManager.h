@@ -52,6 +52,7 @@ public:
     int GetChannelCountMax() const;
     /// 0x7101344564: forwards the voice count to LowLevelVoiceAllocator::GetRequiredMemSize.
     int GetRequiredMemSizeForMemoryPool(int max_voices) const;
+    size_t GetRequiredMemSize(const HardwareManagerParameter& parameter) const;
     size_t GetRequiredEffectAuxBufferSize(const EffectAux* effect) const;
     size_t GetRequiredPerformanceFramesBufferSize(const HardwareManagerParameter& parameter) const;
     bool IsFinishedClearEffect(AuxBus bus, OutputDevice device, int index) const;

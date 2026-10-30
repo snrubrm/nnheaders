@@ -14,6 +14,15 @@ int HardwareManager::GetRequiredMemSizeForMemoryPool(int max_voices) const {
     return LowLevelVoiceAllocator::GetRequiredMemSize(max_voices);
 }
 
+// NON_MATCHING: the compiler places the renderer parameter at a different stack offset.
+size_t HardwareManager::GetRequiredMemSize(const HardwareManagerParameter& parameter) const {
+    nn::audio::AudioRendererParameter renderer_parameter;
+    SetupAudioRendererParameter(&renderer_parameter, parameter);
+    const size_t renderer_size = nn::audio::GetAudioRendererWorkBufferSize(renderer_parameter);
+    const size_t config_size = nn::audio::GetAudioRendererConfigWorkBufferSize(renderer_parameter);
+    return renderer_size + config_size;
+}
+
 size_t HardwareManager::GetRequiredEffectAuxBufferSize(const EffectAux* effect) const {
     return effect->GetRequiredMemSize(mRendererParameter);
 }
