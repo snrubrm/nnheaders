@@ -20,6 +20,7 @@ public:
     Channel();
     ~Channel();
     static void DetachChannel(Channel* channel);
+    static void FreeChannel(Channel* channel);
     void SetBiquadFilter(int type, float frequency);
     void Release();
     void NoteOff();

@@ -4,6 +4,34 @@
 
 namespace nn::atk::detail::driver {
 
+// NON_MATCHING: the compiler schedules the final head clear and flag setup in the opposite order.
+void SequenceTrack::SetMute(SequenceMute mute) {
+    switch (mute) {
+    case 0:
+        _122 = 0;
+        break;
+    case 1:
+        _122 = 1;
+        break;
+    case 2:
+        ReleaseAllChannel(-1);
+        FreeAllChannel();
+        _122 = 1;
+        break;
+    case 3:
+        for (Channel* channel = mChannelHead; channel;) {
+            Channel* next = channel->mNext;
+            channel->Stop();
+            channel->CallChannelCallback(static_cast<Channel::ChannelCallbackStatus>(0));
+            Channel::FreeChannel(channel);
+            channel = next;
+        }
+        mChannelHead = nullptr;
+        _122 = 1;
+        break;
+    }
+}
+
 void SequenceTrack::Close() {
     ReleaseAllChannel(-1);
     FreeAllChannel();
