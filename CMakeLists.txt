@@ -419,6 +419,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_Thread.cpp
   src/NintendoSDK/atk/atk_LowLevelVoice.cpp
   src/NintendoSDK/atk/atk_MmlParser.cpp
+  src/NintendoSDK/atk/atk_MmlSequenceTrack.cpp
   src/NintendoSDK/atk/atk_Voice.cpp
   src/NintendoSDK/atk/atk_MultiVoice.cpp
   src/NintendoSDK/atk/atk_SequenceTrack.cpp
