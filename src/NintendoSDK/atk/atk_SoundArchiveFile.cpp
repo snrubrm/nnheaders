@@ -1,6 +1,7 @@
 #include <nn/atk/SoundArchive.h>
 #include <nn/atk/detail/Util.h>
 #include <nn/util/util_BytePtr.h>
+#include <cstring>
 
 namespace nn {
 namespace atk {
@@ -39,12 +40,13 @@ const SoundArchiveFile::StreamSoundTrackInfo* SoundArchiveFile::StreamSoundInfo:
     return nn::util::ConstBytePtr(this, mTrackInfoOffset).Get<StreamSoundTrackInfo>();
 }
 
-const char* SoundArchiveFile::StreamSoundInfo::GetStreamSoundExtension() const {
+const SoundArchiveFile::StreamSoundExtension*
+SoundArchiveFile::StreamSoundInfo::GetStreamSoundExtension() const {
     if (mExtensionOffset == -1)
         return nullptr;
     if (mExtensionSignature != 0x2210)
         return nullptr;
-    return nn::util::ConstBytePtr(this, mExtensionOffset).Get<char>();
+    return nn::util::ConstBytePtr(this, mExtensionOffset).Get<StreamSoundExtension>();
 }
 
 const u8* SoundArchiveFile::StreamSoundInfo::GetSendValue() const {
@@ -63,7 +65,7 @@ u32 SoundArchiveFile::WaveSoundInfo::GetChannelPriority() const {
     return mChannelPriority;
 }
 
-u32 SoundArchiveFile::WaveSoundInfo::GetIsReleasePriorityFix() const {
+u8 SoundArchiveFile::WaveSoundInfo::GetIsReleasePriorityFix() const {
     if (!(mFlags & 1))
         return 0;
     return mChannelPriority >> 8;
@@ -73,6 +75,15 @@ u32 SoundArchiveFile::SequenceSoundInfo::GetStartOffset() const {
     if (!(mOptionFlags & 1))
         return 0;
     return mStartOffset;
+}
+
+// NON_MATCHING: the compiler omits the redundant zero-signature selection.
+u32 SoundArchiveFile::FileInfo::GetFileLocationType() const {
+    if (mSignature == 0x220c)
+        return 0;
+    if (mSignature == 0x220d)
+        return 1;
+    return 2;
 }
 
 const SoundArchiveFile::InternalFileInfo* SoundArchiveFile::FileInfo::GetInternalFileInfo() const {
@@ -98,11 +109,53 @@ struct StringTable {
     StringTableItem items[1];
 };
 
+// Node and header layout are read by the native item-ID lookup at 0x710134048c.
+struct ItemIdTreeNode {
+    u8 mFlags;
+    u8 _1;
+    u16 mBitIndex;
+    u32 mLeft;
+    u32 mRight;
+    u32 mStringId;
+    u32 mItemId;
+};
+static_assert(sizeof(ItemIdTreeNode) == 0x14);
+struct ItemIdTree {
+    u32 mRootIndex;
+    u32 mNodeCount;
+    ItemIdTreeNode mNodes[1];
+};
+
+// NON_MATCHING: register allocation and initial branch layout differ.
+s32 SoundArchiveFile::StringBlockBody::GetItemIdImpl(Sections section, const char* name) const {
+    const ItemIdTree* tree = nullptr;
+    if (section <= 1)
+        tree = nn::util::ConstBytePtr(this, mSections[section].mOffset).Get<ItemIdTree>();
+    u32 index = tree->mRootIndex;
+    if (index >= tree->mNodeCount)
+        return -1;
+    const ItemIdTreeNode* node = &tree->mNodes[index];
+    if (!(node->mFlags & 1)) {
+        const int length = std::strlen(name);
+        do {
+            const int byteIndex = node->mBitIndex >> 3;
+            if (byteIndex < length && (name[byteIndex] & (1 << (7 - (node->mBitIndex & 7)))))
+                index = node->mRight;
+            else
+                index = node->mLeft;
+            node = &tree->mNodes[index];
+        } while (!(node->mFlags & 1));
+    }
+    if (std::strcmp(name, GetString(tree->mNodes[index].mStringId)) != 0)
+        return -1;
+    return tree->mNodes[index].mItemId;
+}
+
 const char* SoundArchiveFile::StringBlockBody::GetString(u32 string_id) const {
     if (string_id == 0xffffffff)
         return nullptr;
     const auto* table =
-        static_cast<const StringTable*>(nn::util::ConstBytePtr(this, mStringTableOffset).Get());
+        static_cast<const StringTable*>(nn::util::ConstBytePtr(this, mSections[0].mOffset).Get());
     if (!table)
         return nullptr;
     return nn::util::ConstBytePtr(table, table->items[s32(string_id)].mOffset).Get<char>();
@@ -148,6 +201,37 @@ struct ReferenceTable {
     u32 count;
     ReferenceTableItem items[1];
 };
+
+s32 SoundArchiveFile::InfoBlockBody::GetItemStringId(u32 item_id) const {
+    switch (item_id >> 24) {
+    case 1: {
+        const auto* record = GetSoundInfo(item_id);
+        return record && (record->mOptionFlags & 1) ? record->mStringId : -1;
+    }
+    case 2: {
+        const auto* record = GetSoundGroupInfo(item_id);
+        return record && (record->mOptionFlags & 1) ? record->mStringId : -1;
+    }
+    case 3: {
+        const auto* record = GetBankInfo(item_id);
+        return record && (record->mOptionFlags & 1) ? record->mStringId : -1;
+    }
+    case 4: {
+        const auto* record = GetPlayerInfo(item_id);
+        return record && (record->mOptionFlags & 1) ? record->mStringId : -1;
+    }
+    case 5: {
+        const auto* record = GetWaveArchiveInfo(item_id);
+        return record && (record->mOptionFlags & 1) ? record->mStringId : -1;
+    }
+    case 6: {
+        const auto* record = GetGroupInfo(item_id);
+        return record && (record->mOptionFlags & 1) ? record->mStringId : -1;
+    }
+    default:
+        return -1;
+    }
+}
 
 const SoundArchiveFile::SoundInfo* SoundArchiveFile::InfoBlockBody::GetSoundInfo(u32 sound_id)
     const {

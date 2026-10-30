@@ -1,4 +1,5 @@
 #include <nn/atk/detail/SoundArchiveFileReader.h>
+#include <nn/atk/detail/Util.h>
 #include <nn/util/util_BytePtr.h>
 
 #include <cstring>
@@ -6,6 +7,163 @@
 namespace nn {
 namespace atk {
 namespace detail {
+
+// NON_MATCHING: the item-type branches are emitted in a different order.
+const u32* SoundArchiveFileReader::GetWaveArchiveIdTable(u32 item_id) const {
+    const u32 type = item_id >> 24;
+    if (type == 3) {
+        const auto* bank = mInfoBlock->GetBankInfo(item_id);
+        return nn::util::ConstBytePtr(bank, bank->mWaveArchiveTableOffset).Get<u32>();
+    }
+
+    const SoundArchiveFile::SoundGroupInfo* group;
+    if (type == 2) {
+        group = mInfoBlock->GetSoundGroupInfo(item_id);
+    } else if (type == 1 && mInfoBlock->GetSoundInfo(item_id)->GetSoundType() == 3) {
+        group = nullptr;
+        for (u32 i = 0; i < *mInfoBlock->GetSoundGroupInfoReferenceTable(); ++i) {
+            const auto* candidate = mInfoBlock->GetSoundGroupInfo(i | 0x02000000);
+            if (candidate->mSoundId <= item_id && item_id <= candidate->_4) {
+                group = candidate;
+                break;
+            }
+        }
+        if (!group)
+            return nullptr;
+    } else {
+        return nullptr;
+    }
+    const auto* ref = nn::util::ConstBytePtr(group, group->mWaveArchiveReferenceOffset)
+                          .Get<Util::Reference>();
+    return nn::util::ConstBytePtr(ref, ref->offset).Get<u32>();
+}
+
+bool SoundArchiveFileReader::ReadSoundInfo(u32 sound_id, SoundArchive::SoundInfo* info) const {
+    const auto* record = mInfoBlock->GetSoundInfo(sound_id);
+    if (!record)
+        return false;
+    info->mFileId = record->mItemFileId;
+    info->_4 = record->_4;
+    info->_a = record->_8;
+    info->mPanMode = record->GetPanMode();
+    info->mPanCurve = record->GetPanCurve();
+    info->mPlayerPriority = record->GetPlayerPriority();
+    info->mActorPlayerId = record->GetActorPlayerId();
+    info->_b = record->_9;
+    info->mFrontBypass = record->IsFrontBypass();
+    return true;
+}
+
+bool SoundArchiveFileReader::ReadAdvancedWaveSoundInfo(
+    u32 sound_id, SoundArchive::AdvancedWaveSoundInfo* info) const {
+    const auto* sound = mInfoBlock->GetSoundInfo(sound_id);
+    if (!sound || sound->GetSoundType() != 3)
+        return false;
+    info->_0 = sound->GetAdvancedWaveSoundInfo()->_0;
+    return true;
+}
+
+// NON_MATCHING: the version-dependent default uses the opposite branch layout.
+bool SoundArchiveFileReader::ReadSoundArchivePlayerInfo(SoundArchive::SoundArchivePlayerInfo* info) const {
+    const auto* record = mInfoBlock->GetSoundArchivePlayerInfo();
+    if (!record)
+        return false;
+    info->sequenceSoundCount = record->mSequenceSoundCount;
+    info->sequenceTrackCount = record->mSequenceTrackCount;
+    info->streamSoundCount = record->mStreamSoundCount;
+    info->streamTrackCount = record->mStreamTrackCount;
+    info->streamChannelCount = record->mStreamChannelCount;
+    info->waveSoundCount = record->mWaveSoundCount;
+    info->waveTrackCount = record->mWaveTrackCount;
+    info->streamBufferTimes = GetVersion() < 0x20200 ? 1 : record->mStreamBufferTimes;
+    info->isAdvancedWaveSoundEnabled = (record->mFlags & 1) != 0;
+    return true;
+}
+
+bool SoundArchiveFileReader::ReadStreamSoundInfo2(u32 id, SoundArchive::StreamSoundInfo2* info) const {
+    const auto* sound = mInfoBlock->GetSoundInfo(id);
+    if (!sound || sound->GetSoundType() != 2)
+        return false;
+    const auto* extension = sound->GetStreamSoundInfo()->GetStreamSoundExtension();
+    if (!extension)
+        return false;
+    info->_0 = extension->_1 == 1;
+    info->_4 = extension->_4;
+    info->_8 = extension->_8;
+    return true;
+}
+
+bool SoundArchiveFileReader::ReadWaveArchiveInfo(u32 id, SoundArchive::WaveArchiveInfo* info) const {
+    const auto* record = mInfoBlock->GetWaveArchiveInfo(id);
+    if (!record)
+        return false;
+    info->mFileId = record->mItemFileId;
+    info->mWaveCount = record->GetWaveCount();
+    info->_8 = record->_4;
+    return true;
+}
+
+bool SoundArchiveFileReader::ReadSequenceSoundInfo(u32 id, SoundArchive::SequenceSoundInfo* info) const {
+    const auto* sound = mInfoBlock->GetSoundInfo(id);
+    if (!sound || sound->GetSoundType() != 1)
+        return false;
+    const auto* record = sound->GetSequenceSoundInfo();
+    info->mStartOffset = record->GetStartOffset();
+    info->_14 = record->_8;
+    info->mChannelPriority = record->GetChannelPriority();
+    info->mReleasePriorityFix = record->IsReleasePriorityFix();
+    record->GetBankIds(info->mBankIds);
+    return true;
+}
+
+bool SoundArchiveFileReader::ReadWaveSoundInfo(u32 id, SoundArchive::WaveSoundInfo* info) const {
+    const auto* sound = mInfoBlock->GetSoundInfo(id);
+    if (!sound || sound->GetSoundType() != 3)
+        return false;
+    const auto* record = sound->GetWaveSoundInfo();
+    info->_0 = record->_0;
+    info->_4 = record->_4;
+    info->mChannelPriority = record->GetChannelPriority();
+    info->mReleasePriorityFix = record->GetIsReleasePriorityFix() != 0;
+    return true;
+}
+
+bool SoundArchiveFileReader::ReadGroupInfo(u32 group_id, SoundArchive::GroupInfo* info) const {
+    const auto* group = mInfoBlock->GetGroupInfo(group_id);
+    if (!group)
+        return false;
+    info->mFileId = group->mItemFileId;
+    const auto* file = mInfoBlock->GetFileInfo(info->mFileId);
+    if (!file)
+        return false;
+    const u32 type = file->GetFileLocationType();
+    if (type == 0) {
+        info->mFileSize = file->GetInternalFileInfo()->mSize;
+    } else if (type == 1) {
+        file->GetExternalFileInfo();
+        info->mFileSize = 0xffffffff;
+    } else {
+        return false;
+    }
+    return true;
+}
+
+bool SoundArchiveFileReader::ReadFileInfo(u32 file_id, SoundArchive::FileInfo* info, int) const {
+    const auto* file = mInfoBlock->GetFileInfo(file_id);
+    if (!file)
+        return false;
+    const u32 type = file->GetFileLocationType();
+    if (type == 0) {
+        const auto* internal = file->GetInternalFileInfo();
+        info->mFileSize = internal->mSize;
+        info->mFileOffset = internal->mOffset == -1 ? -1 : internal->mOffset + 8;
+    } else if (type == 1) {
+        info->_8 = file->GetExternalFileInfo();
+    } else {
+        return false;
+    }
+    return true;
+}
 
 bool SoundArchiveFileReader::ReadBankInfo(u32 bank_id, SoundArchive::BankInfo* info) const {
     const auto* record = mInfoBlock->GetBankInfo(bank_id);

@@ -53,8 +53,39 @@ public:
     };
 
     struct DspAdpcmChannelInfo;
-    struct StreamSoundInfo { u8 _0[0x4c]; };
-    struct TrackInfo;
+    struct StreamSoundInfo {
+        u8 _0;
+        u8 _1;
+        u8 _2;
+        u8 _3;
+        u32 _4;
+        u32 _8;
+        u32 _c;
+        u32 _10;
+        u32 _14;
+        u32 _18;
+        u32 _1c;
+        u32 _20;
+        u32 _24;
+        u32 _28;
+        u32 _2c;
+        u32 _30;
+        u32 _34;
+        u16 _38;
+        u8 _3a[2];
+        u32 _3c;
+        u32 _40;
+        u32 _44;
+        u32 _48;
+    };
+    struct TrackInfo {
+        u8 _0;
+        u8 _1;
+        u8 _2;
+        u8 _3;
+        u8 _4[4];
+        s32 mChannelTableOffset;
+    };
     struct ChannelInfo;
 
     // A reference table: the item count, then one Reference per item, each relative to the
@@ -63,8 +94,9 @@ public:
         // 0x7101361e74: items of type 0x4101.
         const TrackInfo* GetTrackInfo(u32 index) const;
 
-    private:
         u32 mCount;
+
+    private:
         Reference mItems[1];
     };
 

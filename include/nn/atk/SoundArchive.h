@@ -71,8 +71,11 @@ struct SoundArchiveFile {
         const char* GetString(u32 string_id) const;
 
     private:
-        u8 _0[4];
-        s32 mStringTableOffset;  // +4, relative to this
+        struct SectionReference {
+            u32 _0;
+            s32 mOffset;
+        };
+        SectionReference mSections[2];  // offsets relative to this block body
     };
 
     struct StringBlock {
@@ -84,15 +87,32 @@ struct SoundArchiveFile {
     /// the type-specific sub-info that follows the record body.
     struct StreamSoundTrackInfo;
     struct SequenceSoundInfo;
-    struct AdvancedWaveSoundInfo;
+    struct AdvancedWaveSoundInfo { u32 _0; };
     struct PlayerInfo;
-    struct SoundArchivePlayerInfo;
+    struct SoundArchivePlayerInfo {
+        u16 mSequenceSoundCount;
+        u16 mSequenceTrackCount;
+        u16 mStreamSoundCount;
+        u16 mStreamTrackCount;
+        u16 mStreamChannelCount;
+        u16 mWaveSoundCount;
+        u16 mWaveTrackCount;
+        u8 mStreamBufferTimes;
+        u8 mFlags;
+    };
+    struct StreamSoundExtension {
+        u8 _0;
+        u8 _1;
+        u8 _2[2];
+        u32 _4;
+        u32 _8;
+    };
 
     /// A stream sound record. The track info table and the extension block are both found by a
     /// signature at a fixed offset and located by a relative offset next to it.
     struct StreamSoundInfo {
         const StreamSoundTrackInfo* GetTrackInfoTable() const;
-        const char* GetStreamSoundExtension() const;
+        const StreamSoundExtension* GetStreamSoundExtension() const;
         const u8* GetSendValue() const;
 
     private:
@@ -110,11 +130,13 @@ struct SoundArchiveFile {
     /// A wave sound record; the optional values are present when bit 0 of the flag byte is set.
     struct WaveSoundInfo {
         u32 GetChannelPriority() const;
-        u32 GetIsReleasePriorityFix() const;
+        u8 GetIsReleasePriorityFix() const;
         u32 GetPrefetchFileId() const { return mPrefetchFileId; }
 
+        u32 _0;
+        u32 _4;
+
     private:
-        u8 _0[8];
         u8 mFlags;  // +0x8
         u8 _9[3];
         u32 mChannelPriority;  // +0xc, the release-priority-fix flag sits in its upper bits
@@ -135,17 +157,26 @@ struct SoundArchiveFile {
     private:
         u8 _0[4];
         s32 mBankIdTableOffset;  // +0x4
-        u8 _8[4];
+
+    public:
+        u32 _8;
+
+    private:
         u32 mOptionFlags;  // +0xc, followed by the present optional values
         u32 mStartOffset;  // +0x10
     };
 
     /// A file record: the signature names the internal (0x220c) or external (0x220d) file info
     /// that the offset at +4 points at.
-    struct InternalFileInfo;
+    struct InternalFileInfo {
+        u32 _0;
+        s32 mOffset;
+        u32 mSize;
+    };
     struct ExternalFileInfo;
 
     struct FileInfo {
+        u32 GetFileLocationType() const;
         const InternalFileInfo* GetInternalFileInfo() const;
         const ExternalFileInfo* GetExternalFileInfo() const;
 
@@ -158,6 +189,10 @@ struct SoundArchiveFile {
     /// The file id every item record starts with, and the sound id a sound group starts with.
     struct BankInfo {
         u32 mItemFileId;  // +0
+        u32 _4;
+        s32 mWaveArchiveTableOffset;  // +0x8, relative to this record
+        u32 mOptionFlags;
+        s32 mStringId;
     };
 
     struct SoundGroupInfo {
@@ -166,10 +201,16 @@ struct SoundArchiveFile {
         u16 _8;
         u16 _a;
         s32 mTableOffset;  // +0xc, relative to this record
+        u32 _10;
+        s32 mWaveArchiveReferenceOffset;  // +0x14, relative to this record
+        u32 mOptionFlags;
+        s32 mStringId;
     };
 
     struct GroupInfo {
         u32 mItemFileId;  // +0
+        u32 mOptionFlags;
+        s32 mStringId;
     };
 
     /// 0x7101340f78: the wave count is the optional value for bit 1 of the option flags at +8;
@@ -178,8 +219,10 @@ struct SoundArchiveFile {
         u32 GetWaveCount() const;
 
         u32 mItemFileId;  // +0
-        u8 _4[4];
+        u8 _4;
+        u8 _5[3];
         u32 mOptionFlags;  // +0x8, followed by the present optional values
+        s32 mStringId;     // first optional value, when bit 0 is set
     };
 
     /// 0x7101340f58: the heap size is the optional value for bit 1 of the option flags at +4.
@@ -188,6 +231,7 @@ struct SoundArchiveFile {
 
         u32 mPlayerSoundLimit;  // +0
         u32 mOptionFlags;       // +0x4, followed by the present optional values
+        s32 mStringId;          // first optional value, when bit 0 is set
     };
 
     struct SoundInfo {
@@ -205,14 +249,20 @@ struct SoundArchiveFile {
         u32 GetSoundType() const;
 
         u32 mItemFileId;  // +0
+        u32 _4;
+        u8 _8;
+        u8 _9;
+        u8 _a[2];
 
         u16 GetSignature() const { return mSignature; }
 
     private:
-        u8 _4[0x8];
         u16 mSignature;     // +0xc
         s32 mSubInfoOffset; // +0x10, relative to this
+
+    public:
         u32 mOptionFlags;   // +0x14, followed by the present optional values
+        s32 mStringId;      // first optional value, when bit 0 is set
     };
 
     /// The info block. Each of the seven tables is described by a {u32, s32} pair (the second word
@@ -294,6 +344,38 @@ public:
         bool isAdvancedWaveSoundEnabled;
     };
 
+    struct GroupInfo {
+        u32 mFileId;
+        u32 mFileSize;
+    };
+    struct FileInfo {
+        u32 mFileSize;
+        s32 mFileOffset;
+        const void* _8;
+    };
+    struct StreamSoundInfo2 {
+        bool _0;
+        u32 _4;
+        u32 _8;
+    };
+    struct WaveArchiveInfo {
+        u32 mFileId;
+        u32 mWaveCount;
+        u8 _8;
+    };
+    struct SequenceSoundInfo {
+        u32 mStartOffset;
+        u32 mBankIds[4];
+        u32 _14;
+        u8 mChannelPriority;
+        bool mReleasePriorityFix;
+    };
+    struct WaveSoundInfo {
+        u32 _0;
+        u32 _4;
+        u8 mChannelPriority;
+        bool mReleasePriorityFix;
+    };
     struct BankInfo {
         u32 mFileId;
     };
@@ -307,8 +389,18 @@ public:
         const void* _8;
     };
 
-    // Only the record pointer is needed by the wrappers below; the record layout is not modelled.
-    struct AdvancedWaveSoundInfo;
+    struct SoundInfo {
+        u32 mFileId;
+        u32 _4;
+        u8 mActorPlayerId;
+        u8 mPlayerPriority;
+        u8 _a;
+        u8 _b;
+        u32 mPanMode;
+        u32 mPanCurve;
+        bool mFrontBypass;
+    };
+    struct AdvancedWaveSoundInfo { u32 _0; };
 
     bool IsAvailable() const;
     void Initialize(detail::SoundArchiveFileReader* reader);
