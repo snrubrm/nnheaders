@@ -13,6 +13,9 @@
 
 namespace nn {
 namespace ui2d {
+namespace detail {
+class AnimPaneTree;
+}
 class AnimTransform;
 class DrawInfo;
 class BuildResultInformation;
@@ -108,6 +111,7 @@ public:
     }
 
 private:
+    friend class detail::AnimPaneTree;
     // Native shader setup allocates sixteen bytes at 0x7100ac2d14; binding and
     // allocation paths 0x7100ac4ad0..0x7100ac4f74 consume these four words.
     struct UserShaderConstantBufferInformation {

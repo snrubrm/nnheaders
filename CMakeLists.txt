@@ -223,6 +223,7 @@ add_library(NintendoSDK OBJECT
   include/nn/util/util_StringUtil.h
   include/nn/util/util_StringView.h
   include/nn/ui2d/detail/TexCoordArray.h
+  include/nn/ui2d/detail/AnimPaneTree.h
   include/nn/ui2d/AnimTransform.h
   include/nn/ui2d/ArcExtractor.h
   include/nn/ui2d/DrawInfo.h
@@ -435,6 +436,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/font/font_TextureObject.cpp
   src/NintendoSDK/font/font_TextWriterBase.cpp
   src/NintendoSDK/ui2d/ui2d_AnimTransform.cpp
+  src/NintendoSDK/ui2d/ui2d_AnimPaneTree.cpp
   src/NintendoSDK/ui2d/ui2d_Allocator.cpp
   src/NintendoSDK/ui2d/ui2d_ArcExtractor.cpp
   src/NintendoSDK/ui2d/ui2d_DrawInfo.cpp
