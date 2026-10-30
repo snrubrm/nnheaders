@@ -4,6 +4,12 @@
 
 namespace nn::atk::detail::driver {
 
+void SequenceTrack::Close() {
+    ReleaseAllChannel(-1);
+    FreeAllChannel();
+    mIsOpen = false;
+}
+
 void SequenceTrack::FreeAllChannel() {
     for (Channel* channel = mChannelHead; channel; channel = channel->mNext)
         Channel::DetachChannel(channel);

@@ -21,6 +21,7 @@ public:
     virtual int Parse(bool flag) = 0;
     int ParseNextTick(bool flag);
     void FreeAllChannel();
+    void Close();
     void PauseAllChannel(bool pause);
     void ReleaseAllChannel(int release);
     void UpdateChannelLength();

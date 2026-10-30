@@ -2,6 +2,14 @@
 
 namespace nn::atk::detail::driver {
 
+void Channel::CallChannelCallback(ChannelCallbackStatus status) {
+    if (mCallback) {
+        mCallback(this, status, mCallbackArg);
+        mCallback = nullptr;
+        mCallbackArg = nullptr;
+    }
+}
+
 void Channel::DetachChannel(Channel* channel) {
     channel->mCallback = nullptr;
     channel->mCallbackArg = nullptr;

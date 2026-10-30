@@ -24,6 +24,7 @@ public:
     void Release();
     void NoteOff();
     void UpdateSweep(int milliseconds);
+    void CallChannelCallback(ChannelCallbackStatus status);
 
 private:
     friend class SequenceTrack;
