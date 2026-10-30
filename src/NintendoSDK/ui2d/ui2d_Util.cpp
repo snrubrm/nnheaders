@@ -5,11 +5,47 @@
 #include <nn/ui2d/DrawInfo.h>
 #include <nn/ui2d/GraphicsResource.h>
 #include <nn/ui2d/Material.h>
+#include <nn/ui2d/ResourceTextureInfo.h>
 #include <nn/ui2d/ShaderInfo.h>
 #include <nn/util/util_BytePtr.h>
 #include <cstring>
 
 namespace nn::ui2d {
+
+// 0x7100abc670
+// NON_MATCHING: pool-offset register allocation and argument setup scheduling differ.
+bool LoadTexture(ResourceTextureInfo* info, gfx::Device* device, const void* data) {
+    auto* resource = static_cast<gfx::ResTexture*>(const_cast<void*>(data));
+    info->mResource = resource;
+    gfx::detail::TextureImpl<gfx::DefaultApi>* texture = resource->GetTexture();
+    if (!texture || !texture->ToData()->state) {
+        auto& texture_data = resource->ToData();
+        auto& container = *texture_data.pResTextureContainerData.Get();
+        const ptrdiff_t image_offset = container.memoryPoolOffsetBase +
+            util::ConstBytePtr(container.pTextureData.Get(), sizeof(util::BinaryBlockHeader))
+                .Distance(texture_data.pMipPtrArray.Get()[0].Get());
+        texture->Initialize(device, *resource->GetTextureInfo(),
+                            container.pCurrentMemoryPool.Get(), image_offset,
+                            texture_data.textureDataSize);
+
+        gfx::TextureViewInfo view_info;
+        view_info.SetDefault();
+        view_info.SetImageDimension(static_cast<gfx::ImageDimension>(texture_data.imageDimension));
+        view_info.SetChannelMapping(static_cast<gfx::ChannelMapping>(texture_data.channelMapping[0]),
+                                    static_cast<gfx::ChannelMapping>(texture_data.channelMapping[1]),
+                                    static_cast<gfx::ChannelMapping>(texture_data.channelMapping[2]),
+                                    static_cast<gfx::ChannelMapping>(texture_data.channelMapping[3]));
+        view_info.SetImageFormat(resource->GetTextureInfo()->GetImageFormat());
+        view_info.SetTexturePtr(resource->GetTexture());
+        view_info.EditSubresourceRange().EditArrayRange().SetArrayLength(
+            resource->GetTextureInfo()->GetArrayLength());
+        view_info.EditSubresourceRange().EditMipRange().SetMipCount(
+            resource->GetTextureInfo()->GetMipCount());
+        gfx::detail::TextureViewImpl<gfx::DefaultApi>* view = resource->GetTextureView();
+        view->Initialize(device, view_info);
+    }
+    return true;
+}
 
 // 0x7100abc98c
 // NON_MATCHING: search branch layout and floating-point instruction scheduling differ.
