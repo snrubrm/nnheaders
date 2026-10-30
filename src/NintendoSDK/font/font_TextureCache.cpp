@@ -4,8 +4,6 @@
 
 namespace nn::font {
 
-GlyphTreeMap::GlyphTreeMap() : _0(), mNodes(), _10(), mCount(0) {}
-
 // NON_MATCHING: the loop uses a widened index and hoists the per-face base.
 bool TextureCache::IsBorderEffectEnabled(u16 font_face) const {
     const u32 count = _1888[font_face];
@@ -20,6 +18,18 @@ bool TextureCache::IsBorderEffectEnabled(u16 font_face) const {
 }
 
 // 0x7100ab2910
+// 0x7100ab0d24
+TextureCache::TextureCache()
+    : mScalableFontEngine(nullptr), mScalableFontEngines(nullptr), _18(0), mTextureData(nullptr),
+      mTextureWidth(0), mTextureHeight(0), _1880(0), mFontFaceCount(0), mFontFace(0), _18ec(0),
+      _18f0(0), _18f4(1), _18f8(nullptr), mFontMetrics(nullptr), _1938(1), mPool(nullptr),
+      mPoolOffset(0) {
+    for (s32 i = 0; i < 32; ++i) {
+        _1888[i] = 0;
+        _18a8[i] = 0;
+    }
+}
+
 // NON_MATCHING: native branches on an empty range list before testing its signed count;
 // this range search produces different branch flow and font-index allocation.
 bool TextureCache::IsGlyphExistInFont(u32 code, u16 font_face) {

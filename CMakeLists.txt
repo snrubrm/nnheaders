@@ -439,6 +439,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/font/font_RectDrawer.cpp
   src/NintendoSDK/font/font_Font.cpp
   src/NintendoSDK/font/font_ResFont.cpp
+  src/NintendoSDK/font/font_GlyphTreeMap.cpp
   src/NintendoSDK/font/font_ResFontBase.cpp
   src/NintendoSDK/font/font_ScalableFont.cpp
   src/NintendoSDK/font/font_TagProcessorBase.cpp

@@ -123,6 +123,9 @@ private:
     // The four intrusive list heads of a face node and the head of a list; the constructor
     // (0x7100ab0d24) self-links all of them. Names are guesses.
     struct ListHead {
+        // Inline-only; name is a guess. TextureCache's constructor self-links every head.
+        ListHead() : prev(this), next(this) {}
+
         /* 0x00 */ void* prev;
         /* 0x08 */ void* next;
     };
