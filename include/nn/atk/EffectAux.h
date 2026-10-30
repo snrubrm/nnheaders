@@ -20,6 +20,8 @@ public:
     bool SetAudioFrameCount(s32 count);
     void SetEnabled(bool enabled);
     void SetEffectInputOutput(const s8* input, const s8*, int, int);
+    void RemoveEffect(nn::audio::AudioRendererConfig* config, nn::audio::FinalMixType* mix);
+    void RemoveEffect(nn::audio::AudioRendererConfig* config, nn::audio::SubMixType* mix);
     // 0x710135bde8
     bool IsRemovable() const;
 

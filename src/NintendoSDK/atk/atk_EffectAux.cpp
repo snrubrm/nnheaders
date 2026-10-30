@@ -58,6 +58,28 @@ void EffectAux::SetEffectInputOutput(const s8* input, const s8*, int, int) {
     nn::audio::SetAuxInputOutput(&mAux, channels, channels, mChannelCount);
 }
 
+void EffectAux::RemoveEffect(nn::audio::AudioRendererConfig* config, nn::audio::FinalMixType* mix) {
+    if (mIsAdded) {
+        nn::os::LockMutex(detail::Util::Singleton<detail::driver::HardwareManager>::GetInstance()
+                              .GetAudioRendererMutex());
+        nn::audio::RemoveAux(config, &mAux, mix);
+        mIsAdded = false;
+        nn::os::UnlockMutex(detail::Util::Singleton<detail::driver::HardwareManager>::GetInstance()
+                                .GetAudioRendererMutex());
+    }
+}
+
+void EffectAux::RemoveEffect(nn::audio::AudioRendererConfig* config, nn::audio::SubMixType* mix) {
+    if (mIsAdded) {
+        nn::os::LockMutex(detail::Util::Singleton<detail::driver::HardwareManager>::GetInstance()
+                              .GetAudioRendererMutex());
+        nn::audio::RemoveAux(config, &mAux, mix);
+        mIsAdded = false;
+        nn::os::UnlockMutex(detail::Util::Singleton<detail::driver::HardwareManager>::GetInstance()
+                                .GetAudioRendererMutex());
+    }
+}
+
 bool EffectAux::IsRemovable() const {
     return nn::audio::IsAuxRemovable(&mAux);
 }
