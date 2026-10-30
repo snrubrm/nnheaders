@@ -13,6 +13,9 @@ public:
     void Initialize();
     void UpdateVoiceInfo();
     int GetUnreleasedLowLevelVoiceCount() const;
+    // Inline-only, name guessed: Voice::IsAvailable 1358bd8 and command dispatch 1359620
+    // both index the pointer array at +0x28.
+    LowLevelVoice* GetLowLevelVoice(u32 index) const { return mVoices[index]; }
 
 private:
     // Inline-only: GetInstance 0x7101358c34 and Initialize 0x7101359378 repeat this reset.

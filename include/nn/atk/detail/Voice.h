@@ -13,6 +13,7 @@ public:
     // 0x7101358bd4: the original body is a four-byte empty function.
     ~Voice();
     u64 GetPlayPosition() const;
+    bool IsAvailable() const;
     void SetMonoFilter(bool enabled, u16 coefficient);
     void SetBiquadFilter(bool enabled, const BiquadFilterCoefficients* coefficients);
 
