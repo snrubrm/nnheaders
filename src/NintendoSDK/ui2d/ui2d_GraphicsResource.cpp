@@ -2,6 +2,7 @@
 
 #include <nn/gfx/gfx_CommandBuffer.h>
 #include <nn/gfx/gfx_GpuAddress.h>
+#include <nn/gfx/gfx_StateInfo.h>
 
 namespace nn::ui2d {
 
@@ -9,10 +10,65 @@ GraphicsResource::GraphicsResource() = default;
 
 GraphicsResource::~GraphicsResource() = default;
 
+// Native readonly resource-code conversion tables at 0x7101e7f6b0 and 0x7101e7f6f0.
+const gfx::LogicOperation sUnk_7101E7F6B0[16] = {
+    gfx::LogicOperation_NoOp, gfx::LogicOperation_Clear, gfx::LogicOperation_Set,
+    gfx::LogicOperation_Copy, gfx::LogicOperation_CopyInverted, gfx::LogicOperation_Invert,
+    gfx::LogicOperation_And, gfx::LogicOperation_Nand, gfx::LogicOperation_Or,
+    gfx::LogicOperation_Nor, gfx::LogicOperation_Xor, gfx::LogicOperation_Equiv,
+    gfx::LogicOperation_AndReverse, gfx::LogicOperation_AndInverted,
+    gfx::LogicOperation_OrReverse, gfx::LogicOperation_OrInverted,
+};
+const gfx::BlendFactor sUnk_7101E7F6F0[10] = {
+    gfx::BlendFactor_Zero, gfx::BlendFactor_One,
+    gfx::BlendFactor_DestinationColor, gfx::BlendFactor_OneMinusDestinationColor,
+    gfx::BlendFactor_SourceAlpha, gfx::BlendFactor_OneMinusSourceAlpha,
+    gfx::BlendFactor_DestinationAlpha, gfx::BlendFactor_OneMinusDestinationAlpha,
+    gfx::BlendFactor_SourceColor, gfx::BlendFactor_OneMinusSourceColor,
+};
+
+// NON_MATCHING: logic-table index extension and the shared result store differ.
+// 0x7100ac0fd0
+size_t GraphicsResource::SetupBlendStateInfo(gfx::BlendStateInfo* state,
+                                            gfx::BlendTargetStateInfo* target,
+                                            const ResBlendMode* color,
+                                            const ResBlendMode* alpha) {
+    state->SetDefault();
+    target->SetDefault();
+    state->SetBlendTargetStateInfoArray(target, 1);
+    if (color->logicOp) {
+        state->SetLogicOperationEnabled(true);
+        target->SetBlendEnabled(false);
+        const u32 operation = color->logicOp - 1;
+        state->SetLogicOperation(operation < 16 ? sUnk_7101E7F6B0[operation] :
+                                                gfx::LogicOperation_Clear);
+    } else if (color->blendOp) {
+        state->SetLogicOperationEnabled(false);
+        target->SetBlendEnabled(true);
+        target->SetSourceColorBlendFactor(color->srcFactor < 10 ?
+            sUnk_7101E7F6F0[color->srcFactor] : gfx::BlendFactor_Zero);
+        target->SetDestinationColorBlendFactor(color->dstFactor < 10 ?
+            sUnk_7101E7F6F0[color->dstFactor] : gfx::BlendFactor_Zero);
+        target->SetSourceAlphaBlendFactor(alpha->srcFactor < 10 ?
+            sUnk_7101E7F6F0[alpha->srcFactor] : gfx::BlendFactor_Zero);
+        target->SetDestinationAlphaBlendFactor(alpha->dstFactor < 10 ?
+            sUnk_7101E7F6F0[alpha->dstFactor] : gfx::BlendFactor_Zero);
+        const u32 color_operation = color->blendOp - 1;
+        target->SetColorBlendFunction(color_operation < 5 ?
+            static_cast<gfx::BlendFunction>(color_operation) : gfx::BlendFunction_Add);
+        const u32 alpha_operation = alpha->blendOp - 1;
+        target->SetAlphaBlendFunction(alpha_operation < 5 ?
+            static_cast<gfx::BlendFunction>(alpha_operation) : gfx::BlendFunction_Add);
+    } else {
+        target->SetBlendEnabled(false);
+    }
+    return gfx::detail::BlendStateImpl<gfx::ApiVariationNvn8>::GetRequiredMemorySize(*state);
+}
+
 int GraphicsResource::GetPresetBlendStateId(const ResBlendMode* color, const ResBlendMode* alpha) {
     const ResBlendMode* colorPresets;
     const ResBlendMode* alphaPresets;
-    sub_7100AC0ECC(&colorPresets, &alphaPresets);
+    GetPresetBlendModeArray(&colorPresets, &alphaPresets);
     for (int i = 0; i < 6; ++i) {
         if (colorPresets[i].blendOp == color->blendOp &&
             colorPresets[i].srcFactor == color->srcFactor &&
