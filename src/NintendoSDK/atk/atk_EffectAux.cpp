@@ -51,6 +51,13 @@ void EffectAux::SetEnabled(bool enabled) {
     }
 }
 
+void EffectAux::SetEffectInputOutput(const s8* input, const s8*, int, int) {
+    s8 channels[6];
+    for (s32 i = 0; i < mChannelCount; ++i)
+        channels[i] = input[mChannelIndices[i]];
+    nn::audio::SetAuxInputOutput(&mAux, channels, channels, mChannelCount);
+}
+
 bool EffectAux::IsRemovable() const {
     return nn::audio::IsAuxRemovable(&mAux);
 }

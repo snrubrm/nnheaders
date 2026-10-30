@@ -19,6 +19,7 @@ public:
     bool SetChannelCount(s32 count);
     bool SetAudioFrameCount(s32 count);
     void SetEnabled(bool enabled);
+    void SetEffectInputOutput(const s8* input, const s8*, int, int);
     // 0x710135bde8
     bool IsRemovable() const;
 
