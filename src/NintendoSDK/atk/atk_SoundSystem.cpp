@@ -7,6 +7,39 @@ namespace nn::atk {
 // 0x7102662aa8: the flag IsInitialized returns and Finalize clears, both through the GOT.
 bool sIsInitialized = false;
 
+// NON_MATCHING: the compiler combines adjacent 32-bit defaults into 64-bit stores.
+SoundSystem::SoundSystemParam::SoundSystemParam() {
+    _0 = 0;
+    _8 = 0x4000;
+    _10 = 0x20000;
+    _18 = 0x80000;
+    _20 = 0;
+    _50 = 0;
+    _51 = 0;
+    _52 = 0;
+    _60 = 0;
+    _61 = 0;
+    _58 = 0;
+    _6c = 0;
+    _68 = 0;
+    _69 = 0;
+    _6a = 0;
+    _6b = 0;
+    _28 = 0x4000;
+    _30 = 0x2000;
+    mSampleRate = 48000;
+    mEffectCount = 10;
+    mVoiceCount = 96;
+    _4c = 512;
+    mRecorderFrameCount = 8;
+    _66 = 1;
+    _67 = 1;
+    _62 = 1;
+    _63 = 1;
+    _64 = 1;
+    _65 = 1;
+}
+
 int SoundSystem::GetRendererChannelCountMax() {
     return detail::Util::Singleton<detail::driver::HardwareManager>::GetInstance().GetChannelCountMax();
 }
