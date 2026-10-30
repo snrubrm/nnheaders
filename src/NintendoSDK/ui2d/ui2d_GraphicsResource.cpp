@@ -32,7 +32,7 @@ void GraphicsResource::InitializeVertexBuffer(gfx::Device* device, gfx::MemoryPo
     gfx::MemoryPoolInfo vertex_pool_granularity;
     vertex_pool_granularity.SetDefault();
     vertex_pool_granularity.SetMemoryPoolProperty(0x22);
-    const size_t vertex_pool_size = util::align_up(size_t(32),
+    const size_t vertex_pool_size = util::align_up(static_cast<size_t>(32),
         gfx::detail::MemoryPoolImpl<gfx::DefaultApi>::GetPoolMemorySizeGranularity(
             device, vertex_pool_granularity));
     mVertexData = new (Layout::AllocateMemory(vertex_pool_size, vertex_alignment)) util::Float2[4];
@@ -54,7 +54,7 @@ void GraphicsResource::InitializeVertexBuffer(gfx::Device* device, gfx::MemoryPo
     gfx::MemoryPoolInfo index_pool_granularity;
     index_pool_granularity.SetDefault();
     index_pool_granularity.SetMemoryPoolProperty(0x22);
-    const size_t index_pool_size = util::align_up(size_t(12),
+    const size_t index_pool_size = util::align_up(static_cast<size_t>(12),
         gfx::detail::MemoryPoolImpl<gfx::DefaultApi>::GetPoolMemorySizeGranularity(
             device, index_pool_granularity));
     mIndexData = new (Layout::AllocateMemory(index_pool_size, index_alignment)) u16[6];

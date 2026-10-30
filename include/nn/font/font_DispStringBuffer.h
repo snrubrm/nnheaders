@@ -8,6 +8,36 @@ namespace nn::font {
 
 class TextureObject;
 class GpuBuffer;
+struct ShadowParameter;
+struct PerCharacterTransformInfo;
+
+// BuildConstantBuffer copies 0x78 bytes. TextBox::BuildConstantBuffer supplies the two
+// matrices; SetupConstantBufferAdditionalContent supplies the float colors and byte alphas.
+// Unknown prefix semantics and padding remain unnamed; no default lifetime is implied.
+struct ConstantBufferAdditionalContent {
+    // The native enum argument uses 32-bit values; meanings of its values are unclaimed.
+    enum PerCharacterTransformCenter : int;
+
+    /* 0x00 */ const ShadowParameter* _0;
+    /* 0x08 */ const PerCharacterTransformInfo* _8;
+    /* 0x10 */ PerCharacterTransformCenter _10;
+    /* 0x14 */ u8 _14[4];
+    /* 0x18 */ const util::MatrixT4x3fType* _18;
+    /* 0x20 */ const util::MatrixT4x3fType* _20;
+    /* 0x28 */ util::Float4 _28;
+    /* 0x38 */ util::Float4 _38;
+    /* 0x48 */ u8 _48;
+    /* 0x49 */ u8 _49[3];
+    /* 0x4c */ util::Float4 _4c;
+    /* 0x5c */ util::Float4 _5c;
+    /* 0x6c */ u8 _6c;
+    /* 0x6d */ u8 _6d[3];
+    /* 0x70 */ u32 _70;
+    /* 0x74 */ u8 _74[4];
+};
+static_assert(sizeof(ConstantBufferAdditionalContent) == 0x78);
+static_assert(offsetof(ConstantBufferAdditionalContent, _18) == 0x18);
+static_assert(offsetof(ConstantBufferAdditionalContent, _4c) == 0x4c);
 
 // Partial layout: TextBox::AllocateStringBuffer allocates this 0xc0-byte object and extra GPU
 // storage. Copying a TextBox reads the capacity at +0x98; per-character updates read +0x9c.
@@ -51,6 +81,19 @@ public:
     static size_t sub_71013240B4(gfx::Device*, const InitializeArg&);
     void SetGpuBuffer(GpuBuffer* buffer);
     void SetFontHeight(f32 height);
+
+    // BuildConstantBuffer reserves 128 bytes, and the common-data writer fills through +0x7c.
+    struct ShaderParam {
+        util::MatrixT4x4fType matrix;
+        util::Float4 _40;
+        util::Float4 _50;
+        util::Float4 _60;
+        util::Float4 _70;
+    };
+    static_assert(sizeof(ShaderParam) == 0x80);
+
+    void BuildCommonConstantBufferData(ShaderParam&, const util::MatrixT4x4fType&,
+                                       const ConstantBufferAdditionalContent&) const;
 
     // BuildConstantBuffer and the drawing helper keep byte offsets at 0/4, flags at8,
     // and up to eight texture/count/flag records at10. Names are inferred from those uses.
