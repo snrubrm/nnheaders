@@ -6,11 +6,39 @@
 #include <nn/ui2d/Pane.h>
 #include <nn/ui2d/ResourceAccessor.h>
 #include <nn/ui2d/ResExtUserData.h>
+#include <nn/ui2d/Util.h>
 #include <nn/util/util_BinTypes.h>
 #include <cstdio>
 #include <new>
 
 namespace nn::ui2d {
+
+// 0x7100ab59ac
+// NON_MATCHING: native retains an extra byte mask and allocates registers differently.
+void AnimTransformBasic::AnimateExtUserDataImpl(ResExtUserData* data,
+                                                 const ResAnimationContent* content) {
+    const u32* info_offsets = content->type == 2 ?
+        util::ConstBytePtr(content, *util::ConstBytePtr(content, 0x20).Get<u32>()).Get<u32>() :
+        util::ConstBytePtr(content, 0x20).Get<u32>();
+    for (s32 i = 0; i < content->infoCount; ++i) {
+        const auto* info = util::ConstBytePtr(content, info_offsets[i]).Get<ResAnimationInfo>();
+        if (info->targetCount) {
+            const f32 frame = mFrame;
+            const u32* target_offsets = util::ConstBytePtr(info, 8).Get<u32>();
+            for (s32 j = 0; j < info->targetCount; ++j) {
+                const auto* target = util::ConstBytePtr(info, target_offsets[j]).Get<ResAnimationTarget>();
+                const auto* keys = util::ConstBytePtr(target, target->keyOffset).Get<ResHermiteKey>();
+                if (data->type == ExtUserDataType_Int) {
+                    const f32 value = GetHermiteCurveValue(frame, keys, target->keyCount);
+                    util::BytePtr(data, data->dataOffset).Get<s32>()[target->index] = static_cast<s32>(value);
+                } else if (data->type == ExtUserDataType_Float) {
+                    const f32 value = GetHermiteCurveValue(frame, keys, target->keyCount);
+                    util::BytePtr(data, data->dataOffset).Get<f32>()[target->index] = value;
+                }
+            }
+        }
+    }
+}
 
 // 0x7100ab4428
 void AnimTransformBasic::BindPane(Pane* pane, bool recursive) {

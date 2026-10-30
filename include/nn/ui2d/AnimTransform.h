@@ -68,6 +68,22 @@ static_assert(sizeof(ResAnimationContent) == 0x20);
 static_assert(offsetof(ResAnimationContent, infoCount) == 0x1c);
 static_assert(offsetof(ResAnimationContent, type) == 0x1d);
 
+// Animation info/target prefixes used by pane, material and extended-data animation.
+// Target offsets follow each info at +8 and are relative to that info; keyOffset is relative
+// to its target. The remaining fields and full record extents are not established.
+struct ResAnimationInfo {
+    u8 _0[4];
+    u8 targetCount;
+};
+
+struct ResAnimationTarget {
+    u8 index;
+    u8 _1[3];
+    u16 keyCount;
+    u8 _6[2];
+    u32 keyOffset;
+};
+
 // Resource blocks (offsets read by the accessors below).
 struct ResAnimationBlock {
     u8 _0[8];
