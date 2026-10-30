@@ -20,6 +20,8 @@ public:
     // The full-word comparison in ParseNextTick supports a numeric status; int is inferred.
     virtual int Parse(bool flag) = 0;
     int ParseNextTick(bool flag);
+    void FreeAllChannel();
+    void PauseAllChannel(bool pause);
 
     void Open();
     void SetMute(SequenceMute mute);

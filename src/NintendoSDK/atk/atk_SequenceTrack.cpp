@@ -1,6 +1,23 @@
 #include <nn/atk/detail/driver/SequenceTrack.h>
+#include <nn/atk/detail/driver/Channel.h>
+#include <nn/atk/detail/driver/MultiVoice.h>
 
 namespace nn::atk::detail::driver {
+
+void SequenceTrack::FreeAllChannel() {
+    for (Channel* channel = mChannelHead; channel; channel = channel->mNext)
+        Channel::DetachChannel(channel);
+    mChannelHead = nullptr;
+}
+
+void SequenceTrack::PauseAllChannel(bool pause) {
+    for (Channel* channel = mChannelHead; channel; channel = channel->mNext) {
+        if (channel->mActive && (channel->mPaused != 0) != pause) {
+            channel->mPaused = pause;
+            channel->mVoice->Pause(pause);
+        }
+    }
+}
 
 // NON_MATCHING: the compiler reorganizes the counter and parse-loop branches.
 int SequenceTrack::ParseNextTick(bool flag) {
