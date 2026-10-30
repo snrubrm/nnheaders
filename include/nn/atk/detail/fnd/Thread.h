@@ -9,6 +9,13 @@ namespace nn::atk::detail::fnd {
 // (1 while the body runs, 2 when it has exited); the os thread object follows at +8.
 class Thread {
 public:
+    class Handler {
+    public:
+        virtual ~Handler();
+        // Native ThreadMain ignores the result; void is inferred. Purity is unresolved.
+        virtual void Run(void* arg);
+    };
+
     enum AffinityMask : u32 {};
 
     Thread();
