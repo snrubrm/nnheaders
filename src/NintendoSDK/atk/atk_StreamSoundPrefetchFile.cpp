@@ -3,6 +3,10 @@
 
 namespace nn::atk::detail {
 
+const void* StreamSoundPrefetchFile::PrefetchSample::GetSampleAddress() const {
+    return this;
+}
+
 const StreamSoundPrefetchFile::InfoBlock*
 StreamSoundPrefetchFile::FileHeader::GetInfoBlock() const {
     return static_cast<const InfoBlock*>(Util::FindBlock(this, mBlockCount, mBlocks, 0x4000));

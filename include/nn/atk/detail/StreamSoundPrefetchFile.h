@@ -11,7 +11,9 @@ class StreamSoundPrefetchFile {
 public:
     struct InfoBlock;
     struct PrefetchDataBlock;
-    struct PrefetchSample;
+    struct PrefetchSample {
+        const void* GetSampleAddress() const;
+    };
 
     struct FileHeader {
         // 0x7101364284: block type 0x4000
@@ -33,9 +35,17 @@ public:
         // 0x7101364328: the sample reference at +0xc, relative to this.
         const PrefetchSample* GetPrefetchSample() const;
 
+        u32 _0;
+        u32 _4;
+        u8 _8[4];
+
     private:
-        u8 _0[0xc];
         Util::Reference mPrefetchSample;  // +0xc
+    };
+
+    struct PrefetchDataBlockBody {
+        u32 mCount;
+        PrefetchData mData[1];
     };
 
     struct InfoBlock {
@@ -46,7 +56,7 @@ public:
     struct PrefetchDataBlock {
         u32 mSignature;
         u32 mSize;
-        PrefetchData mBody[1];
+        PrefetchDataBlockBody mBody;
     };
 };
 
