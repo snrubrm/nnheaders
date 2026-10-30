@@ -8,7 +8,16 @@ namespace nn::atk::detail {
 // reference-table getter reads is modelled.
 class AdvancedWaveSoundFile {
 public:
-    struct WaveSoundClip;
+    struct WaveSoundClip {
+        u32 _0;
+        u32 _4;
+        u32 _8;
+        u32 _c;
+        u32 _10;
+        u8 _14;
+        u8 _15;
+        u8 _16[2];
+    };
 
     struct WaveSoundTrack {
         // 0x71013657f4: an unsigned offset at +4, relative to the track, to a table of clip
