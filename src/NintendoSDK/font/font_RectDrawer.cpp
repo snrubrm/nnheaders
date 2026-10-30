@@ -155,7 +155,9 @@ void RectDrawer::Draw(gfx::CommandBuffer& command_buffer, const DispStringBuffer
     }
 }
 
-// NON_MATCHING: signed count, local lifetimes and instruction scheduling differ.
+// NON_MATCHING: native snapshots the count once; this loop reloads it after command calls.
+// A re-entrant out-of-memory callback could make the difference observable. Local lifetimes and
+// instruction scheduling also differ.
 // 0x7101325484
 void RectDrawer::AddDrawCommand(gfx::CommandBuffer& command_buffer,
                                 const DispStringBuffer::VertexBufferData& data, u32 flags,

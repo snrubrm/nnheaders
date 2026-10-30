@@ -1,5 +1,6 @@
 #include <nn/font/font_TextureCache.h>
 #include <nn/font/font_GlyphNode.h>
+#include <nn/font/fontll_ScalableFontEngine.h>
 
 namespace nn::font {
 
@@ -14,6 +15,30 @@ bool TextureCache::IsBorderEffectEnabled(u16 font_face) const {
     for (u32 i = 0; i < count; ++i) {
         if (mBorderFlags[first + i])
             return true;
+    }
+    return false;
+}
+
+// 0x7100ab2910
+// NON_MATCHING: native branches on an empty range list before testing its signed count;
+// this range search produces different branch flow and font-index allocation.
+bool TextureCache::IsGlyphExistInFont(u32 code, u16 font_face) {
+    u32 font = _18a8[font_face];
+    for (s32 i = 0; i < _1888[font_face]; ++i, ++font) {
+        const s32 range_count = mRangeCounts[font];
+        bool check_font = range_count == 0;
+        for (s32 range = 0; range < range_count; ++range) {
+            if (mRangeStarts[font][range] <= code && code <= mRangeEnds[font][range]) {
+                check_font = true;
+                break;
+            }
+        }
+        if (check_font) {
+            const u32 core = _18f0 ? _18f8() : 0;
+            SetFontFaceNoPlot(font, core);
+            if (mScalableFontEngines[core].CheckGlyphExist(code))
+                return true;
+        }
     }
     return false;
 }
