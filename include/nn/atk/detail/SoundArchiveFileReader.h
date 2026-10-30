@@ -23,6 +23,9 @@ public:
     u32 GetWaveArchiveCount() const;
     u32 GetFileCount() const;
     u32 GetSoundType(u32 sound_id) const;
+    bool ReadBankInfo(u32 bank_id, SoundArchive::BankInfo* info) const;
+    bool ReadPlayerInfo(u32 player_id, SoundArchive::PlayerInfo* info) const;
+    bool ReadSoundGroupInfo(u32 sound_group_id, SoundArchive::SoundGroupInfo* info) const;
     const u32* GetWaveArchiveIdTable(u32 wave_archive_id) const;
     bool ReadAdvancedWaveSoundInfo(u32 sound_id, SoundArchive::AdvancedWaveSoundInfo* info) const;
 

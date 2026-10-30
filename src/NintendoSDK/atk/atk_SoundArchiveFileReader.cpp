@@ -1,10 +1,39 @@
 #include <nn/atk/detail/SoundArchiveFileReader.h>
+#include <nn/util/util_BytePtr.h>
 
 #include <cstring>
 
 namespace nn {
 namespace atk {
 namespace detail {
+
+bool SoundArchiveFileReader::ReadBankInfo(u32 bank_id, SoundArchive::BankInfo* info) const {
+    const auto* record = mInfoBlock->GetBankInfo(bank_id);
+    if (!record)
+        return false;
+    info->mFileId = record->mItemFileId;
+    return true;
+}
+
+bool SoundArchiveFileReader::ReadPlayerInfo(u32 player_id, SoundArchive::PlayerInfo* info) const {
+    const auto* record = mInfoBlock->GetPlayerInfo(player_id);
+    if (!record)
+        return false;
+    info->mSoundLimit = record->mPlayerSoundLimit;
+    info->mHeapSize = record->GetPlayerHeapSize();
+    return true;
+}
+
+bool SoundArchiveFileReader::ReadSoundGroupInfo(u32 sound_group_id,
+                                                SoundArchive::SoundGroupInfo* info) const {
+    const auto* record = mInfoBlock->GetSoundGroupInfo(sound_group_id);
+    if (!record)
+        return false;
+    info->_0 = record->mSoundId;
+    info->_4 = record->_4;
+    info->_8 = nn::util::ConstBytePtr(record, record->mTableOffset).Get();
+    return true;
+}
 
 SoundArchiveFileReader::SoundArchiveFileReader()
     : mStringBlock(nullptr), mInfoBlock(nullptr), _48(0) {

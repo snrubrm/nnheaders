@@ -162,6 +162,10 @@ struct SoundArchiveFile {
 
     struct SoundGroupInfo {
         u32 mSoundId;  // +0
+        u32 _4;
+        u16 _8;
+        u16 _a;
+        s32 mTableOffset;  // +0xc, relative to this record
     };
 
     struct GroupInfo {
@@ -288,6 +292,19 @@ public:
         s32 waveTrackCount;
         s32 streamBufferTimes;
         bool isAdvancedWaveSoundEnabled;
+    };
+
+    struct BankInfo {
+        u32 mFileId;
+    };
+    struct PlayerInfo {
+        u32 mSoundLimit;
+        u32 mHeapSize;
+    };
+    struct SoundGroupInfo {
+        u32 _0;
+        u32 _4;
+        const void* _8;
     };
 
     // Only the record pointer is needed by the wrappers below; the record layout is not modelled.
