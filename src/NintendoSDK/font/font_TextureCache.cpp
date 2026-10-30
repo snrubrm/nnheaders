@@ -98,6 +98,113 @@ const TextureCache::FontMetrics* TextureCache::GetFontMetrics(u16 font_face) con
     return &metrics[selected];
 }
 
+// 0x7100ab3a78
+// NON_MATCHING: branch merging and an omitted overwritten intermediate rotation store.
+GlyphNode* GlyphTreeMap::Erase(GlyphNode* node, u64 key) {
+    const bool left_is_red = node->left && node->left->color == 1;
+    if (key < node->key) {
+        if (!left_is_red && (!node->left->left || node->left->left->color != 1)) {
+            node->color = !node->color;
+            node->left->color = !node->left->color;
+            node->right->color = !node->right->color;
+            GlyphNode* right = node->right;
+            if (right->left && right->left->color == 1) {
+                GlyphNode* middle = right->left;
+                right->left = middle->right;
+                middle->right = right;
+                middle->color = right->color;
+                right->color = 1;
+                node->right = middle->left;
+                middle->left = node;
+                middle->color = node->color;
+                node->color = 1;
+                node = middle;
+                node->color = !node->color;
+                node->left->color = !node->left->color;
+                node->right->color = !node->right->color;
+            }
+        }
+        node->left = Erase(node->left, key);
+    } else {
+        if (left_is_red) {
+            GlyphNode* left = node->left;
+            node->left = left->right;
+            left->right = node;
+            left->color = node->color;
+            node->color = 1;
+            node = left;
+        }
+        if (node->key == key && !node->right) {
+            node->_0 = mFreeNodes;
+            mFreeNodes = node;
+            return nullptr;
+        }
+        if (node->right->color != 1 &&
+            (!node->right->left || node->right->left->color != 1)) {
+            node->color = !node->color;
+            node->left->color = !node->left->color;
+            node->right->color = !node->right->color;
+            GlyphNode* left = node->left;
+            if (left->left && left->left->color == 1) {
+                node->left = left->right;
+                left->right = node;
+                left->color = node->color;
+                node->color = 1;
+                node = left;
+                node->color = !node->color;
+                node->left->color = !node->left->color;
+                node->right->color = !node->right->color;
+            }
+        }
+        if (node->key == key) {
+            GlyphNode* minimum = node->right;
+            while (minimum->left)
+                minimum = minimum->left;
+            const u64 minimum_key = minimum->key;
+            GlyphNode* replacement = node->right;
+            while (replacement) {
+                if (replacement->key > minimum_key)
+                    replacement = replacement->left;
+                else if (replacement->key < minimum_key)
+                    replacement = replacement->right;
+                else
+                    break;
+            }
+            replacement->right = EraseMin(node->right);
+            replacement->left = node->left;
+            replacement->color = node->color;
+            node->_0 = mFreeNodes;
+            mFreeNodes = node;
+            node = replacement;
+        } else {
+            node->right = Erase(node->right, key);
+        }
+    }
+    if (node->right && node->right->color == 1) {
+        GlyphNode* right = node->right;
+        node->right = right->left;
+        right->left = node;
+        right->color = node->color;
+        node->color = 1;
+        node = right;
+    }
+    if (node->left && node->left->color == 1 && node->left->left &&
+        node->left->left->color == 1) {
+        GlyphNode* left = node->left;
+        node->left = left->right;
+        left->right = node;
+        left->color = node->color;
+        node->color = 1;
+        node = left;
+    }
+    if (node->left && node->left->color == 1 && node->right && node->right->color == 1) {
+        node->color = !node->color;
+        node->left->color = !node->left->color;
+        node->right->color = !node->right->color;
+    }
+    return node;
+}
+
 // NON_MATCHING: the compiler merges the final child checks and returns.
 // 0x7100ab3e70
 GlyphNode* GlyphTreeMap::EraseMin(GlyphNode* node) {
