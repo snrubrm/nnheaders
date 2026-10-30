@@ -80,6 +80,41 @@ GlyphNode* TextureCache::FindGlyphNode(u32 code, u32 font_size, u16 font_face) {
     return nullptr;
 }
 
+// NON_MATCHING: font-index allocation and range-base arithmetic scheduling differ.
+// 0x7100ab2afc
+s32 TextureCache::CalculateCharWidth(u32 code, u32 font_size, u16 font_face) {
+    u32 font = _18a8[font_face];
+    for (s32 i = 0; i < _1888[font_face]; ++i, ++font) {
+        const s32 range_count = mRangeCounts[font];
+        if (range_count != 0) {
+            s32 range = 0;
+            for (; range < range_count; ++range) {
+                if (mRangeStarts[font][range] <= code && code <= mRangeEnds[font][range])
+                    break;
+            }
+            if (range >= range_count)
+                continue;
+        }
+        const u32 check_core = _18f0 ? _18f8() : 0;
+        SetFontFaceNoPlot(font, check_core);
+        if (!mScalableFontEngines[check_core].CheckGlyphExist(code))
+            continue;
+
+        const u32 core = _18f0 ? _18f8() : 0;
+        SetFontFaceNoPlot(font, core);
+        const s32 scale = s32(font_size << 16);
+        mScalableFontEngines[core].SetScale(scale, 0, 0, scale);
+        s16 advance;
+        s16 out1;
+        s32 out2;
+        s32 out3;
+        if (mScalableFontEngines[core].GetAdvance(&advance, &out1, &out2, &out3, code, 8) == 0)
+            return advance;
+        return 0;
+    }
+    return 0;
+}
+
 // NON_MATCHING: the unrolled loop uses a precomputed remaining count for termination.
 const TextureCache::FontMetrics* TextureCache::GetFontMetrics(u16 font_face) const {
     const u32 first = _18a8[font_face];

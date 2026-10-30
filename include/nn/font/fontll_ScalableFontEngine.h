@@ -18,6 +18,11 @@ public:
     void SetFlags(Flags flags);
     // The boolean result is inferred from several native callers testing bit 0 for glyph existence.
     bool CheckGlyphExist(u32 code);
+    // The SetScale return is unused in the observed native calls.
+    void SetScale(s32, s32, s32, s32);
+    // Imported parameters are exact; the 32-bit status representation is inferred
+    // from CalculateCharWidth's comparison with zero. Output meanings remain unclaimed.
+    s32 GetAdvance(s16*, s16*, s32*, s32*, u32, u16);
 
 private:
     u8 _opaque[0xb8];
