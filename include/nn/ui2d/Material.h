@@ -79,6 +79,7 @@ public:
     void Initialize();
     void Finalize(gfx::Device*);
     void ReserveMem(s32, s32, s32, s32, bool, s32, bool, s32, bool, bool);
+    void SetupBlendState(const DrawInfo*);
     void SetupSubmaterialOf_Texture(DrawInfo&, gfx::CommandBuffer&) const;
     void SetCommandBufferOnlyBlend(gfx::CommandBuffer&) const;
     void SetCommandBuffer(gfx::CommandBuffer&, DrawInfo&) const;
@@ -162,7 +163,8 @@ private:
     /* 0x30 */ u32 mVertexShaderConstantBufferOffset;
     /* 0x34 */ u32 mPixelShaderConstantBufferOffset;
     /* 0x38 */ UserShaderConstantBufferInformation* mUserShaderConstantBufferInformation;
-    /* 0x40 */ void* _40;
+    // Presets and custom states share this interface; the custom object's owning type is unknown.
+    /* 0x40 */ const gfx::detail::BlendStateImpl<gfx::ApiVariationNvn8>* mBlendState;
     /* 0x48 */ s8 _48;
     /* 0x49 */ u8 _49;
     /* 0x4a */ u8 mFlags;

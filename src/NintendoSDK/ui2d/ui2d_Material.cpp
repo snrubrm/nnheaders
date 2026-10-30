@@ -72,6 +72,23 @@ void Material::UnbindAnimation(AnimTransform* transform) {
     transform->UnbindMaterial(this);
 }
 
+// 0x7100ac330c
+// NON_MATCHING: dynamic record pointer arithmetic and instruction scheduling differ.
+void Material::SetupBlendState(const DrawInfo* info) {
+    if (mBlendState)
+        return;
+
+    u32 preset = 0;
+    if (mMemCap.blend) {
+        const u32 offset = mMemCap.texMap * 16 + mMemCap.texSrt * 20 +
+                           mMemCap.texCoordGen * 16 + mMemCap.alphaCompare * 8;
+        const ResBlendMode* color = util::BytePtr(mMem, offset).Get<ResBlendMode>();
+        const ResBlendMode* alpha = mMemCap.blend == 2 ? color + 1 : color;
+        preset = GraphicsResource::GetPresetBlendStateId(color, alpha);
+    }
+    mBlendState = info->mGraphicsResource->sub_7100AC1158(preset);
+}
+
 // 0x7100ac391c
 Material::ConstantBufferForVertexShader* Material::GetConstantBufferForVertexShader(const DrawInfo& info) const {
     void* mapped = info.mUi2dConstantBuffer->mMappedPtr;
