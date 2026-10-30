@@ -1,9 +1,8 @@
 #include <nn/font/font_TextureCache.h>
 #include <nn/font/font_GlyphNode.h>
+#include <nn/font/fontll_ScalableFontEngine.h>
 
 namespace nn::font {
-
-GlyphTreeMap::GlyphTreeMap() : _0(), mNodes(), _10(), mCount(0) {}
 
 // NON_MATCHING: the loop uses a widened index and hoists the per-face base.
 bool TextureCache::IsBorderEffectEnabled(u16 font_face) const {
@@ -16,6 +15,68 @@ bool TextureCache::IsBorderEffectEnabled(u16 font_face) const {
             return true;
     }
     return false;
+}
+
+// 0x7100ab0d24
+TextureCache::TextureCache()
+    : mScalableFontEngine(nullptr), mScalableFontEngines(nullptr), _18(0), mTextureData(nullptr),
+      mTextureWidth(0), mTextureHeight(0), _1880(0), mFontFaceCount(0), mFontFace(0), _18ec(0),
+      _18f0(0), _18f4(1), _18f8(nullptr), mFontMetrics(nullptr), _1938(1), mPool(nullptr),
+      mPoolOffset(0) {
+    for (s32 i = 0; i < 32; ++i) {
+        _1888[i] = 0;
+        _18a8[i] = 0;
+    }
+}
+
+// 0x7100ab0e7c
+TextureCache::~TextureCache() = default;
+
+// 0x7100ab2910
+// NON_MATCHING: native branches on an empty range list before testing its signed count;
+// this range search produces different branch flow and font-index allocation.
+bool TextureCache::IsGlyphExistInFont(u32 code, u16 font_face) {
+    u32 font = _18a8[font_face];
+    for (s32 i = 0; i < _1888[font_face]; ++i, ++font) {
+        const s32 range_count = mRangeCounts[font];
+        bool check_font = range_count == 0;
+        for (s32 range = 0; range < range_count; ++range) {
+            if (mRangeStarts[font][range] <= code && code <= mRangeEnds[font][range]) {
+                check_font = true;
+                break;
+            }
+        }
+        if (check_font) {
+            const u32 core = _18f0 ? _18f8() : 0;
+            SetFontFaceNoPlot(font, core);
+            if (mScalableFontEngines[core].CheckGlyphExist(code))
+                return true;
+        }
+    }
+    return false;
+}
+
+// NON_MATCHING: native tests for an empty range list before its signed count; the search's
+// branches and selected-font register allocation differ.
+GlyphNode* TextureCache::FindGlyphNode(u32 code, u32 font_size, u16 font_face) {
+    u32 font = _18a8[font_face];
+    for (s32 i = 0; i < _1888[font_face]; ++i, ++font) {
+        const s32 range_count = mRangeCounts[font];
+        bool check_font = range_count == 0;
+        for (s32 range = 0; range < range_count; ++range) {
+            if (mRangeStarts[font][range] <= code && code <= mRangeEnds[font][range]) {
+                check_font = true;
+                break;
+            }
+        }
+        if (check_font) {
+            const u32 core = _18f0 ? _18f8() : 0;
+            SetFontFaceNoPlot(font, core);
+            if (mScalableFontEngines[core].CheckGlyphExist(code))
+                return mGlyphTreeMap.Find(code, font_size, font);
+        }
+    }
+    return nullptr;
 }
 
 // NON_MATCHING: the unrolled loop uses a precomputed remaining count for termination.

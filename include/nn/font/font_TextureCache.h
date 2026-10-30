@@ -11,13 +11,13 @@
 #include <nn/gfx/gfx_Types.h>
 #include <nn/types.h>
 
+namespace nn::fontll {
+class ScalableFontEngine;
+}
+
 namespace nn::font {
 
 struct GlyphNode;
-
-namespace fontll {
-class ScalableFontEngine;
-}
 
 // The glyph index of the cache (constructor 0x7100ab3704, Initialize 0x7100ab3714: it allocates
 // `count` fixed 0x58-byte nodes and chains them; only the root / array / count fields are known).
@@ -88,7 +88,7 @@ public:
         /* 0x49b4 */ u32 _49b4[32][8];  // the last LoadFont argument
         /* 0x4db4 */ u8 _4db4;   // stored at cache + 0x18f0
         /* 0x4db8 */ u32 _4db8;  // 1 default; the engine count of the cache
-        /* 0x4dc0 */ void (*getCurrentCoreNumberMaybe)();  // null default; Initialize substitutes
+        /* 0x4dc0 */ u32 (*getCurrentCoreNumberMaybe)();  // null default; Initialize substitutes
                                                            // nn::os::GetCurrentCoreNumber
         /* 0x4dc8 */ u8 autoHint;  // Initialize calls ScalableFontEngine::SetAutoHint when set
         /* 0x4dc9 */ u8 _4dc9;     // stored at cache + 0x1938
@@ -118,10 +118,14 @@ public:
 
 private:
     friend class ScalableFont;
+    void SetFontFaceNoPlot(u32 font, u32 core);
 
     // The four intrusive list heads of a face node and the head of a list; the constructor
     // (0x7100ab0d24) self-links all of them. Names are guesses.
     struct ListHead {
+        // Inline-only; name is a guess. TextureCache's constructor self-links every head.
+        ListHead() : prev(this), next(this) {}
+
         /* 0x00 */ void* prev;
         /* 0x08 */ void* next;
     };
@@ -140,7 +144,8 @@ private:
     static_assert(sizeof(FaceNode) == 0x60);
 
     /* 0x08 */ fontll::ScalableFontEngine* mScalableFontEngine;
-    /* 0x10 */ u64 _10[2];
+    /* 0x10 */ fontll::ScalableFontEngine* mScalableFontEngines;
+    /* 0x18 */ u64 _18;
     /* 0x20 */ void* mTextureData;
     /* 0x28 */ u32 mTextureWidth;
     /* 0x2c */ u32 mTextureHeight;
@@ -160,11 +165,14 @@ private:
     /* 0x18ec */ u32 _18ec;
     /* 0x18f0 */ u8 _18f0;
     /* 0x18f4 */ u32 _18f4;
-    /* 0x18f8 */ void (*_18f8)();
+    /* 0x18f8 */ u32 (*_18f8)();
     /* 0x1900 */ FontMetrics* mFontMetrics;
     /* 0x1908 */ void* _1908;
     /* 0x1910 */ u8* mBorderFlags;
-    /* 0x1918 */ void* _1918[4];
+    /* 0x1918 */ s32* mRangeCounts;
+    /* 0x1920 */ u32 (*mRangeStarts)[4];
+    /* 0x1928 */ u32 (*mRangeEnds)[4];
+    /* 0x1930 */ void* _1930;
     /* 0x1938 */ u8 _1938;
     /* 0x1940 */ gfx::detail::TextureImpl<gfx::ApiVariationNvn8> mTexture;
     /* 0x1a18 */ gfx::TextureView mTextureView;

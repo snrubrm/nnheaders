@@ -12,6 +12,22 @@
 namespace nn::ui2d {
 
 namespace detail {
+// 0x7100ac0214
+void CalculateQuad(DrawInfo& draw_info, Material::ConstantBufferForVertexShader* buffer,
+                   const util::Float2& position, const Size& size) {
+    buffer->size.width = size.width;
+    buffer->size.height = size.height;
+    buffer->position.x = position.x;
+    buffer->position.y = position.y;
+    draw_info.sub_7100AC074C(&buffer->matrix);
+}
+
+// 0x7100ac023c
+void CalculateQuad(DrawInfo& draw_info, Material& material, const util::Float2& position,
+                   const Size& size) {
+    CalculateQuad(draw_info, material.GetConstantBufferForVertexShader(draw_info), position, size);
+}
+
 // 0x7100ac045c
 void DrawQuad(gfx::CommandBuffer& command_buffer, DrawInfo& draw_info, Material& material) {
     material.sub_7100AC50CC(&command_buffer);

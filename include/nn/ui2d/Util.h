@@ -4,6 +4,7 @@
 #include <nn/font/font_Util.h>
 #include <nn/gfx/gfx_Device.h>
 #include <nn/gfx/gfx_Types.h>
+#include <nn/ui2d/Material.h>
 #include <nn/util/MathTypes.h>
 
 namespace nn::ui2d {
@@ -21,6 +22,8 @@ struct ResExtUserDataList;
 struct ResExtUserData;
 
 namespace detail {
+void CalculateQuad(DrawInfo&, Material::ConstantBufferForVertexShader*, const util::Float2&, const Size&);
+void CalculateQuad(DrawInfo&, Material&, const util::Float2&, const Size&);
 void DrawQuad(gfx::CommandBuffer&, DrawInfo&, Material&);
 }
 
