@@ -1,4 +1,5 @@
 #include <nn/font/font_WordWrapping.h>
+#include <cstring>
 
 namespace nn::font {
 
@@ -643,6 +644,82 @@ const u16* FindLineBreak(const u16* begin, const u16* end, WordWrapCallback& cal
         left = right;
         ignored = false;
     }
+}
+
+// NON_MATCHING: range-search loops and shared exits differ after loop unswitching.
+// 0x710132a6b8
+bool CalculateWordWrapping(u32* out_count, u16* destination, u32 capacity, const u16* source,
+                           u32 length, WordWrapCallback& callback, const WordWrapConfig& config) {
+    if (out_count)
+        *out_count = 0;
+    if (capacity == 0 || !destination || !source)
+        return false;
+    destination[0] = 0;
+    if (length == 0 || source[0] == 0)
+        return true;
+
+    const s32 initial_limit = config._0;
+    const u16* end = source + length;
+    const u16* cursor = source;
+    s32 written = 0;
+    s32 line_count = 0;
+    bool success = false;
+    for (;;) {
+        const u16* last = FindLineBreak(cursor, end, callback, config);
+        const s32 line_length = s32(last - cursor) + 1;
+        const s32 remaining = s32(capacity - written - 1);
+        const s32 copied = remaining < line_length ? remaining : line_length;
+        std::memcpy(destination + written, cursor, copied * sizeof(u16));
+        written += copied;
+        destination[written] = 0;
+        if (remaining < line_length)
+            break;
+        cursor = last + 1;
+        if (cursor == end) {
+            success = true;
+            break;
+        }
+
+        ++line_count;
+        if (initial_limit >= 1 && line_count >= config._0)
+            break;
+        if (*last != 0xa) {
+            if (written + 1 >= capacity)
+                break;
+            destination[written++] = 0xa;
+            destination[written] = 0;
+        }
+
+        if (config._4 != 0) {
+            for (;;) {
+                const u32 code = *cursor;
+                s32 lower = 0;
+                s32 upper = 1986;
+                while (upper - lower > 1) {
+                    const s32 middle = (lower + upper) / 2;
+                    if (sUnk_7101EC8B74[middle].first > code)
+                        upper = middle;
+                    else
+                        lower = middle;
+                }
+                const CharacterRange& range = sUnk_7101EC8B74[lower];
+                if (code > range.first + range.length || range.category != 38)
+                    break;
+                ++cursor;
+                if (cursor == end)
+                    break;
+            }
+            if (cursor == end) {
+                --written;
+                destination[written] = 0;
+                success = true;
+                break;
+            }
+        }
+    }
+    if (out_count)
+        *out_count = written;
+    return success;
 }
 
 }  // namespace WordWrapping
