@@ -28,6 +28,30 @@ void CalculateQuad(DrawInfo& draw_info, Material& material, const util::Float2& 
     CalculateQuad(draw_info, material.GetConstantBufferForVertexShader(draw_info), position, size);
 }
 
+// 0x7100ac029c
+// NON_MATCHING: native unrolls the three coordinate slots; this version retains the loop.
+void CalculateQuadWithTexCoords(DrawInfo& draw_info, Material& material,
+                                const util::Float2& position, const Size& size, s32 count,
+                                const util::Float2 (*coordinates)[4]) {
+    auto* buffer = material.GetConstantBufferForVertexShader(draw_info);
+    if (count > 0 && coordinates) {
+        for (s32 slot = 0; slot < 3; ++slot) {
+            const s8 index = draw_info._e8[slot];
+            if (index < 0)
+                break;
+            if (index < count) {
+                for (s32 vertex = 0; vertex < 4; ++vertex) {
+                    buffer->textureCoordinates[slot][vertex].x = coordinates[index][vertex].x;
+                    buffer->textureCoordinates[slot][vertex].y = coordinates[index][vertex].y;
+                    buffer->textureCoordinates[slot][vertex].z = 0.0f;
+                    buffer->textureCoordinates[slot][vertex].w = 1.0f;
+                }
+            }
+        }
+    }
+    CalculateQuad(draw_info, buffer, position, size);
+}
+
 // 0x7100ac045c
 void DrawQuad(gfx::CommandBuffer& command_buffer, DrawInfo& draw_info, Material& material) {
     material.sub_7100AC50CC(&command_buffer);

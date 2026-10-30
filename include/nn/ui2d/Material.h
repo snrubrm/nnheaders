@@ -64,7 +64,9 @@ public:
     struct ConstantBufferForVertexShader {
         u8 _0[0x40];
         util::Matrix4x3fType matrix;
-        u8 _70[0x1a0];
+        u8 _70[0x70];
+        util::Float4 textureCoordinates[3][4];
+        u8 _1a0[0x70];
         Size size;
         util::Float2 position;
     };
