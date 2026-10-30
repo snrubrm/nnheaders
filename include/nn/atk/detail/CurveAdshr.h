@@ -12,6 +12,9 @@ public:
     void Initialize(f32 value);
     void Reset(f32 value);
     f32 GetValue() const;
+    // Inline-only, name guessed: Channel::Release/NoteOff and SequenceTrack::NoteOn all
+    // independently compare the envelope state at +0.
+    u32 GetState() const { return mState; }
     void SetDecay(int decay);
     void SetRelease(int release);
     void SetAttack(int attack);

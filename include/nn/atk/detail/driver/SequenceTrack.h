@@ -22,6 +22,9 @@ public:
     int ParseNextTick(bool flag);
     void FreeAllChannel();
     void PauseAllChannel(bool pause);
+    void ReleaseAllChannel(int release);
+    void UpdateChannelLength();
+    void UpdateChannelParam();
 
     void Open();
     void SetMute(SequenceMute mute);
@@ -71,7 +74,8 @@ private:
     u8 _121[3];
     s32 _124;
     u8 _128;
-    u8 _129[2];
+    u8 _129;
+    u8 _12a;
     /* 0x12b */ u8 mBankIndex;
     u8 _12c[0x136 - 0x12c];
     s16 _136;

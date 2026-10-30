@@ -21,6 +21,9 @@ public:
     ~Channel();
     static void DetachChannel(Channel* channel);
     void SetBiquadFilter(int type, float frequency);
+    void Release();
+    void NoteOff();
+    void UpdateSweep(int milliseconds);
 
 private:
     friend class SequenceTrack;
@@ -45,7 +48,9 @@ private:
     u8 _bc[4];
     u8 mPaused;               // +0xc0
     u8 mActive;               // +0xc1
-    u8 _c2[4];
+    u8 _c2;
+    u8 _c3;
+    u8 _c4[2];
     u8 mBiquadType;           // +0xc6
     u8 _c7[0xd4 - 0xc7];
     f32 mBiquadFrequency;     // +0xd4

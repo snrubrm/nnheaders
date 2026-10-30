@@ -19,6 +19,30 @@ void SequenceTrack::PauseAllChannel(bool pause) {
     }
 }
 
+void SequenceTrack::ReleaseAllChannel(int release) {
+    UpdateChannelParam();
+    for (Channel* channel = mChannelHead; channel; channel = channel->mNext) {
+        if (channel->mActive) {
+            if (release >= 0)
+                channel->mEnvelope.SetRelease(release & 0xff);
+            channel->Release();
+        }
+    }
+}
+
+void SequenceTrack::UpdateChannelLength() {
+    if (!mIsOpen)
+        return;
+    for (Channel* channel = mChannelHead; channel; channel = channel->mNext) {
+        if (channel->_158 > 0)
+            --channel->_158;
+        if (channel->_158 == 0 && channel->mEnvelope.GetState() != 4 && _12a == 0)
+            channel->NoteOff();
+        if (channel->_c3 == 0)
+            channel->UpdateSweep(1);
+    }
+}
+
 // NON_MATCHING: the compiler reorganizes the counter and parse-loop branches.
 int SequenceTrack::ParseNextTick(bool flag) {
     if (!mIsOpen)

@@ -7,7 +7,8 @@ namespace nn::atk::detail::driver {
 class DisposeCallback {
 public:
     virtual ~DisposeCallback();
-    virtual void InvalidateData(const void* begin, const void* end) = 0;
+    // The slot is established by native dispatch; whether the base is pure is unresolved.
+    virtual void InvalidateData(const void* begin, const void* end);
 
 private:
     nn::util::IntrusiveListNode mNode;  // +0x8
