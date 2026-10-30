@@ -29,7 +29,7 @@ size_t SoundArchivePlayer::GetRequiredStreamCacheSize(const SoundArchive* archiv
     return detail::StreamSoundRuntime::GetRequiredStreamCacheSize(archive, unknown);
 }
 
-u32 SoundArchivePlayer::GetRequiredStreamBufferSize(const SoundArchive* archive) const {
+size_t SoundArchivePlayer::GetRequiredStreamBufferSize(const SoundArchive* archive) const {
     return mStreamSoundRuntime.GetRequiredStreamBufferSize(archive);
 }
 

@@ -20,10 +20,12 @@ public:
     // caller's size_t cache size; no StreamSoundRuntime receiver is passed.
     static size_t GetRequiredStreamCacheSize(const SoundArchive* archive, size_t cache_size);
     // 0x710135035c / 0x71013503ac (declared only; bodies U).
-    u32 GetRequiredStreamBufferSize(const SoundArchive* archive) const;
+    size_t GetRequiredStreamBufferSize(const SoundArchive* archive) const;
     static u32 GetRequiredStreamBufferTimes(const SoundArchive* archive);
 
-    u8 _0[0xB0];
+    u8 _0[0xa8];
+    s32 _a8;  // Constructor initializes this multiplier to 5.
+    u8 _ac[4];
 };
 }  // namespace detail
 }  // namespace atk
