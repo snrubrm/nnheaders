@@ -150,6 +150,40 @@ CharWidths ScalableFont::GetCharWidths(u32 code) const {
             static_cast<u8>(node->charWidth)};
 }
 
+// 0x710132753c
+void ScalableFont::GetGlyph(Glyph* glyph, u32 code) const {
+    GlyphNode* node = mTextureCache->FindGlyphNode(code, mWidth, mFontFace);
+    u16 width;
+    if (!node || (node->flags & 0x42) || (!(node->flags & 0x35) && !node->requestMask)) {
+        if (_2f != 2 && mTextureCache->IsGlyphExistInFont(code, mFontFace)) {
+            width = mTextureCache->CalculateCharWidth(code, mWidth, mFontFace);
+            node = mTextureCache->FindGlyphNode(' ', mWidth, mFontFace);
+        } else {
+            node = mTextureCache->FindGlyphNode(mAlternateChar, mWidth, mFontFace);
+            width = node->charWidth;
+        }
+    } else {
+        width = node->charWidth;
+    }
+    glyph->leftWidth = node->leftWidth;
+    glyph->glyphWidth = node->glyphWidth;
+    glyph->charWidth = width;
+    glyph->_e = node->_44;
+    glyph->height = node->_4a + 1;
+    glyph->_12 = node->_46 + 1;
+    glyph->cellX = node->_40 + 1;
+    glyph->cellY = node->_42;
+    glyph->pTexture = mTextureCache->mTextureData;
+    glyph->sheetIndex = 0;
+    glyph->_1e = 0;
+    glyph->texFormat = TextureFormat_A8;
+    glyph->texWidth = mTextureCache->mTextureWidth;
+    glyph->texHeight = mTextureCache->mTextureHeight;
+    glyph->pTextureObject = &mTextureCache->mTextureObject;
+    glyph->_28 = node->_50 - mBaselinePos;
+    node->flags |= 4;
+}
+
 bool ScalableFont::HasGlyph(u32 code) const {
     GlyphNode* node = mTextureCache->FindGlyphNode(code, mWidth, mFontFace);
     if (!node || (node->flags & 0x42))

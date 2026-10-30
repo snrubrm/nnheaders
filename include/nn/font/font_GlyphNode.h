@@ -16,12 +16,16 @@ struct GlyphNode {
     u8 flags;
     u8 _39[3];
     u32 requestMask;
-    u8 _40[8];
+    u16 _40;
+    u16 _42;
+    u16 _44;
+    u16 _46;
     u16 glyphWidth;
-    u8 _4a[2];
+    u16 _4a;
     u16 charWidth;
     s16 leftWidth;
-    u8 _50[8];
+    u16 _50;
+    u8 _52[6];
 };
 static_assert(sizeof(GlyphNode) == 0x58);
 
