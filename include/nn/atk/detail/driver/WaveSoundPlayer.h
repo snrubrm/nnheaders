@@ -28,6 +28,7 @@ public:
 
     void SetChannelPriority(int priority);
     void SetReleasePriorityFix(bool fix);
+    void FinishPlayer();
     s64 GetPlaySamplePosition(bool flag) const;
     static void ChannelCallbackFunc(Channel*, Channel::ChannelCallbackStatus, void*);
 
@@ -41,6 +42,8 @@ private:
     u8 _e3[0x138 - 0xe3];
     Channel* mChannel;         // +0x138
     u32 _140;                  // copied from the prepare argument
+    u8 _144[0x14a - 0x144];
+    u8 _14a;                   // callback registration state
 };
 
 }  // namespace nn::atk::detail::driver

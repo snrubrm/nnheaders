@@ -20,6 +20,8 @@ public:
     };
 
     static SoundThread& GetInstance();
+    // Return type inferred from callers that discard the result.
+    void UnregisterPlayerCallback(PlayerCallback* callback);
 
     /// Registers a function that is called by the sound thread every sound frame with `arg`.
     void RegisterSoundFrameUserCallback(void (*callback)(unsigned long), unsigned long arg);

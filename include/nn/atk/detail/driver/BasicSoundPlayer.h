@@ -27,13 +27,16 @@ protected:
     void SetStarted(bool started) { _31 = started; }
     // Inline-only, name guessed: sequence, wave and advanced-wave Pause write +0x32.
     void SetPaused(bool paused) { _32 = paused; }
+    // Inline-only, name guessed: wave FinishPlayer, Finalize and Update write +0x33.
+    void SetFinished(bool finished) { _33 = finished; }
 
 private:
     nn::os::Event mEvent;  // +0x8
     u8 _30;
     u8 _31;
     u8 _32;
-    u8 _33[0x44 - 0x33];
+    u8 _33;
+    u8 _34[0x44 - 0x34];
     f32 mBiquadFrequency;  // +0x44
     u8 mBiquadType;        // +0x48
     u8 _49[0xb0 - 0x49];
