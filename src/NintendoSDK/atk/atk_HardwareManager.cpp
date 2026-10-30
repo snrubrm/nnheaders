@@ -36,6 +36,33 @@ size_t HardwareManager::GetRequiredPerformanceFramesBufferSize(
     return (size + 63) & ~63ULL;
 }
 
+// NON_MATCHING: the compiler places the renderer parameter at a different stack offset.
+size_t HardwareManager::GetRequiredCircularBufferSinkWithMemoryPoolBufferSize(
+    const HardwareManagerParameter& parameter) const {
+    nn::audio::AudioRendererParameter renderer_parameter;
+    SetupAudioRendererParameter(&renderer_parameter, parameter);
+    const size_t size = nn::audio::GetRequiredBufferSizeForCircularBufferSink(
+        &renderer_parameter, _758 ? 2 : 6, parameter.mRecorderFrameCount,
+        nn::audio::SampleFormat_PcmInt16);
+    return (size + 0x1fff) & ~0xfffULL;
+}
+
+// NON_MATCHING: stack placement differs and the compiler reloads the unused setup receiver.
+size_t HardwareManager::GetRequiredRecorderWorkBufferSize(
+    const HardwareManagerParameter& parameter) const {
+    nn::audio::AudioRendererParameter renderer_parameter;
+    SetupAudioRendererParameter(&renderer_parameter, parameter);
+    const size_t sink_size = nn::audio::GetRequiredBufferSizeForCircularBufferSink(
+        &renderer_parameter, _758 ? 2 : 6, parameter.mRecorderFrameCount,
+        nn::audio::SampleFormat_PcmInt16);
+    const size_t pool_size = (sink_size + 0x1fff) & ~0xfffULL;
+    SetupAudioRendererParameter(&renderer_parameter, parameter);
+    const size_t work_size = nn::audio::GetRequiredBufferSizeForCircularBufferSink(
+        &renderer_parameter, _758 ? 2 : 6, parameter.mRecorderFrameCount,
+        nn::audio::SampleFormat_PcmInt16);
+    return pool_size + work_size;
+}
+
 }  // namespace driver
 }  // namespace detail
 }  // namespace atk

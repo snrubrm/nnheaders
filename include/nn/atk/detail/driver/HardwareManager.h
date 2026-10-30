@@ -26,7 +26,11 @@ namespace nn::atk::detail::driver {
 
 class HardwareManager {
 public:
-    struct HardwareManagerParameter;
+    struct HardwareManagerParameter {
+        u8 _0[0x14];
+        s32 mRecorderFrameCount;
+        u8 _18[8];
+    };
     /// The master volume, which is faded linearly from the previous to the target volume over the frames that
     /// were given to SetMasterVolume (see sead::AudioResetterCafe::calc, 0x7100bb9858).
     f32 GetMasterVolume() const {
@@ -55,6 +59,9 @@ public:
     size_t GetRequiredMemSize(const HardwareManagerParameter& parameter) const;
     size_t GetRequiredEffectAuxBufferSize(const EffectAux* effect) const;
     size_t GetRequiredPerformanceFramesBufferSize(const HardwareManagerParameter& parameter) const;
+    size_t GetRequiredRecorderWorkBufferSize(const HardwareManagerParameter& parameter) const;
+    size_t GetRequiredCircularBufferSinkWithMemoryPoolBufferSize(
+        const HardwareManagerParameter& parameter) const;
     bool IsFinishedClearEffect(AuxBus bus, OutputDevice device, int index) const;
     /// 0x71013450b8 (declared only)
     void SetOutputMode(OutputMode mode, OutputDevice device);
