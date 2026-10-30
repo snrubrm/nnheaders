@@ -130,6 +130,17 @@ void SequenceSoundPlayer::SetTrackTvVolume(u32 track_mask, f32 volume) {
     }
 }
 
+// NON_MATCHING: the compiler copies each record in one pass instead of six component passes.
+void SequenceSoundPlayer::SetTrackChannelTvMixParameter(u32 track_mask, u32 channel,
+                                                         const nn::atk::MixParameter& mix) {
+    for (s32 i = 0; i < 16 && track_mask != 0; ++i, track_mask >>= 1) {
+        if ((track_mask & 1) != 0) {
+            if (SequenceTrack* track = mTracks[i])
+                track->mChannelMix[channel] = mix;
+        }
+    }
+}
+
 void SequenceSoundPlayer::SetTrackTvPan(u32 track_mask, f32 pan) {
     for (s32 i = 0; i < 16 && track_mask != 0; ++i, track_mask >>= 1) {
         if ((track_mask & 1) != 0) {
