@@ -48,8 +48,7 @@ public:
     virtual ShaderInfo* AcquireShader(gfx::Device* device, const char* name) = 0;
     virtual bool LoadTexture(ResourceTextureInfo* texture, gfx::Device* device,
                              const char* name) = 0;
-    // The original slot 14 loads a font; its source name is unknown.
-    virtual font::Font* sub_710132B174(gfx::Device* device, const char* name);
+    virtual font::Font* LoadFont(gfx::Device* device, const char* name);
     virtual bool LoadShader(ShaderInfo* shader, gfx::Device* device, const char* name) = 0;
 };
 static_assert(sizeof(ResourceAccessor) == 8);
