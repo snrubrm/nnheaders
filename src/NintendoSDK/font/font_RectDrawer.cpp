@@ -2,12 +2,14 @@
 
 #include <algorithm>
 #include <nn/font/font_GpuBuffer.h>
+#include <nn/font/font_TextureObject.h>
 #include <nn/gfx/gfx_BufferInfo.h>
 #include <nn/gfx/gfx_MemoryPoolInfo.h>
 #include <nn/gfx/gfx_StateInfo.h>
 #include <nn/util/util_BinaryFormat.h>
 #include <nn/util/util_BitUtil.h>
 #include <nn/gfx/gfx_GpuAddress.h>
+#include <nn/gfx/gfx_CommandBuffer.h>
 
 #include <nn/gfx/gfx_ResShader.h>
 #include <nn/gfx/detail/gfx_ResShaderImpl.h>
@@ -150,6 +152,71 @@ void RectDrawer::Draw(gfx::CommandBuffer& command_buffer, const DispStringBuffer
         AddDrawCommand(command_buffer, vertex_data, flags | 1u, constant_address, vertex_address);
     } else {
         AddDrawCommand(command_buffer, vertex_data, buffer.mFlags, constant_address, vertex_address);
+    }
+}
+
+// NON_MATCHING: signed count, local lifetimes and instruction scheduling differ.
+// 0x7101325484
+void RectDrawer::AddDrawCommand(gfx::CommandBuffer& command_buffer,
+                                const DispStringBuffer::VertexBufferData& data, u32 flags,
+                                const gfx::GpuAddress& constant_address,
+                                const gfx::GpuAddress& vertex_address) const {
+    gfx::GpuAddress current_address = vertex_address;
+    u32 previous_variation = 7;
+    const u32 count_shift = (flags >> 1) & 1;
+    for (s32 i = 0; i < data.mTextureCount; ++i) {
+        const DispStringBuffer::TextureEntry& entry = data.mTextures[i];
+        if (!entry.mCount)
+            continue;
+
+        u32 variation = (entry.mFlags & 1) ? (flags & 1) + 1 : 0;
+        if (flags & 4)
+            variation = (entry.mFlags & 2) ? (flags & 1) | 4 : 3;
+
+        if (variation != previous_variation) {
+            gfx::detail::ShaderImpl<gfx::DefaultApi>* shader =
+                mResShaderFile->GetShaderContainer()->GetResShaderVariation(variation)
+                    ->GetResShaderProgram(static_cast<gfx::ShaderCodeType>(mShaderSelection))
+                    ->GetShader();
+            command_buffer.gfx::detail::CommandBufferImpl<gfx::DefaultApi>::SetShader(shader, 0x3f);
+            command_buffer.gfx::detail::CommandBufferImpl<gfx::DefaultApi>::SetVertexState(
+                &mVertexStates[variation]);
+            gfx::GpuAddress address;
+            mVertexBuffer.GetGpuAddress(&address);
+            command_buffer.gfx::detail::CommandBufferImpl<gfx::DefaultApi>::SetVertexBuffer(
+                mVertexUniformSlots[variation], address, 28, 112);
+            command_buffer.gfx::detail::CommandBufferImpl<gfx::DefaultApi>::SetConstantBuffer(
+                mVertexUniformSlots[variation], gfx::ShaderStage_Vertex, constant_address, 128);
+            command_buffer.gfx::detail::CommandBufferImpl<gfx::DefaultApi>::SetConstantBuffer(
+                mPixelUniformSlots[variation], gfx::ShaderStage_Pixel, constant_address, 128);
+            previous_variation = variation;
+        }
+
+        const size_t size = (entry.mCount * size_t((flags & 4) ? 96 : 64)) << count_shift;
+        command_buffer.gfx::detail::CommandBufferImpl<gfx::DefaultApi>::SetUnorderedAccessBuffer(
+            mVertexUnorderedAccessSlots[variation], gfx::ShaderStage_Vertex, current_address, size);
+        current_address.Offset(size);
+        command_buffer.gfx::detail::CommandBufferImpl<gfx::DefaultApi>::SetTextureAndSampler(
+            mTextureSlots[variation], gfx::ShaderStage_Pixel, entry.mTexture->mDescriptorSlot,
+            mSamplerSlot);
+
+        gfx::GpuAddress interpolation_address;
+        size_t interpolation_size;
+        if (entry.mFlags & 1) {
+            mInterpolationEnabledBuffer.GetGpuAddress(&interpolation_address);
+            interpolation_size = mInterpolationEnabledBufferSize;
+        } else {
+            mInterpolationDisabledBuffer.GetGpuAddress(&interpolation_address);
+            interpolation_size = mInterpolationDisabledBufferSize;
+        }
+        command_buffer.gfx::detail::CommandBufferImpl<gfx::DefaultApi>::SetConstantBuffer(
+            mPixelInterpolationSlots[variation], gfx::ShaderStage_Pixel, interpolation_address,
+            interpolation_size);
+        gfx::GpuAddress index_address;
+        mIndexBuffer.GetGpuAddress(&index_address);
+        command_buffer.gfx::detail::CommandBufferImpl<gfx::DefaultApi>::DrawIndexed(
+            gfx::PrimitiveTopology_TriangleList, gfx::IndexFormat_Uint16, index_address, 6, 0,
+            entry.mCount << count_shift, 0);
     }
 }
 

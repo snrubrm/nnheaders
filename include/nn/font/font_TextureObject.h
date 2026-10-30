@@ -37,6 +37,8 @@ public:
     gfx::DescriptorSlot* GetDescriptorSlot() { return &mDescriptorSlot; }
 
 protected:
+    friend class RectDrawer;
+
     // inline-only in the original (constructor, destructor and ResourceTextureObject's constructor all run it); name is
     // a guess
     void Reset() {
