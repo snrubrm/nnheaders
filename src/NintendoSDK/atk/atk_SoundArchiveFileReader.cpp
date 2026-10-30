@@ -7,6 +7,41 @@ namespace nn {
 namespace atk {
 namespace detail {
 
+bool SoundArchiveFileReader::ReadWaveArchiveInfo(u32 id, SoundArchive::WaveArchiveInfo* info) const {
+    const auto* record = mInfoBlock->GetWaveArchiveInfo(id);
+    if (!record)
+        return false;
+    info->mFileId = record->mItemFileId;
+    info->mWaveCount = record->GetWaveCount();
+    info->_8 = record->_4;
+    return true;
+}
+
+bool SoundArchiveFileReader::ReadSequenceSoundInfo(u32 id, SoundArchive::SequenceSoundInfo* info) const {
+    const auto* sound = mInfoBlock->GetSoundInfo(id);
+    if (!sound || sound->GetSoundType() != 1)
+        return false;
+    const auto* record = sound->GetSequenceSoundInfo();
+    info->mStartOffset = record->GetStartOffset();
+    info->_14 = record->_8;
+    info->mChannelPriority = record->GetChannelPriority();
+    info->mReleasePriorityFix = record->IsReleasePriorityFix();
+    record->GetBankIds(info->mBankIds);
+    return true;
+}
+
+bool SoundArchiveFileReader::ReadWaveSoundInfo(u32 id, SoundArchive::WaveSoundInfo* info) const {
+    const auto* sound = mInfoBlock->GetSoundInfo(id);
+    if (!sound || sound->GetSoundType() != 3)
+        return false;
+    const auto* record = sound->GetWaveSoundInfo();
+    info->_0 = record->_0;
+    info->_4 = record->_4;
+    info->mChannelPriority = record->GetChannelPriority();
+    info->mReleasePriorityFix = record->GetIsReleasePriorityFix() != 0;
+    return true;
+}
+
 bool SoundArchiveFileReader::ReadBankInfo(u32 bank_id, SoundArchive::BankInfo* info) const {
     const auto* record = mInfoBlock->GetBankInfo(bank_id);
     if (!record)

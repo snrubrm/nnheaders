@@ -110,11 +110,13 @@ struct SoundArchiveFile {
     /// A wave sound record; the optional values are present when bit 0 of the flag byte is set.
     struct WaveSoundInfo {
         u32 GetChannelPriority() const;
-        u32 GetIsReleasePriorityFix() const;
+        u8 GetIsReleasePriorityFix() const;
         u32 GetPrefetchFileId() const { return mPrefetchFileId; }
 
+        u32 _0;
+        u32 _4;
+
     private:
-        u8 _0[8];
         u8 mFlags;  // +0x8
         u8 _9[3];
         u32 mChannelPriority;  // +0xc, the release-priority-fix flag sits in its upper bits
@@ -135,7 +137,11 @@ struct SoundArchiveFile {
     private:
         u8 _0[4];
         s32 mBankIdTableOffset;  // +0x4
-        u8 _8[4];
+
+    public:
+        u32 _8;
+
+    private:
         u32 mOptionFlags;  // +0xc, followed by the present optional values
         u32 mStartOffset;  // +0x10
     };
@@ -178,7 +184,8 @@ struct SoundArchiveFile {
         u32 GetWaveCount() const;
 
         u32 mItemFileId;  // +0
-        u8 _4[4];
+        u8 _4;
+        u8 _5[3];
         u32 mOptionFlags;  // +0x8, followed by the present optional values
     };
 
@@ -294,6 +301,24 @@ public:
         bool isAdvancedWaveSoundEnabled;
     };
 
+    struct WaveArchiveInfo {
+        u32 mFileId;
+        u32 mWaveCount;
+        u8 _8;
+    };
+    struct SequenceSoundInfo {
+        u32 mStartOffset;
+        u32 mBankIds[4];
+        u32 _14;
+        u8 mChannelPriority;
+        bool mReleasePriorityFix;
+    };
+    struct WaveSoundInfo {
+        u32 _0;
+        u32 _4;
+        u8 mChannelPriority;
+        bool mReleasePriorityFix;
+    };
     struct BankInfo {
         u32 mFileId;
     };

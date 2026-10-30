@@ -63,7 +63,7 @@ u32 SoundArchiveFile::WaveSoundInfo::GetChannelPriority() const {
     return mChannelPriority;
 }
 
-u32 SoundArchiveFile::WaveSoundInfo::GetIsReleasePriorityFix() const {
+u8 SoundArchiveFile::WaveSoundInfo::GetIsReleasePriorityFix() const {
     if (!(mFlags & 1))
         return 0;
     return mChannelPriority >> 8;
