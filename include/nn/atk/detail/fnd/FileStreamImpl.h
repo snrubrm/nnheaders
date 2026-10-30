@@ -1,6 +1,7 @@
 #pragma once
 
 #include <nn/atk/detail/fnd/Stream.h>
+#include <nn/atk/detail/fnd/StreamCache.h>
 #include <nn/fs/fs_types.h>
 #include <nn/types.h>
 
@@ -11,36 +12,6 @@ namespace nn::atk::detail::fnd {
 // at +0x10. The nested DirectStream object at +0x68 only implements Stream.
 class FileStreamImpl : public FileStream {
 public:
-    // Reads and writes go through the cache buffer while it is enabled.
-    class StreamCache {
-    public:
-        StreamCache();
-        // 0x710135cd5c / 0x710135cd74: installs the stream and the aligned buffer range.
-        void Initialize(Stream* stream, void* buffer, u64 size);
-        void Finalize();
-        s32 Read(void* data, u64 size, FndResult* result, FsAccessLog* log, void* unk);
-        s32 Write(const void* data, u64 size, FndResult* result);
-        s64 Seek(s64 offset, Stream::SeekOrigin origin);
-
-        // Inline-only in the original; name is a guess. StreamCache::Read 0x710135cd8c repeats
-        // the same three tests before it uses the cache.
-        bool isEnabled() const
-        {
-            return mStream != nullptr && mBuffer != nullptr && mSize != 0;
-        }
-
-        u64 getPosition() const { return mPosition; }
-
-    private:
-        u8 _0[8];
-        /* 0x08 */ Stream* mStream;
-        /* 0x10 */ u64 mPosition;
-        /* 0x18 */ void* mBuffer;
-        /* 0x20 */ u64 mSize;
-        u8 _28[0x40 - 0x28];
-    };
-    static_assert(sizeof(StreamCache) == 0x40);
-
     // 0x710135c864: the original body is a four-byte empty function.
     ~FileStreamImpl() override;
     // 0x710135c4c8: zeroes the handle, the flag and the position and installs the nested stream.

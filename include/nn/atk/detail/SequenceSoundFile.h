@@ -33,6 +33,16 @@ public:
     public:
         // 0x71013650c8
         bool GetOffsetByLabel(const char* label, u32* offset) const;
+
+    private:
+        struct LabelEntry {
+            u32 _0;
+            u32 mOffset;
+            u32 _8;
+            char mLabel[1];
+        };
+
+        Util::ReferenceTable mEntries;
     };
 
     struct DataBlock {

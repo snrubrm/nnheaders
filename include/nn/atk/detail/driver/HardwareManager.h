@@ -7,13 +7,25 @@
 #include <nn/os.h>
 #include <nn/os/os_Mutex.h>
 #include <nn/types.h>
+#include <atomic>
 
 namespace nn::atk::detail {
 
-/// Declared only: the voice allocator's required-size query 0x7101356d6c is still undecompiled.
+class LowLevelVoice;
+
 class LowLevelVoiceAllocator {
 public:
-    static int GetRequiredMemSize(int max_voices);
+    LowLevelVoiceAllocator();
+    static size_t GetRequiredMemSize(int max_voices);
+
+private:
+    LowLevelVoice* mVoices;        // +0x00
+    LowLevelVoice** mFreeVoices;   // +0x08
+    s32 mActiveVoiceCount;         // +0x10
+    u8 _14[4];
+    s32* mVoiceIndices;            // +0x18
+    s32 mVoiceCapacity;            // +0x20
+    std::atomic<u32> _24;          // +0x24: UpdateAllVoiceState publishes this count.
 };
 
 }  // namespace nn::atk::detail
@@ -64,11 +76,12 @@ public:
     nn::os::MutexType* GetAudioRendererMutex() { return &mAudioRendererMutex; }
 
     void SetMasterVolume(f32 volume, s32 frames);
+    void UpdateEffect();
     // Native 1344670 returns the renderer channel count (2 or 6). The private
     // configuration flag it reads remains outside this partial representation.
     int GetChannelCountMax() const;
     /// 0x7101344564: forwards the voice count to LowLevelVoiceAllocator::GetRequiredMemSize.
-    int GetRequiredMemSizeForMemoryPool(int max_voices) const;
+    size_t GetRequiredMemSizeForMemoryPool(int max_voices) const;
     void AttachMemoryPool(nn::audio::MemoryPoolType* pool, void* address, size_t size, bool wait);
     void DetachMemoryPool(nn::audio::MemoryPoolType* pool, bool wait);
     size_t GetRequiredMemSize(const HardwareManagerParameter& parameter) const;

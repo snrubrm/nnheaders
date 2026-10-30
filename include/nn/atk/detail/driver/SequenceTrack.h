@@ -13,6 +13,7 @@ namespace nn::atk::detail::driver {
 // channel and tick state of the track is not modelled.
 class SequenceTrack {
 public:
+    void Open();
     void SetMute(SequenceMute mute);
     void SetSilence(bool silence, int fade_frames);
     void SetPlayerTrackNo(int track_no);
@@ -42,7 +43,8 @@ private:
 
     u8 _0[8];
     /* 0x8 */ u8 mPlayerTrackNo;
-    u8 _9[0xc - 0x9];
+    bool mIsOpen;
+    u8 _a[0xc - 0xa];
     /* 0xc */ f32 mVolume;
     /* 0x10 */ f32 mPitch;
     /* 0x14 */ u32 _14;
@@ -55,7 +57,12 @@ private:
     /* 0x68 */ const void* mSeqData;
     /* 0x70 */ const void* mSeqDataEnd;
     u8 _78;
-    u8 _79[0x12b - 0x79];
+    u8 _79[0x120 - 0x79];
+    u8 _120;
+    u8 _121[3];
+    s32 _124;
+    u8 _128;
+    u8 _129[2];
     /* 0x12b */ u8 mBankIndex;
     u8 _12c[0x198 - 0x12c];
     /* 0x198 */ u8 mVelocityRange;

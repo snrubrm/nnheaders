@@ -31,6 +31,7 @@ using SequenceUserProcCallback = void (*)(u16, SequenceUserProcCallbackParam*, v
 class SequenceSoundPlayer {
 public:
     SequenceSoundPlayer();  // 0x7101347490, declared only
+    static void InitSequenceSoundPlayer();
     enum StartOffsetType {
         StartOffsetType_0,
         StartOffsetType_1,
