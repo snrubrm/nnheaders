@@ -1,4 +1,7 @@
 #include <nn/ui2d/ArcExtractor.h>
+#include <nn/font/font_ResFont.h>
+#include <nn/util/util_BinaryFormat.h>
+#include <nn/util/util_BytePtr.h>
 
 #include <cstring>
 
@@ -69,6 +72,27 @@ bool ArcExtractor::PrepareArchive(const void* archive) {
     return true;
 }
 
+// NON_MATCHING: inlined file-access bounds checks remain; tag branches are not combined.
+// 0x710132acec
+void ArcExtractor::Unrelocate(const void* archive) {
+    ArcExtractor extractor(archive);
+    for (s32 i = 0; i < extractor.GetFileCount(); ++i) {
+        void* resource = const_cast<void*>(extractor.GetFileFast(nullptr, i));
+        // The native dispatch compares the entire eight-byte serialized prefix.
+        const u64 signature = *util::ConstBytePtr(resource).Get<u64>();
+        if (signature == util::MakeSignature('B', 'N', 'T', 'X') ||
+            signature == util::MakeSignature('B', 'N', 'S', 'H')) {
+            auto* header = static_cast<util::BinaryFileHeader*>(resource);
+            if (header->IsRelocated()) {
+                header->GetRelocationTable()->Unrelocate();
+                header->SetRelocated(false);
+            }
+        }
+        if (*util::ConstBytePtr(resource).Get<u64>() == util::MakeSignature('F', 'F', 'N', 'T'))
+            font::ResFont::Unrelocate(resource);
+    }
+}
+
 // 0x710132ae50
 s32 ArcExtractor::GetFileCount() const {
     return mFileCount < 0 ? 0 : mFileCount;
@@ -89,6 +113,55 @@ const void* ArcExtractor::GetFileFast(ArcFileInfo* info, s32 entry_id) {
         info->size = end - start;
     }
     return mDataBlock + start;
+}
+
+// NON_MATCHING: midpoint-result comparison lowering and instruction scheduling differ.
+// 0x710132aed4
+s32 ArcExtractor::ConvertPathToEntryId(const char* path) const {
+    const u32 multiplier = ReadU32(*util::ConstBytePtr(mFatHeader, 8).Get<u32>());
+    u32 hash = 0;
+    for (const char* character = path; *character; ++character)
+        hash = hash * multiplier + u8(*character);
+
+    s32 left = 0;
+    s32 right = mFileCount;
+    s32 index = -1;
+    for (;;) {
+        const s32 middle = (left + right) / 2;
+        const u32 entry_hash = ReadU32(mFatEntries[middle].hash);
+        if (entry_hash == hash) {
+            index = middle;
+            break;
+        }
+        if (entry_hash < hash) {
+            if (left == middle)
+                break;
+            left = middle;
+        } else {
+            if (right == middle)
+                break;
+            right = middle;
+        }
+    }
+    if (index == -1)
+        return -1;
+
+    const u32 name_info = ReadU32(mFatEntries[index].nameInfo);
+    if (name_info == 0)
+        return index;
+    index = index + 1 - s32(name_info >> 24);
+    for (; index < mFileCount; ++index) {
+        if (ReadU32(mFatEntries[index].hash) != hash)
+            return -1;
+        const u32 name_offset = ReadU32(mFatEntries[index].nameInfo) & 0xffffff;
+        // Native checks the unscaled offset, then resolves the name in four-byte units.
+        if (util::ConstBytePtr(mFntData, name_offset).Get<u8>() > mDataBlock)
+            return -1;
+        const char* name = util::ConstBytePtr(mFntData, name_offset << 2).Get<char>();
+        if (std::strcmp(path, name) == 0)
+            break;
+    }
+    return index;
 }
 
 }  // namespace nn::ui2d

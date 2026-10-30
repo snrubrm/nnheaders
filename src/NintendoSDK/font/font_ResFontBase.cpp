@@ -70,6 +70,23 @@ void ResFontBase::GenTextureNames(gfx::Device* device) {
     mTexture.Initialize(device, mMemoryPool, mPoolOffset + offset, mPoolSize);
 }
 
+// 0x7101326e24
+void ResFontBase::UnloadTexture(gfx::Device* device) const {
+    if (mTexture.IsSet()) {
+        auto* resource = mTexture.GetResTexture();
+        gfx::detail::TextureImpl<gfx::DefaultApi>* texture = resource->GetTexture();
+        texture->Finalize(device);
+        gfx::detail::TextureViewImpl<gfx::DefaultApi>* view = resource->GetTextureView();
+        view->Finalize(device);
+        auto* file = gfx::ResTextureFile::ResCast(const_cast<void*>(mTexture.GetData()));
+        auto& container = file->ToData().textureContainerData;
+        if (container.pCurrentMemoryPool.Get() == container.pTextureMemoryPool.Get())
+            container.pTextureMemoryPool.Get()->Finalize(device);
+        container.pCurrentMemoryPool.Clear();
+        mTexture.Reset();
+    }
+}
+
 // 0x7101326af8
 // NON_MATCHING: shared resource-table lookup changes binary-search control flow and register allocation.
 s32 ResFontBase::GetKerning(u32 first, u32 second) const {
