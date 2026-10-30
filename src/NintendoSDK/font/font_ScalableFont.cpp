@@ -1,5 +1,6 @@
 #include <nn/font/font_ScalableFont.h>
 
+#include <nn/font/font_GlyphNode.h>
 #include <nn/font/font_TextureCache.h>
 
 namespace nn::font {
@@ -88,6 +89,38 @@ bool ScalableFont::SetAlternateChar(u32 code) {
         return true;
     }
     return false;
+}
+
+s32 ScalableFont::GetCharWidth(u32 code) const {
+    GlyphNode* node = mTextureCache->FindGlyphNode(code, mWidth, mFontFace);
+    if (!node || (node->flags & 0x42)) {
+        if (_2f != 2 && mTextureCache->IsGlyphExistInFont(code, mFontFace))
+            return mTextureCache->CalculateCharWidth(code, mWidth, mFontFace);
+        node = mTextureCache->FindGlyphNode(mAlternateChar, mWidth, mFontFace);
+    }
+    return node->charWidth;
+}
+
+CharWidths ScalableFont::GetCharWidths(u32 code) const {
+    GlyphNode* node = mTextureCache->FindGlyphNode(code, mWidth, mFontFace);
+    if (!node || (node->flags & 0x42)) {
+        if (_2f != 2 && mTextureCache->IsGlyphExistInFont(code, mFontFace)) {
+            const s32 width = mTextureCache->CalculateCharWidth(code, mWidth, mFontFace);
+            return {0, static_cast<u8>(width), static_cast<u8>(width)};
+        }
+        node = mTextureCache->FindGlyphNode(mAlternateChar, mWidth, mFontFace);
+    }
+    return {static_cast<s8>(node->leftWidth), static_cast<u8>(node->glyphWidth),
+            static_cast<u8>(node->charWidth)};
+}
+
+bool ScalableFont::HasGlyph(u32 code) const {
+    GlyphNode* node = mTextureCache->FindGlyphNode(code, mWidth, mFontFace);
+    if (!node || (node->flags & 0x42))
+        return false;
+    if (node->flags & 0x35)
+        return true;
+    return node->requestMask != 0;
 }
 
 // 0x710132771c
