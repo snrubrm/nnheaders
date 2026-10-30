@@ -14,6 +14,16 @@ void AdvancedWaveSoundPlayer::Start() {
     SetStarted(true);
 }
 
+void AdvancedWaveSoundPlayer::Stop() {
+    SetFinished(true);
+    if (_766) {
+        SoundThread::GetInstance().UnregisterPlayerCallback(this);
+        _766 = 0;
+    }
+    if (IsStarted())
+        SetStarted(false);
+}
+
 void AdvancedWaveSoundPlayer::Pause(bool pause) {
     SetPaused(pause);
 }

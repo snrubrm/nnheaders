@@ -25,6 +25,7 @@ private:
     u8 _c8[0x764 - 0xc8];
     u8 _764;
     u8 _765;
+    u8 _766;  // callback registration state
 };
 
 }  // namespace nn::atk::detail::driver
