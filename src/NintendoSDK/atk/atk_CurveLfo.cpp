@@ -45,6 +45,53 @@ void CurveLfo::InitializeCurveTable() {
     sCurveTable[4] = sub_7101353C8C;
 }
 
+void CurveLfo::Reset() {
+    mElapsed = 0;
+    mPhase = 0.0f;
+    mCachedValue = 1.0f;
+    mPhaseInitialized = false;
+    mPhaseWrapped = false;
+}
+
+// NON_MATCHING: the delay update uses a conditional select instead of separate branches.
+void CurveLfo::Update(int time) {
+    if (mElapsed < mParam.mDelay) {
+        const u32 elapsed = mElapsed + time;
+        if (elapsed <= mParam.mDelay) {
+            mElapsed = elapsed;
+            return;
+        }
+        time = elapsed - mParam.mDelay;
+        mElapsed = mParam.mDelay;
+    }
+    if (mParam.mSpeed > 0.0f) {
+        if (!mPhaseInitialized) {
+            mPhase = static_cast<f32>(mParam.mPhase) / 127.0f;
+            mPhaseInitialized = true;
+        }
+        const f32 phase = mPhase + static_cast<f32>(time) * mParam.mSpeed / 1000.0f;
+        mPhaseWrapped = phase >= 1.0f;
+        mPhase = phase - static_cast<int>(phase);
+    }
+}
+
+f32 CurveLfo::GetValue() const {
+    if (mParam.mDepth == 0.0f || mElapsed < mParam.mDelay)
+        return 0.0f;
+    const auto curve = sCurveTable[mParam.mCurve];
+    f32 value;
+    if (!curve) {
+        value = 1.0f;
+    } else if (mParam.mCurve == 4) {
+        if (mPhaseWrapped)
+            mCachedValue = curve(mPhase);
+        value = mCachedValue;
+    } else {
+        value = curve(mPhase);
+    }
+    return value * mParam.mDepth * mParam.mRange;
+}
+
 void CurveLfoParam::Initialize() {
     mDepth = 0.0f;
     mSpeed = 6.25f;
