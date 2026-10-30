@@ -47,6 +47,31 @@ struct ResParts : ResPane {
 };
 static_assert(sizeof(ResParts) == 0x60);
 
+// Window resource prefix (InitializeSize 0xabd038). Further resource fields and total extent
+// are not established by these margin reads.
+struct ResWindow : ResPane {
+    u16 mFrameMargins[4];
+    u16 mContentMargins[4];
+    u8 mFrameCount;
+    u8 mResourceFlags;
+    u8 _66[2];
+    u32 mContentOffset;
+    u32 mFrameOffsetsOffset;
+};
+
+// Window constructor's serialized content and frame prefixes; names are descriptive guesses.
+// Coordinate quads follow the content prefix. Frame offsets are relative to their ResWindow.
+struct ResWindowContent {
+    util::Unorm8x4 mColors[4];
+    u16 mMaterialIndex;
+    u8 mCoordinateCount;
+};
+
+struct ResWindowFrame {
+    u16 mMaterialIndex;
+    u8 mTextureFlip;
+};
+
 // Fixed text-box resource header, read by TextBox's constructor (0xaba5b8).
 // The string, its ID and optional arrays are addressed by relative offsets.
 struct ResTextBox : ResPane {

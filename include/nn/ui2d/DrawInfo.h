@@ -53,7 +53,7 @@ public:
     /* 0xc8 */ font::GpuBuffer* mUi2dConstantBuffer;
     /* 0xd0 */ font::GpuBuffer* mFontConstantBuffer;
     /* 0xd8 */ u64 _d8[2];  // zero-initialised
-    /* 0xe8 */ u8 _e8[3];
+    /* 0xe8 */ s8 _e8[3];  // coordinate indices; negative means no further slots
     /* 0xeb */ u8 _eb[7];  // zero-initialised flag bytes (Pane::LoadMtx clears the one at +0xee)
 };
 static_assert(sizeof(DrawInfo) == 0xf8);

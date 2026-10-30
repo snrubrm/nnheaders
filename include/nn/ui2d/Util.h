@@ -24,6 +24,8 @@ struct ResExtUserData;
 namespace detail {
 void CalculateQuad(DrawInfo&, Material::ConstantBufferForVertexShader*, const util::Float2&, const Size&);
 void CalculateQuad(DrawInfo&, Material&, const util::Float2&, const Size&);
+void CalculateQuadWithTexCoords(DrawInfo&, Material&, const util::Float2&, const Size&, s32,
+                                const util::Float2 (*)[4]);
 void DrawQuad(gfx::CommandBuffer&, DrawInfo&, Material&);
 }
 

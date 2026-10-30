@@ -165,6 +165,15 @@ GlyphNode* GlyphTreeMap::Find(u32 code, u16 size, u16 face) const {
     return nullptr;
 }
 
+// 0x7100ab3a30
+// NON_MATCHING: root load and key packing are scheduled differently.
+void GlyphTreeMap::Erase(u32 code, u16 size, u16 face) {
+    const u64 key = (static_cast<u64>(size) << 48) | (static_cast<u64>(face) << 32) | code;
+    _0 = Erase(_0, key);
+    if (_0)
+        _0->color = 0;
+}
+
 void GlyphTreeMap::UpdateFlagsForCompleteTextureCacheRecursive(GlyphNode* node) {
     do {
         node->flags = ((node->flags & 5) != 0 ? 0x10 : 0) | (node->flags & 0x60);
