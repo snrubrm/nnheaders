@@ -2,6 +2,7 @@
 
 #include <nn/atk/AuxBus.h>
 #include <nn/atk/OutputMode.h>
+#include <nn/audio.h>
 #include <nn/types.h>
 
 namespace nn::atk {
@@ -26,6 +27,8 @@ public:
     static void Finalize();
     /// 0x710133dd80 (declared only)
     static bool IsInitialized();
+    static void AttachMemoryPool(nn::audio::MemoryPoolType* pool, void* address, size_t size);
+    static void DetachMemoryPool(nn::audio::MemoryPoolType* pool);
     static int GetRendererChannelCountMax();
     /// 0x710133e244: the renderer's sample count reported by the driver.
     static int GetRendererSampleCount();

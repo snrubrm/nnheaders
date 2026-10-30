@@ -27,4 +27,13 @@ bool SoundSystem::IsInitialized() {
     return sIsInitialized;
 }
 
+void SoundSystem::AttachMemoryPool(nn::audio::MemoryPoolType* pool, void* address, size_t size) {
+    detail::Util::Singleton<detail::driver::HardwareManager>::GetInstance().AttachMemoryPool(
+        pool, address, size, true);
+}
+
+void SoundSystem::DetachMemoryPool(nn::audio::MemoryPoolType* pool) {
+    detail::Util::Singleton<detail::driver::HardwareManager>::GetInstance().DetachMemoryPool(pool, true);
+}
+
 }  // namespace nn::atk
