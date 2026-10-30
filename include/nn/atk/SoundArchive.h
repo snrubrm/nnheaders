@@ -71,8 +71,11 @@ struct SoundArchiveFile {
         const char* GetString(u32 string_id) const;
 
     private:
-        u8 _0[4];
-        s32 mStringTableOffset;  // +4, relative to this
+        struct SectionReference {
+            u32 _0;
+            s32 mOffset;
+        };
+        SectionReference mSections[2];  // offsets relative to this block body
     };
 
     struct StringBlock {
