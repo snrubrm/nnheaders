@@ -15,6 +15,9 @@ public:
     int GetUnreleasedLowLevelVoiceCount() const;
 
 private:
+    // Inline-only: GetInstance 0x7101358c34 and Initialize 0x7101359378 repeat this reset.
+    VirtualVoiceManager() { Initialize(); }
+
     u64 _0[4];
     u32 _20;
     u8 _24[4];

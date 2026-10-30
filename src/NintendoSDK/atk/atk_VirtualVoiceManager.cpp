@@ -3,6 +3,12 @@
 
 namespace nn::atk::detail {
 
+// NON_MATCHING: the compiler schedules the initial scalar stores in a different order.
+VirtualVoiceManager& VirtualVoiceManager::GetInstance() {
+    static VirtualVoiceManager sUnk_7102663EF0;
+    return sUnk_7102663EF0;
+}
+
 void VirtualVoiceManager::Initialize() {
     for (u64& word : _0)
         word = ~0ULL;
