@@ -9,6 +9,9 @@ struct WaveBuffer;
 
 namespace nn::atk::detail {
 
+class Voice;
+struct VoiceInfo;
+
 // TODO: incomplete. Only the available flag at +0x28 is modelled.
 class LowLevelVoice {
 public:
@@ -16,6 +19,7 @@ public:
     void SetPriority(int priority);
     void AppendWaveBuffer(WaveBuffer* buffer);
     void FreeAllWaveBuffer();
+    void UpdateVoiceInfo(VoiceInfo* info) const;
 
 private:
     friend class LowLevelVoiceAllocator;
@@ -24,7 +28,7 @@ private:
     /* 0x28 */ bool mAvailable;
     u8 _29[0xa4 - 0x29];
     s32 mPriority;                 // +0xa4: SetPriority 0x7101355f78
-    u8 _a8[4];
+    u32 _a8;
     s32 mSampleRate;               // +0xac
     s32 _b0;
     u8 _b4[4];
@@ -34,7 +38,7 @@ private:
     WaveBuffer* mWaveBufferHead;    // +0xc8
     WaveBuffer* mWaveBufferTail;    // +0xd0
     WaveBuffer* mWaveBufferCursor;  // +0xd8
-    u8 _e0[8];
+    Voice* mSourceVoice;            // +0xe0
     u32 _e8;
     u8 _ec;
     // The allocator's initialization loop at 0x7101356d84 uses a 0x100-byte stride.

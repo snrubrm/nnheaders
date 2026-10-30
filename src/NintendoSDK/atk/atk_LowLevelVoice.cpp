@@ -1,6 +1,7 @@
 #include <nn/atk/detail/LowLevelVoice.h>
 #include <nn/atk/detail/driver/HardwareManager.h>
 #include <nn/atk/WaveBuffer.h>
+#include <nn/atk/detail/VoiceInfo.h>
 
 namespace nn::atk::detail {
 
@@ -36,6 +37,19 @@ void LowLevelVoice::FreeAllWaveBuffer() {
     mWaveBufferTail = nullptr;
     mWaveBufferCursor = nullptr;
     mWaveBufferHead = nullptr;
+}
+
+// NON_MATCHING: the compiler reloads the current buffer after writing the output state.
+void LowLevelVoice::UpdateVoiceInfo(VoiceInfo* info) const {
+    info->mVoice = mSourceVoice;
+    info->_0 = _a8;
+    if (mWaveBufferHead) {
+        info->mWaveBufferState = mWaveBufferHead->_34;
+        info->mWaveBuffer = mWaveBufferHead->mSource;
+    } else {
+        info->mWaveBufferState = 0;
+    }
+    info->mPlayPosition = _b8;
 }
 
 // NON_MATCHING: the compiler combines the array sizes before multiplying the voice count.
