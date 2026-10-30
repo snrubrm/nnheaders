@@ -2,6 +2,13 @@
 
 namespace nn::atk::detail::Util {
 
+// NON_MATCHING: the local static uses direct references and different saved registers.
+template <>
+WarningLogger& Singleton<WarningLogger>::GetInstance() {
+    static WarningLogger logger;
+    return logger;
+}
+
 // The native mutable seed at 0x710252d7e8 is referenced by CalcRandom.
 static u32 sUnk_710252D7E8 = 0x12345678;
 
