@@ -1,5 +1,6 @@
 #include <nn/ui2d/Window.h>
 #include <nn/ui2d/Material.h>
+#include <nn/ui2d/Layout.h>
 
 namespace nn::ui2d {
 
@@ -7,6 +8,43 @@ namespace nn::ui2d {
 // destructor. Keep it as in GameDataFlagSelector (commit 96101229).
 Window::~Window() {
     ;
+}
+
+// 0x7100abd3cc
+// NON_MATCHING: native merges the first loop exit into the destruction pass differently.
+void Window::Finalize(gfx::Device* device) {
+    Pane::Finalize(device);
+    if (mFrameConstantBufferOffsets)
+        Layout::FreeMemory(mFrameConstantBufferOffsets);
+
+    for (s32 i = 0; i < mFrameCount; ++i)
+        mFrames[i].mMaterial->Finalize(device);
+
+    // Destruction may invoke user code; keep the native frame array and count for this pass.
+    Frame* frames = mFrames;
+    const s32 count = mFrameCount;
+    if (frames) {
+        for (s32 i = 0; i < count; ++i) {
+            Material* material = frames[i].mMaterial;
+            if (material && !material->IsUserAllocated()) {
+                material->~Material();
+                Layout::FreeMemory(material);
+            }
+            frames[i].mMaterial = nullptr;
+        }
+        Layout::FreeMemory(frames);
+    }
+
+    if (mContentMaterial && !mContentMaterial->IsUserAllocated()) {
+        mContentMaterial->Finalize(device);
+        Material* material = mContentMaterial;
+        if (material) {
+            material->~Material();
+            Layout::FreeMemory(material);
+        }
+        mContentMaterial = nullptr;
+    }
+    mTexCoordArray.Free();
 }
 
 util::Unorm8x4 Window::GetVertexColor(s32 index) const {
