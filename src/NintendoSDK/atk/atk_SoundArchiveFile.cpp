@@ -39,12 +39,13 @@ const SoundArchiveFile::StreamSoundTrackInfo* SoundArchiveFile::StreamSoundInfo:
     return nn::util::ConstBytePtr(this, mTrackInfoOffset).Get<StreamSoundTrackInfo>();
 }
 
-const char* SoundArchiveFile::StreamSoundInfo::GetStreamSoundExtension() const {
+const SoundArchiveFile::StreamSoundExtension*
+SoundArchiveFile::StreamSoundInfo::GetStreamSoundExtension() const {
     if (mExtensionOffset == -1)
         return nullptr;
     if (mExtensionSignature != 0x2210)
         return nullptr;
-    return nn::util::ConstBytePtr(this, mExtensionOffset).Get<char>();
+    return nn::util::ConstBytePtr(this, mExtensionOffset).Get<StreamSoundExtension>();
 }
 
 const u8* SoundArchiveFile::StreamSoundInfo::GetSendValue() const {

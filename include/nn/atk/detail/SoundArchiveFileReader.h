@@ -23,6 +23,8 @@ public:
     u32 GetWaveArchiveCount() const;
     u32 GetFileCount() const;
     u32 GetSoundType(u32 sound_id) const;
+    bool ReadSoundArchivePlayerInfo(SoundArchive::SoundArchivePlayerInfo* info) const;
+    bool ReadStreamSoundInfo2(u32 id, SoundArchive::StreamSoundInfo2* info) const;
     bool ReadWaveArchiveInfo(u32 id, SoundArchive::WaveArchiveInfo* info) const;
     bool ReadSequenceSoundInfo(u32 id, SoundArchive::SequenceSoundInfo* info) const;
     bool ReadWaveSoundInfo(u32 id, SoundArchive::WaveSoundInfo* info) const;

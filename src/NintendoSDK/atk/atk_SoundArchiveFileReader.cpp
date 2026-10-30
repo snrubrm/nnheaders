@@ -7,6 +7,36 @@ namespace nn {
 namespace atk {
 namespace detail {
 
+// NON_MATCHING: the version-dependent default uses the opposite branch layout.
+bool SoundArchiveFileReader::ReadSoundArchivePlayerInfo(SoundArchive::SoundArchivePlayerInfo* info) const {
+    const auto* record = mInfoBlock->GetSoundArchivePlayerInfo();
+    if (!record)
+        return false;
+    info->sequenceSoundCount = record->mSequenceSoundCount;
+    info->sequenceTrackCount = record->mSequenceTrackCount;
+    info->streamSoundCount = record->mStreamSoundCount;
+    info->streamTrackCount = record->mStreamTrackCount;
+    info->streamChannelCount = record->mStreamChannelCount;
+    info->waveSoundCount = record->mWaveSoundCount;
+    info->waveTrackCount = record->mWaveTrackCount;
+    info->streamBufferTimes = GetVersion() < 0x20200 ? 1 : record->mStreamBufferTimes;
+    info->isAdvancedWaveSoundEnabled = (record->mFlags & 1) != 0;
+    return true;
+}
+
+bool SoundArchiveFileReader::ReadStreamSoundInfo2(u32 id, SoundArchive::StreamSoundInfo2* info) const {
+    const auto* sound = mInfoBlock->GetSoundInfo(id);
+    if (!sound || sound->GetSoundType() != 2)
+        return false;
+    const auto* extension = sound->GetStreamSoundInfo()->GetStreamSoundExtension();
+    if (!extension)
+        return false;
+    info->_0 = extension->_1 == 1;
+    info->_4 = extension->_4;
+    info->_8 = extension->_8;
+    return true;
+}
+
 bool SoundArchiveFileReader::ReadWaveArchiveInfo(u32 id, SoundArchive::WaveArchiveInfo* info) const {
     const auto* record = mInfoBlock->GetWaveArchiveInfo(id);
     if (!record)

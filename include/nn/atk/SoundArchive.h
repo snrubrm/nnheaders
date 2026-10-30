@@ -86,13 +86,30 @@ struct SoundArchiveFile {
     struct SequenceSoundInfo;
     struct AdvancedWaveSoundInfo;
     struct PlayerInfo;
-    struct SoundArchivePlayerInfo;
+    struct SoundArchivePlayerInfo {
+        u16 mSequenceSoundCount;
+        u16 mSequenceTrackCount;
+        u16 mStreamSoundCount;
+        u16 mStreamTrackCount;
+        u16 mStreamChannelCount;
+        u16 mWaveSoundCount;
+        u16 mWaveTrackCount;
+        u8 mStreamBufferTimes;
+        u8 mFlags;
+    };
+    struct StreamSoundExtension {
+        u8 _0;
+        u8 _1;
+        u8 _2[2];
+        u32 _4;
+        u32 _8;
+    };
 
     /// A stream sound record. The track info table and the extension block are both found by a
     /// signature at a fixed offset and located by a relative offset next to it.
     struct StreamSoundInfo {
         const StreamSoundTrackInfo* GetTrackInfoTable() const;
-        const char* GetStreamSoundExtension() const;
+        const StreamSoundExtension* GetStreamSoundExtension() const;
         const u8* GetSendValue() const;
 
     private:
@@ -301,6 +318,11 @@ public:
         bool isAdvancedWaveSoundEnabled;
     };
 
+    struct StreamSoundInfo2 {
+        bool _0;
+        u32 _4;
+        u32 _8;
+    };
     struct WaveArchiveInfo {
         u32 mFileId;
         u32 mWaveCount;
