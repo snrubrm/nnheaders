@@ -91,6 +91,17 @@ bool ScalableFont::SetAlternateChar(u32 code) {
     return false;
 }
 
+// NON_MATCHING: the receiver and first argument loads are ordered differently.
+void ScalableFont::RegisterAlternateCharGlyph() const {
+    mTextureCache->RegisterGlyph(mAlternateChar, mWidth, mFontFace, -1);
+    mTextureCache->FindGlyphNode(mAlternateChar, mWidth, mFontFace)->flags |= 0x20;
+    if (_2f == 1) {
+        mTextureCache->RegisterGlyph(' ', mWidth, mFontFace, -1);
+        if (mTextureCache->FindGlyphNode(' ', mWidth, mFontFace))
+            mTextureCache->FindGlyphNode(' ', mWidth, mFontFace)->flags |= 0x20;
+    }
+}
+
 s32 ScalableFont::GetCharWidth(u32 code) const {
     GlyphNode* node = mTextureCache->FindGlyphNode(code, mWidth, mFontFace);
     if (!node || (node->flags & 0x42)) {

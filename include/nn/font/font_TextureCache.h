@@ -96,6 +96,7 @@ public:
     void CompleteTextureCache();
     void ResetTextureCache();
     bool IsBorderEffectEnabled(u16 font_face) const;
+    bool RegisterGlyph(u32 code, u32 font_size, u16 font_face, s32 index);
     bool IsGlyphExistInFont(u32 code, u16 font_face);
     s32 CalculateKerning(u32 first, u32 second, u32 font_size, u16 font_face);
     s32 CalculateCharWidth(u32 code, u32 font_size, u16 font_face);
