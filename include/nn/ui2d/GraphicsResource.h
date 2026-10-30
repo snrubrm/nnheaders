@@ -9,6 +9,7 @@
 #include <nn/gfx/gfx_State.h>
 #include <nn/gfx/gfx_Types.h>
 #include <nn/ui2d/Types.h>
+#include <nn/util/MathTypes.h>
 
 namespace nn::gfx {
 class BlendStateInfo;
@@ -42,6 +43,8 @@ public:
 
     // 0x7100ac13a8
     void Finalize(gfx::Device* device);
+    // Native builds internal vertex/index pools; the trailing API parameters are unused.
+    void InitializeVertexBuffer(gfx::Device*, gfx::MemoryPool*, s64, u64);
     static int GetPresetBlendStateId(const ResBlendMode* color, const ResBlendMode* alpha);
     static size_t SetupBlendStateInfo(gfx::BlendStateInfo* state, gfx::BlendTargetStateInfo* target,
                                      const ResBlendMode* color, const ResBlendMode* alpha);
@@ -61,7 +64,12 @@ public:
     s32 _8 = 2;
     u8 _c[4];
     // Constructor clears exactly +0x10 through +0x6b, leaving +0x0c and alignment padding untouched.
-    u8 _10[0x5c]{};
+    u8 _10[0x40]{};
+    // InitializeVertexBuffer allocates four Float2 vertices and six u16 indices;
+    // Finalize frees these two owned allocations after the GPU resources.
+    /* 0x50 */ util::Float2* mVertexData = nullptr;
+    /* 0x58 */ u16* mIndexData = nullptr;
+    u8 _60[0x0c]{};
     u64 _70 = 4;
     font::RectDrawer mRectDrawer;
     gfx::Buffer mBuffer0;
