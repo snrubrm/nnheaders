@@ -23,7 +23,7 @@ f32 sub_7101353C44(f32 phase) {
     return sUnk_7101ECB5E8[index] * phase + sUnk_7101ECB5FC[index];
 }
 f32 sub_7101353C8C(f32) {
-    return static_cast<f32>(Util::sub_71013548CC() & 0xffff) / 65535.0f;
+    return static_cast<f32>(Util::CalcRandom() & 0xffff) / 65535.0f;
 }
 
 f32 sub_7101353C70(f32 phase) {
