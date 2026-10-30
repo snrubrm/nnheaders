@@ -12,6 +12,16 @@ void WaveSoundPlayer::Pause(bool pause) {
         mChannel->Pause(pause);
 }
 
+void WaveSoundPlayer::FinishPlayer() {
+    SetFinished(true);
+    if (_14a) {
+        SoundThread::GetInstance().UnregisterPlayerCallback(this);
+        _14a = 0;
+    }
+    if (IsStarted())
+        SetStarted(false);
+}
+
 void WaveSoundPlayer::SetChannelPriority(int priority) {
     mChannelPriority = priority;
 }

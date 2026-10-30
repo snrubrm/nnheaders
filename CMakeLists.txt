@@ -413,6 +413,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_SequenceSoundPlayer.cpp
   src/NintendoSDK/atk/atk_StreamSoundPlayer.cpp
   src/NintendoSDK/atk/atk_WaveSoundPlayer.cpp
+  src/NintendoSDK/atk/atk_AdvancedWaveSoundPlayer.cpp
   src/NintendoSDK/atk/atk_MemoryFileStream.cpp
   src/NintendoSDK/atk/atk_FileStreamImpl.cpp
   src/NintendoSDK/atk/atk_StreamCache.cpp
