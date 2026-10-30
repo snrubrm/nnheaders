@@ -2,6 +2,11 @@
 
 namespace nn::atk::detail::driver {
 
+void StreamSoundPlayer::Start() {
+    if (_d1 == 0 && !IsStarted())
+        StartPlayer();
+}
+
 void StreamSoundPlayer::OnUpdateFrameSoundThread() {
     Update();
 }
