@@ -1,4 +1,6 @@
 #include <nn/atk/EffectAux.h>
+#include <nn/atk/detail/Util.h>
+#include <nn/atk/detail/driver/HardwareManager.h>
 
 namespace nn::atk {
 
@@ -36,6 +38,17 @@ bool EffectAux::SetAudioFrameCount(s32 count) {
         return false;
     mAudioFrameCount = count;
     return true;
+}
+
+void EffectAux::SetEnabled(bool enabled) {
+    mIsEnabled = enabled;
+    if (mIsAdded) {
+        nn::os::LockMutex(detail::Util::Singleton<detail::driver::HardwareManager>::GetInstance()
+                              .GetAudioRendererMutex());
+        nn::audio::SetAuxEnabled(&mAux, enabled);
+        nn::os::UnlockMutex(detail::Util::Singleton<detail::driver::HardwareManager>::GetInstance()
+                                .GetAudioRendererMutex());
+    }
 }
 
 bool EffectAux::IsRemovable() const {

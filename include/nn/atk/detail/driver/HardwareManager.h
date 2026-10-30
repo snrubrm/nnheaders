@@ -37,6 +37,9 @@ public:
     // Constructor 1343DB4 and SoundSystem query 133DD80 establish the flag at +0.
     bool IsInitialized() const { return mIsInitialized; }
     nn::audio::AudioRendererConfig* GetAudioRendererConfig() { return &mAudioRendererConfig; }
+    // Inline-only in the original; name is a guess. Renderer operations 1344688 and 1344714
+    // both lock the mutex at +0x760 around nn::audio calls.
+    nn::os::MutexType* GetAudioRendererMutex() { return &mAudioRendererMutex; }
 
     void SetMasterVolume(f32 volume, s32 frames);
     // Native 1344670 returns the renderer channel count (2 or 6). The private
@@ -83,6 +86,8 @@ private:
     // +0x758: GetChannelCountMax returns 2 when it is set and 6 otherwise; what it means is not
     // established, so it keeps a placeholder name.
     u8 _758;
+    u8 _759[7];
+    nn::os::MutexType mAudioRendererMutex;  // +0x760
 };
 
 }  // namespace nn::atk::detail::driver

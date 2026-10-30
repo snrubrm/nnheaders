@@ -18,6 +18,7 @@ public:
     size_t GetRequiredMemSize(const nn::audio::AudioRendererParameter& parameter) const;
     bool SetChannelCount(s32 count);
     bool SetAudioFrameCount(s32 count);
+    void SetEnabled(bool enabled);
     // 0x710135bde8
     bool IsRemovable() const;
 
@@ -27,7 +28,8 @@ private:
     s32 mAudioFrameCount;
     s32 mChannelCount;
     bool mIsAdded;
-    u8 _29[0x30 - 0x29];
+    bool mIsEnabled;
+    u8 _2a[0x30 - 0x2a];
     /* 0x30 */ void* mBuffer;
     /* 0x38 */ u64 mBufferSize;
     u8 _40[8];
