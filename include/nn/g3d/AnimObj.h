@@ -24,6 +24,10 @@ public:
     // Inlined by BoneBlendState 0x7101257934: the play policy maps the frame.
     void SetFrame(float frame) { mFrame = mPlayPolicy(frame, mStartFrame, mEndFrame, mUserData); }
 
+    // inline-only in the original; name is a guess. Swarm::Unit 0x71002da3a0 and
+    // ModelAnimation::setMaterialAnmFrame 0x7100bfe384 read the current frame.
+    float GetFrame() const { return mFrame; }
+
 private:
     friend class AnimObj;
 
@@ -59,6 +63,10 @@ public:
     // 0x710132b708: resets the default frame controller. The play policy is
     // PlayLoop when `flag` is set and PlayOneTime otherwise.
     void ResetFrameCtrl(int frame, bool flag);
+
+    // inline-only in the original; name is a guess. Swarm::Unit 0x71002da3a0 and
+    // ModelAnimation::setMaterialAnmFrame 0x7100bfe384 read this controller.
+    AnimFrameCtrl* GetFrameCtrl() const { return mFrameCtrl; }
 
 protected:
     AnimFrameCtrl* mFrameCtrl;
