@@ -20,9 +20,15 @@ public:
 
     void SetBiquadFilter(int type, float frequency);
 
+protected:
+    // Inline-only, name guessed: stream Start, Stop and Update repeatedly test +0x31.
+    bool IsStarted() const { return _31 != 0; }
+
 private:
     nn::os::Event mEvent;  // +0x8
-    u8 _30[0x44 - 0x30];
+    u8 _30;
+    u8 _31;
+    u8 _32[0x44 - 0x32];
     f32 mBiquadFrequency;  // +0x44
     u8 mBiquadType;        // +0x48
     u8 _49[0xb0 - 0x49];

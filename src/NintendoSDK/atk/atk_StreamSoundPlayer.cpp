@@ -2,6 +2,15 @@
 
 namespace nn::atk::detail::driver {
 
+void StreamSoundPlayer::Start() {
+    if (_d1 == 0 && !IsStarted())
+        StartPlayer();
+}
+
+void StreamSoundPlayer::OnUpdateFrameSoundThread() {
+    Update();
+}
+
 void StreamSoundPlayer::OnUpdateFrameSoundThreadWithAudioFrameFrequency() {
     if (_11040 == 0)
         Update();
@@ -50,6 +59,14 @@ void StreamSoundPlayer::SetTrackTvVolume(u32 track_mask, f32 volume) {
     for (int i = 0; track_mask && i < mTrackCount; ++i, track_mask >>= 1)
         if (track_mask & 1)
             mTracks[i].mTvVolume = volume;
+}
+
+// NON_MATCHING: the compiler reshapes the loop and combines the mix-record copies.
+void StreamSoundPlayer::SetTrackChannelTvMixParameter(u32 track_mask, u32 channel,
+                                                      const nn::atk::MixParameter& mix) {
+    for (int i = 0; track_mask && i < mTrackCount; ++i, track_mask >>= 1)
+        if (track_mask & 1)
+            mTracks[i].mChannelMix[channel] = mix;
 }
 
 // NON_MATCHING: the compiler reshapes the count and mask loop.

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <nn/atk/AuxBus.h>
+#include <nn/atk/MixParameter.h>
 #include <nn/atk/detail/driver/BasicSoundPlayer.h>
 #include <nn/atk/detail/driver/SoundThread.h>
 #include <nn/types.h>
@@ -17,7 +18,8 @@ class StreamTrack {
     f32 mVolume;       // +0x24
     u32 mOutputLine;   // +0x28
     f32 mTvVolume;     // +0x2c
-    u8 _30[0x64 - 0x30];
+    u8 _30[4];
+    nn::atk::MixParameter mChannelMix[2];  // +0x34
     f32 mTvPan;        // +0x64
     f32 mTvSurroundPan;
     f32 mTvMainSend;
@@ -46,13 +48,19 @@ public:
     void SetTrackOutputLine(u32 track_mask, u32 line);
     void ResetTrackOutputLine(u32 track_mask);
     void SetTrackTvVolume(u32 track_mask, f32 volume);
+    void SetTrackChannelTvMixParameter(u32 track_mask, u32 channel,
+                                       const nn::atk::MixParameter& mix);
     void SetTrackTvPan(u32 track_mask, f32 pan);
     void SetTrackTvSurroundPan(u32 track_mask, f32 pan);
     void SetTrackTvMainSend(u32 track_mask, f32 send);
     void SetTrackTvFxSend(u32 track_mask, nn::atk::AuxBus bus, f32 send);
 
 private:
-    u8 _c8[0x43c - 0xc8];
+    void StartPlayer();
+
+    u8 _c8[0xd1 - 0xc8];
+    u8 _d1;  // written by Prepare and PreparePrefetch
+    u8 _d2[0x43c - 0xd2];
     s32 mTrackCount;  // +0x43c; Setup clamps it to eight
     u8 _440[0x10c40 - 0x440];
     StreamTrack mTracks[8];  // +0x10c40
