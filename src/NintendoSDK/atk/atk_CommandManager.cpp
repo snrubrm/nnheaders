@@ -62,4 +62,8 @@ bool CommandManager::IsFinishCommand(u32 sequence) const {
     return _2d8 - sequence < wrapWindow;
 }
 
+void CommandManager::WaitCommandReply(u32) {
+    while (ProcessCommand()) {}
+}
+
 }  // namespace nn::atk::detail

@@ -26,6 +26,8 @@ public:
     void Finalize();
     // Native returns a normalized 0/1 status; bool is inferred.
     bool ProcessCommand();
+    // No native callers are known; void is inferred from the wait procedure.
+    void WaitCommandReply(u32 sequence);
     // Native returns the current 32-bit sequence; unsigned return is inferred.
     u32 PushCommand(Command* command);
     bool IsFinishCommand(u32 sequence) const;
