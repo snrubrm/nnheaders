@@ -26,6 +26,8 @@ public:
     ~SoundThread() override;
     void Run(void* arg) override;
     static SoundThread& GetInstance();
+    // Native caller discards the result; void is inferred.
+    void CreateSoundThread(int priority, void* stack, size_t stackSize, int core, u32 affinity);
     void RegisterPlayerCallback(PlayerCallback* callback);
     // Return type inferred from callers that discard the result.
     void UnregisterPlayerCallback(PlayerCallback* callback);
@@ -41,6 +43,9 @@ private:
     fnd::Thread mThread;  // +0x8
     u8 _1f8[0x398 - 0x1f8];
     nn::util::detail::IntrusiveListImplementation mPlayerCallbacks;  // +0x398
+    u8 _3a8[0x3d8 - 0x3a8];
+    u32 _3d8;
+    u8 _3dc;
 };
 
 static_assert(sizeof(fnd::Thread) == 0x1f0);
