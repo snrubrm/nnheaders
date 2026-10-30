@@ -9,7 +9,15 @@ namespace nn::font {
 class TextureObject;
 class GpuBuffer;
 struct ShadowParameter;
-struct PerCharacterTransformInfo;
+// TextBox allocates the raw first record at a 0x2c stride and passes it unchanged
+// through additional content to BuildPerCharacterParams. Names follow the observed targets.
+struct PerCharacterTransformInfo {
+    util::Float3 mRotationCos{{1.0f, 1.0f, 1.0f}};
+    util::Float3 mRotationSin{{0.0f, 0.0f, 0.0f}};
+    util::Float3 mTranslation{{0.0f, 0.0f, 0.0f}};
+    util::Unorm8x4 mColors[2]{{{255, 255, 255, 255}}, {{255, 255, 255, 255}}};
+};
+static_assert(sizeof(PerCharacterTransformInfo) == 0x2c);
 
 // BuildConstantBuffer copies 0x78 bytes. TextBox::BuildConstantBuffer supplies the two
 // matrices; SetupConstantBufferAdditionalContent supplies the float colors and byte alphas.

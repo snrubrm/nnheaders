@@ -7,19 +7,75 @@
 #include <nn/gfx/gfx_BufferInfo.h>
 #include <nn/util.h>
 #include <nn/ui2d/BuildTypes.h>
+#include <nn/ui2d/AnimTransform.h>
+#include <nn/ui2d/Util.h>
 #include <nn/ui2d/DrawInfo.h>
 #include <nn/ui2d/GraphicsResource.h>
 #include <nn/ui2d/Layout.h>
 #include <nn/ui2d/Material.h>
 #include <nn/ui2d/ResourceAccessor.h>
 #include <nn/util/util_BytePtr.h>
+#include <nn/util/util_Arithmetic.h>
 
 #include <cstring>
+#include <cmath>
 #include <algorithm>
 #include <new>
 #include <string>
 
 namespace nn::ui2d {
+
+// NON_MATCHING: color-store branches merge; target extension and table-load scheduling differ.
+// 0x7100abbb38
+void TextBox::UpdatePerCharacterTransform() {
+    const u32 character_count = mDispStringBuf->mCharCount;
+    if (character_count == 0)
+        return;
+    const u32 entry_count = _158->_12;
+    const f32 frame_step = character_count == 1 ? 0.0f :
+        _158->_4 / static_cast<f32>(character_count - 1);
+    const f32 angle_scale = static_cast<f32>(util::detail::AngleIndexHalfRound) /
+                            util::detail::FloatDegree180;
+    for (u32 character = 0; character < character_count; ++character) {
+        const f32 base_frame = frame_step * static_cast<f32>(character) + _158->_0;
+        font::PerCharacterTransformInfo* transforms = _158->_8;
+        for (u32 i = 0; i < entry_count; ++i) {
+            const Unk158::Entry& entry = _158->_18[i];
+            const void* target_data = entry._0;
+            const s32 target = entry._8;
+            const ResHermiteKey* keys = util::ConstBytePtr(target_data,
+                *util::ConstBytePtr(target_data, 8).Get<u32>()).Get<ResHermiteKey>();
+            f32 frame = base_frame;
+            if (_158->_10 == 1) {
+                const u16 key_count = *util::ConstBytePtr(target_data, 4).Get<u16>();
+                if (key_count >= 2) {
+                    const f32 first_frame = keys[0].frame;
+                    const f32 last_frame = keys[key_count - 1].frame;
+                    if (base_frame > last_frame)
+                        frame = std::fmod(base_frame - first_frame,
+                                          last_frame - first_frame) + first_frame;
+                    else if (base_frame < first_frame)
+                        frame = last_frame - std::fmod(first_frame - base_frame,
+                                                      last_frame - first_frame);
+                }
+            }
+            const f32 value = GetHermiteCurveValue(frame, keys,
+                *util::ConstBytePtr(target_data, 4).Get<u16>());
+            if (target <= 2) {
+                transforms[character].mTranslation.v[target] = target == 1 ? -value : value;
+            } else if (target <= 5) {
+                const f32 rotation = target == 4 ? value : -value;
+                const util::AngleIndex angle = u32(static_cast<s64>(rotation * angle_scale));
+                transforms[character].mRotationSin.v[target - 3] = util::SinTable(angle);
+                transforms[character].mRotationCos.v[target - 3] = util::CosTable(angle);
+            } else if (target <= 9) {
+                transforms[character].mColors[0].v[target - 6] = u8(static_cast<s32>(value));
+            } else {
+                transforms[character].mColors[1].v[target - 10] = u8(static_cast<s32>(value));
+            }
+        }
+    }
+}
 
 // 0x7100abbdc0
 void TextBox::DrawSelf(DrawInfo& draw_info, gfx::CommandBuffer& command_buffer) {
@@ -558,11 +614,11 @@ void TextBox::AllocateStringBuffer(gfx::Device* device, u16 length, u16 string_l
         (mIsUtf8 ? sizeof(u32) : sizeof(u16)) * buffer_length, 4));
     void* buffer = Layout::AllocateMemory(buffer_size, 4);
     if (_158) {
-        auto* transforms = static_cast<PerCharacterTransform*>(
-            Layout::AllocateMemory(sizeof(PerCharacterTransform) * string_length, 4));
+        auto* transforms = static_cast<font::PerCharacterTransformInfo*>(
+            Layout::AllocateMemory(sizeof(font::PerCharacterTransformInfo) * string_length, 4));
         if (transforms) {
             for (u32 i = 0; i < string_length; ++i)
-                new (transforms + i) PerCharacterTransform;
+                new (transforms + i) font::PerCharacterTransformInfo;
         }
         _158->_8 = transforms;
     }
