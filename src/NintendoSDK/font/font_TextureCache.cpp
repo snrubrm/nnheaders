@@ -19,8 +19,9 @@ bool TextureCache::IsBorderEffectEnabled(u16 font_face) const {
 
 // 0x7100ab0d24
 TextureCache::TextureCache()
-    : mScalableFontEngine(nullptr), mScalableFontEngines(nullptr), _18(0), mTextureData(nullptr),
-      mTextureWidth(0), mTextureHeight(0), _1880(0), mFontFaceCount(0), mFontFace(0), _18ec(0),
+    : mScalableFontEngine(nullptr), mScalableFontEngines(nullptr), mFontData(nullptr),
+      mTextureData(nullptr), mTextureWidth(0), mTextureHeight(0), _1880(0), mFontFaceCount(0),
+      mFontFace(0), _18ec(0),
       _18f0(0), _18f4(1), _18f8(nullptr), mFontMetrics(nullptr), _1938(1), mPool(nullptr),
       mPoolOffset(0) {
     for (s32 i = 0; i < 32; ++i) {
@@ -224,8 +225,38 @@ void TextureCache::InitializeArg::SetDefault() {
     _4dc9 = true;
 }
 
-// 0x7100ab0d24
-// The constructor body is left undecompiled: interleaving the GlyphTreeMap / gfx impl /
-// TextureObject constructions with the scalar stores needs more evidence to model honestly.
+// 0x7100ab1a00
+// NON_MATCHING: opaque record indexing uses a widened multiply; scheduling also differs.
+void TextureCache::SetFontFace(u32 font) {
+    if (mFontFace == font)
+        return;
+    mScalableFontEngine->SetFont(mFontData[font]);
+    mScalableFontEngine->SetBoldWeight(mBoldWeights[font]);
+    const u8 outline_width = mBorderFlags[font];
+    if (outline_width) {
+        mScalableFontEngine->SetOutlineWidth(outline_width);
+        mScalableFontEngine->SetFlags(static_cast<fontll::ScalableFontEngine::Flags>(2));
+    } else {
+        mScalableFontEngine->SetFlags(static_cast<fontll::ScalableFontEngine::Flags>(0));
+    }
+    mFontFace = font;
+}
+
+// 0x7100ab2ca4
+// NON_MATCHING: opaque record indexing uses a widened multiply; scheduling also differs.
+void TextureCache::SetFontFaceNoPlot(u32 font, u32 core) {
+    if (mFontFacesPerCore[core] == font)
+        return;
+    mScalableFontEngines[core].SetFont(mFontData[font]);
+    mScalableFontEngines[core].SetBoldWeight(mBoldWeights[font]);
+    const u8 outline_width = mBorderFlags[font];
+    if (outline_width) {
+        mScalableFontEngines[core].SetOutlineWidth(outline_width);
+        mScalableFontEngines[core].SetFlags(static_cast<fontll::ScalableFontEngine::Flags>(2));
+    } else {
+        mScalableFontEngines[core].SetFlags(static_cast<fontll::ScalableFontEngine::Flags>(0));
+    }
+    mFontFacesPerCore[core] = font;
+}
 
 }  // namespace nn::font

@@ -111,6 +111,7 @@ public:
     void UpdateTextureCache();
     void CompleteTextureCache();
     void ResetTextureCache();
+    void SetFontFace(u32 font);
     bool IsBorderEffectEnabled(u16 font_face) const;
     const FontMetrics* GetFontMetrics(u16 font_face) const;
     bool RegisterGlyph(u32 code, u32 font_size, u16 font_face, s32 index);
@@ -148,7 +149,8 @@ private:
 
     /* 0x08 */ fontll::ScalableFontEngine* mScalableFontEngine;
     /* 0x10 */ fontll::ScalableFontEngine* mScalableFontEngines;
-    /* 0x18 */ u64 _18;
+    // LoadFont fills each opaque 50-byte record; SetFont consumes its char buffer.
+    /* 0x18 */ char (*mFontData)[50];
     /* 0x20 */ void* mTextureData;
     /* 0x28 */ u32 mTextureWidth;
     /* 0x2c */ u32 mTextureHeight;
@@ -160,17 +162,13 @@ private:
     /* 0x1888 */ u8 _1888[32];
     /* 0x18a8 */ u8 _18a8[32];
     /* 0x18c8 */ u32 mFontFace;  // SetFontFace caches the face here
-    /* 0x18cc */ u32 _18cc;
-    /* 0x18d0 */ u64 _18d0;
-    /* 0x18d8 */ u64 _18d8;
-    /* 0x18e0 */ u64 _18e0;
-    /* 0x18e8 */ u32 _18e8;
+    /* 0x18cc */ u32 mFontFacesPerCore[8];
     /* 0x18ec */ u32 _18ec;
     /* 0x18f0 */ u8 _18f0;
     /* 0x18f4 */ u32 _18f4;
     /* 0x18f8 */ u32 (*_18f8)();
     /* 0x1900 */ FontMetrics* mFontMetrics;
-    /* 0x1908 */ void* _1908;
+    /* 0x1908 */ s32* mBoldWeights;
     /* 0x1910 */ u8* mBorderFlags;
     /* 0x1918 */ s32* mRangeCounts;
     /* 0x1920 */ u32 (*mRangeStarts)[4];
