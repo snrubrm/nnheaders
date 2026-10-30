@@ -411,6 +411,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_MemoryFileStream.cpp
   src/NintendoSDK/atk/atk_FileStreamImpl.cpp
   src/NintendoSDK/atk/atk_StreamCache.cpp
+  src/NintendoSDK/atk/atk_VirtualVoiceManager.cpp
   src/NintendoSDK/atk/atk_FileStreamProxy.cpp
   src/NintendoSDK/atk/atk_HeapBase.cpp
   src/NintendoSDK/atk/atk_Thread.cpp
