@@ -5,8 +5,29 @@
 #include <nn/ui2d/Material.h>
 #include <nn/ui2d/Util.h>
 #include <nn/ui2d/Layout.h>
+#include <new>
 
 namespace nn::ui2d {
+
+// 0x7100ab9c9c
+Picture::Picture(const Picture& source, gfx::Device* device) : Pane(source), mMaterial(nullptr) {
+    mTexCoordArray.Initialize();
+    for (s32 i = 0; i < 4; ++i)
+        mVertexColors[i] = source.mVertexColors[i];
+
+    const u8 count = source.mTexCoordArray.mSize;
+    if (count) {
+        mTexCoordArray.Reserve(count);
+        mTexCoordArray.SetSize(count);
+        for (s32 i = 0; i < count; ++i)
+            mTexCoordArray.SetCoord(i, source.mTexCoordArray.mCoords[i]);
+    }
+
+    // The allocator can call user code, so retain the source material read before it runs.
+    const Material* source_material = source.mMaterial;
+    void* memory = Layout::AllocateMemory(sizeof(Material), 4);
+    mMaterial = memory ? new (memory) Material(*source_material, device) : nullptr;
+}
 
 // The original keeps the vtable store (a plain empty body drops it); `{ ; }` as in upstream's
 // GameDataFlagSelector::~GameDataFlagSelector (commit 96101229).
