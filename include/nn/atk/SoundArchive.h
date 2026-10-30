@@ -191,6 +191,8 @@ struct SoundArchiveFile {
         u32 mItemFileId;  // +0
         u32 _4;
         s32 mWaveArchiveTableOffset;  // +0x8, relative to this record
+        u32 mOptionFlags;
+        s32 mStringId;
     };
 
     struct SoundGroupInfo {
@@ -201,10 +203,14 @@ struct SoundArchiveFile {
         s32 mTableOffset;  // +0xc, relative to this record
         u32 _10;
         s32 mWaveArchiveReferenceOffset;  // +0x14, relative to this record
+        u32 mOptionFlags;
+        s32 mStringId;
     };
 
     struct GroupInfo {
         u32 mItemFileId;  // +0
+        u32 mOptionFlags;
+        s32 mStringId;
     };
 
     /// 0x7101340f78: the wave count is the optional value for bit 1 of the option flags at +8;
@@ -216,6 +222,7 @@ struct SoundArchiveFile {
         u8 _4;
         u8 _5[3];
         u32 mOptionFlags;  // +0x8, followed by the present optional values
+        s32 mStringId;     // first optional value, when bit 0 is set
     };
 
     /// 0x7101340f58: the heap size is the optional value for bit 1 of the option flags at +4.
@@ -224,6 +231,7 @@ struct SoundArchiveFile {
 
         u32 mPlayerSoundLimit;  // +0
         u32 mOptionFlags;       // +0x4, followed by the present optional values
+        s32 mStringId;          // first optional value, when bit 0 is set
     };
 
     struct SoundInfo {
@@ -251,7 +259,10 @@ struct SoundArchiveFile {
     private:
         u16 mSignature;     // +0xc
         s32 mSubInfoOffset; // +0x10, relative to this
+
+    public:
         u32 mOptionFlags;   // +0x14, followed by the present optional values
+        s32 mStringId;      // first optional value, when bit 0 is set
     };
 
     /// The info block. Each of the seven tables is described by a {u32, s32} pair (the second word

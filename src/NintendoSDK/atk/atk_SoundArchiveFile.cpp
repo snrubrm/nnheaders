@@ -202,6 +202,37 @@ struct ReferenceTable {
     ReferenceTableItem items[1];
 };
 
+s32 SoundArchiveFile::InfoBlockBody::GetItemStringId(u32 item_id) const {
+    switch (item_id >> 24) {
+    case 1: {
+        const auto* record = GetSoundInfo(item_id);
+        return record && (record->mOptionFlags & 1) ? record->mStringId : -1;
+    }
+    case 2: {
+        const auto* record = GetSoundGroupInfo(item_id);
+        return record && (record->mOptionFlags & 1) ? record->mStringId : -1;
+    }
+    case 3: {
+        const auto* record = GetBankInfo(item_id);
+        return record && (record->mOptionFlags & 1) ? record->mStringId : -1;
+    }
+    case 4: {
+        const auto* record = GetPlayerInfo(item_id);
+        return record && (record->mOptionFlags & 1) ? record->mStringId : -1;
+    }
+    case 5: {
+        const auto* record = GetWaveArchiveInfo(item_id);
+        return record && (record->mOptionFlags & 1) ? record->mStringId : -1;
+    }
+    case 6: {
+        const auto* record = GetGroupInfo(item_id);
+        return record && (record->mOptionFlags & 1) ? record->mStringId : -1;
+    }
+    default:
+        return -1;
+    }
+}
+
 const SoundArchiveFile::SoundInfo* SoundArchiveFile::InfoBlockBody::GetSoundInfo(u32 sound_id)
     const {
     if (sound_id >> 24 != 1)
