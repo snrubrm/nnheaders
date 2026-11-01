@@ -20,6 +20,10 @@ public:
     // Inline-only in the original; name is a guess. System's three kill paths
     // test this byte at ACC9DC, ACCA9C and ACCB2C.
     bool IsActiveMaybe() const { return _c != 0; }
+    // Inline-only in the original; names are guesses. KillEmitterSetGroup and
+    // RemoveEmitterSetList both traverse +0x1c0 and clear the +0xf byte.
+    EmitterSet* GetNextMaybe() const { return _1c0; }
+    void ClearListFlagMaybe() { _f = 0; }
 
     // 0x7100aca914: asks every emitter of the set to fade out.
     void Fade();
@@ -35,7 +39,9 @@ private:
     bool mFade;                       // +0x9
     u8 _a[2];
     u8 _c;
-    u8 _d[0x20 - 0xd];
+    u8 _d[2];
+    u8 _f;
+    u8 _10[0x20 - 0x10];
     System* mSystem;                   // +0x20
     u8 _28[0x2c - 0x28];
     int m_CreateId;                    // +0x2c
@@ -43,7 +49,10 @@ private:
     f32 mEmissionRatioScale;          // +0x50
     f32 mEmissionIntervalScale;       // +0x54
     f32 mParticleLifeScale;           // +0x58
-    u8 _5c[0x228 - 0x5c];
+    u8 _5c[0x1c0 - 0x5c];
+    EmitterSet* _1c0;
+    EmitterSet* _1c8;
+    u8 _1d0[0x228 - 0x1d0];
     const u8* mResourceMaybe;         // +0x228, the infinity flag is at +0x2a
 };
 

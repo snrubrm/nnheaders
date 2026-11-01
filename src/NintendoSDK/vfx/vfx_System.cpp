@@ -39,6 +39,30 @@ void System::KillEmitterSet(EmitterSet* emitter_set, bool) {
     mPendingKillMutex.Unlock();
 }
 
+void System::KillEmitterSetGroup(int group) {
+    EmitterSet* set = _a8[group];
+    while (set) {
+        EmitterSet* next = set->GetNextMaybe();
+        KillEmitterSet(set, false);
+        set = next;
+    }
+
+    set = _4a8[group];
+    while (set) {
+        EmitterSet* next = set->GetNextMaybe();
+        KillEmitterSet(set, false);
+        set->ClearListFlagMaybe();
+        set = next;
+    }
+}
+
+void System::KillAllEmitterSet() {
+    for (int group = 0; group < 64; ++group)
+        KillEmitterSetGroup(group);
+    _12a0 = nullptr;
+    _1298 = nullptr;
+}
+
 void System::FlushTempBuffer() {
 }
 

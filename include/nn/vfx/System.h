@@ -13,6 +13,7 @@
 namespace nn {
 namespace vfx {
 
+class Emitter;
 class EmitterSet;
 class Heap;
 class Resource;
@@ -26,6 +27,7 @@ public:
 
     void ClearResource(Heap* heap, int resource_id);
     void KillEmitterSet(EmitterSet* emitter_set, bool immediate);
+    void KillEmitterSetGroup(int group);
 
     // 0x7100accbac: kills the emitters of all 64 emitter sets and clears the two list heads.
     void KillAllEmitterSet();
@@ -48,10 +50,17 @@ private:
     int _64;
     u8 _68[0x90 - 0x68];
     Resource** _90;
-    u8 _98[0x8a8 - 0x98];
+    u8 _98[0xa8 - 0x98];
+    EmitterSet* _a8[64];
+    EmitterSet* _2a8[64];
+    EmitterSet* _4a8[64];
+    EmitterSet* _6a8[64];
     EmitterSet** mPendingKillSets;       // +0x8a8
     s32 mPendingKillSetCount;            // +0x8b0
-    u8 _8b4[0x1770 - 0x8b4];
+    u8 _8b4[0x1298 - 0x8b4];
+    Emitter* _1298;  // Compute emitter list head.
+    Emitter* _12a0;  // Compute emitter list tail.
+    u8 _12a8[0x1770 - 0x12a8];
     nn::os::Mutex mPendingKillMutex;     // +0x1770
     u8 _1790[0x17b0 - 0x1790];
 };
