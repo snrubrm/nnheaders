@@ -33,6 +33,8 @@ public:
     size_t GetAllocateSize(size_t size, bool unk) override;
 
 private:
+    static void DisposeCallbackFunc(void* address, size_t size, void* arg);
+
     nn::os::Mutex mMutex;
     detail::FrameHeap mFrameHeap;
 };

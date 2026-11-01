@@ -11,6 +11,8 @@ public:
     FrameHeap();
     ~FrameHeap();
     bool Create(void* address, size_t size);
+    void* Alloc(size_t size, void (*dispose)(void*, size_t, void*), void* dispose_arg,
+                void (*callback)(void*), void* callback_arg);
 
 private:
     void* mHeap;
