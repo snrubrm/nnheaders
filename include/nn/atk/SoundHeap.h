@@ -6,6 +6,8 @@
 #pragma once
 
 #include <nn/types.h>
+#include <nn/atk/detail/FrameHeap.h>
+#include <nn/os/os_Mutex.h>
 
 namespace nn::atk {
 
@@ -31,7 +33,8 @@ public:
     size_t GetAllocateSize(size_t size, bool unk) override;
 
 private:
-    u8 _8[0x38];
+    nn::os::Mutex mMutex;
+    detail::FrameHeap mFrameHeap;
 };
 static_assert(sizeof(SoundHeap) == 0x40);
 
