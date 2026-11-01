@@ -39,7 +39,9 @@ private:
     u8 _e0;
     bool mReleasePriorityFix;  // +0xe1
     u8 mChannelPriority;       // +0xe2
-    u8 _e3[0x138 - 0xe3];
+    u8 _e3[0xe8 - 0xe3];
+    const void* _e8;  // Resource pointer copied by Prepare.
+    u8 _f0[0x138 - 0xf0];
     Channel* mChannel;         // +0x138
     u32 _140;                  // copied from the prepare argument
     u8 _144[0x14a - 0x144];

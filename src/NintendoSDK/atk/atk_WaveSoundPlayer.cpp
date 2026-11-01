@@ -22,6 +22,12 @@ void WaveSoundPlayer::FinishPlayer() {
         SetStarted(false);
 }
 
+// NON_MATCHING: the secondary-base thunk adjusts the receiver later and combines the range tests.
+void WaveSoundPlayer::InvalidateData(const void* begin, const void* end) {
+    if (IsPrepared() && _e8 >= begin && _e8 <= end)
+        FinishPlayer();
+}
+
 void WaveSoundPlayer::SetChannelPriority(int priority) {
     mChannelPriority = priority;
 }
