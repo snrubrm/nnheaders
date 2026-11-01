@@ -22,6 +22,8 @@ public:
     virtual ~System();
     virtual void Initialize(nn::vfx::Heap*, nn::vfx::Heap*, nn::vfx::Config const&);
 
+    void ClearResource(Heap* heap, int resource_id);
+
     // 0x7100accbac: kills the emitters of all 64 emitter sets and clears the two list heads.
     void KillAllEmitterSet();
 
