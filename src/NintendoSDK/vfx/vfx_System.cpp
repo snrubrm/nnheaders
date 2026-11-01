@@ -1,6 +1,7 @@
 #include <nn/vfx/System.h>
 
 #include <nn/vfx/Resource.h>
+#include <nn/vfx/EmitterSet.h>
 #include <nn/vfx/Heap.h>
 #include <nn/vfx/detail/Utility.h>
 
@@ -15,6 +16,27 @@ void System::ClearResource(Heap* heap, int resource_id) {
     } else {
         detail::OutputWarning("no resource to delete.");
     }
+}
+
+void System::KillEmitterSet(EmitterSet* emitter_set, bool) {
+    if (!emitter_set->IsActiveMaybe()) {
+        detail::OutputWarning("EmitterSet is already removed.\n");
+        return;
+    }
+
+    mPendingKillMutex.Lock();
+    const s32 count = mPendingKillSetCount;
+    EmitterSet** sets = mPendingKillSets;
+    s64 i = 0;
+    for (; i < count; ++i) {
+        if (sets[i] == emitter_set)
+            break;
+    }
+    if (i >= count) {
+        sets[count] = emitter_set;
+        ++mPendingKillSetCount;
+    }
+    mPendingKillMutex.Unlock();
 }
 
 void System::FlushTempBuffer() {

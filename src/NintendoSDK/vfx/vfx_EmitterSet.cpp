@@ -1,9 +1,14 @@
 #include <nn/vfx/EmitterSet.h>
+#include <nn/vfx/System.h>
 
 #include <algorithm>
 
 namespace nn {
 namespace vfx {
+
+void EmitterSet::Kill(bool immediate) {
+    mSystem->KillEmitterSet(this, immediate);
+}
 
 void EmitterSet::Fade() {
     mFade = true;

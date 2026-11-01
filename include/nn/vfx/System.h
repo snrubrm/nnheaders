@@ -6,12 +6,14 @@
 #pragma once
 
 #include <nn/types.h>
+#include <nn/os/os_Mutex.h>
 #include <nn/vfx/Config.h>
 
 // Partial member model. The derived PtclSystem starts its own fields at 0x17b0.
 namespace nn {
 namespace vfx {
 
+class EmitterSet;
 class Heap;
 class Resource;
 
@@ -23,6 +25,7 @@ public:
     virtual void Initialize(nn::vfx::Heap*, nn::vfx::Heap*, nn::vfx::Config const&);
 
     void ClearResource(Heap* heap, int resource_id);
+    void KillEmitterSet(EmitterSet* emitter_set, bool immediate);
 
     // 0x7100accbac: kills the emitters of all 64 emitter sets and clears the two list heads.
     void KillAllEmitterSet();
@@ -45,7 +48,12 @@ private:
     int _64;
     u8 _68[0x90 - 0x68];
     Resource** _90;
-    u8 _98[0x17b0 - 0x98];
+    u8 _98[0x8a8 - 0x98];
+    EmitterSet** mPendingKillSets;       // +0x8a8
+    s32 mPendingKillSetCount;            // +0x8b0
+    u8 _8b4[0x1770 - 0x8b4];
+    nn::os::Mutex mPendingKillMutex;     // +0x1770
+    u8 _1790[0x17b0 - 0x1790];
 };
 static_assert(sizeof(System) == 0x17b0);
 }  // namespace vfx
