@@ -69,6 +69,14 @@ void AnimBindTable::sub_710132B58C(u32* entries, s32 capacity) {
     mTargetCount = 0;
 }
 
+void AnimBindTable::ClearAll(int target_count) {
+    const u16 target = u16(target_count);
+    const u16 count = target > mAnimCount ? target : mAnimCount;
+    mTargetCount = target;
+    for (u32 i = 0; i < count; ++i)
+        mEntries[i] = 0xffffffffu;
+}
+
 void AnimBindTable::BindAll(const u16* indices) {
     for (s32 i = 0; i < mAnimCount; ++i) {
         const u16 target = indices[i];

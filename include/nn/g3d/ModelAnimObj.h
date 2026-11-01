@@ -10,6 +10,7 @@ class AnimBindTable {
 public:
     void sub_710132B58C(u32* entries, s32 capacity);
     void BindAll(const u16* indices);
+    void ClearAll(int target_count);
 
     u32* mEntries;
     u16 mFlags;
