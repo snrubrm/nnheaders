@@ -8,6 +8,11 @@ namespace nn::atk {
 
 SoundHeap::SoundHeap() : mMutex(true) {}
 
+// NON_MATCHING: the compiler emits the declaration-only base destructor call.
+SoundHeap::~SoundHeap() {
+    Destroy();
+}
+
 void SoundHeap::Destroy() {
     mMutex.Lock();
     if (mFrameHeap.IsCreated()) {
