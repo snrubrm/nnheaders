@@ -11,6 +11,12 @@ public:
     FrameHeap();
     ~FrameHeap();
     bool Create(void* address, size_t size);
+    // Return types are inferred from callers that discard the results.
+    void Clear();
+    void Destroy();
+    // Inline-only in the original; name is a guess. Create, Destroy, and the destructor
+    // each test this heap pointer before operating on it.
+    bool IsCreated() const { return mHeap != nullptr; }
     void* Alloc(size_t size, void (*dispose)(void*, size_t, void*), void* dispose_arg,
                 void (*callback)(void*), void* callback_arg);
 

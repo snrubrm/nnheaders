@@ -31,6 +31,11 @@ public:
     // Native returns the current 32-bit sequence; unsigned return is inferred.
     u32 PushCommand(Command* command);
     bool IsFinishCommand(u32 sequence) const;
+    // FlushCommand returns the sequence consumed by WaitCommandReply.
+    u32 FlushCommand(bool force);
+    // Inline-only in the original; name is a guess. SoundHeap::Destroy and
+    // SoundHeap::DisposeCallbackFunc both test this byte before issuing commands.
+    bool IsInitialized() const { return _0 != 0; }
 
 private:
     u8 _0;
