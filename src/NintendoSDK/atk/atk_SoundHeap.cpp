@@ -4,6 +4,8 @@
 
 namespace nn::atk {
 
+SoundHeap::SoundHeap() : mMutex(true) {}
+
 bool SoundHeap::Create(void* address, size_t size) {
     detail::Util::IsValidMemoryForDsp(address, size);
     mMutex.Lock();
