@@ -37,6 +37,7 @@ public:
     void CreateSoundThread(int priority, void* stack, size_t stackSize, int core, u32 affinity);
     // SoundSystem discards the native results; void is inferred.
     void Initialize(void* buffer, size_t size, bool enabled, bool unused);
+    void Finalize();
     void Destroy();
     void RegisterPlayerCallback(PlayerCallback* callback);
     // Return type inferred from callers that discard the result.
@@ -58,7 +59,10 @@ private:
     u8 _340[0x348 - 0x340];
     nn::os::MutexType mUserCallbackMutex;  // +0x348
     u8 _368[0x398 - 0x368];
-    nn::util::detail::IntrusiveListImplementation mPlayerCallbacks;  // +0x398
+    using PlayerCallbackList = nn::util::IntrusiveList<
+        PlayerCallback, nn::util::IntrusiveListMemberNodeTraits<PlayerCallback, &PlayerCallback::mNode>>;
+    static_assert(sizeof(PlayerCallbackList) == sizeof(nn::util::detail::IntrusiveListImplementation));
+    PlayerCallbackList mPlayerCallbacks;  // +0x398
     void (*mUserCallback)(unsigned long);  // +0x3a8
     unsigned long mUserCallbackArg;          // +0x3b0
     u8 _3b8[0x3d8 - 0x3b8];

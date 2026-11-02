@@ -65,6 +65,19 @@ void SoundThread::Initialize(void* buffer, size_t size, bool enabled, bool) {
     VirtualVoiceManager::GetInstance().Initialize();
 }
 
+void SoundThread::Finalize() {
+    for (auto it = mPlayerCallbacks.begin(); it != mPlayerCallbacks.end();) {
+        PlayerCallback& callback = *it++;
+        callback.OnShutdownSoundThread();
+    }
+    mPerformanceReader = nullptr;
+    mPerformanceBufferIndex = 0;
+    mPerformanceBufferSize = 0;
+    mPerformanceBuffers[2] = nullptr;
+    mPerformanceBuffers[1] = nullptr;
+    mPerformanceBuffers[0] = nullptr;
+}
+
 // NON_MATCHING: the native Join call passes through a separate branch thunk.
 void SoundThread::Destroy() {
     if (_3dc) {
@@ -77,11 +90,11 @@ void SoundThread::Destroy() {
 }
 
 void SoundThread::RegisterPlayerCallback(PlayerCallback* callback) {
-    mPlayerCallbacks.push_back(callback->mNode);
+    mPlayerCallbacks.push_back(*callback);
 }
 
 void SoundThread::UnregisterPlayerCallback(PlayerCallback* callback) {
-    mPlayerCallbacks.erase(mPlayerCallbacks.iterator_to(callback->mNode));
+    mPlayerCallbacks.erase(mPlayerCallbacks.iterator_to(*callback));
 }
 
 void SoundThread::ForceWakeup() {
