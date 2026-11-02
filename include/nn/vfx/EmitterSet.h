@@ -6,6 +6,17 @@ namespace nn {
 namespace vfx {
 
 class System;
+class CallbackSet;
+
+// Partial emitter model: the complete extent is unknown. The set traverses the link
+// and updates the callback pointer.
+class Emitter {
+    friend class EmitterSet;
+    u8 _0[0x78];
+    Emitter* mNext;  // +0x78
+    u8 _80[0x390 - 0x80];
+    CallbackSet* mCustomActionCallbackSet;  // +0x390
+};
 
 // Partial model. The create id at +0x2c is compared by
 // xlink2::OneEmitterMgr::releaseOneEmitterInstance 0x7100bce19c; the setters below are the ones
@@ -14,6 +25,8 @@ class EmitterSet {
 public:
     // 0x7100acaaf4
     void Kill(bool immediate);
+    Emitter* GetAliveEmitter(int index) const;
+    void OverwriteCustomActionCallbackSet(CallbackSet* callbacks);
 
     int GetCreateId() const { return m_CreateId; }
 
@@ -53,7 +66,9 @@ private:
     f32 mEmissionRatioScale;          // +0x50
     f32 mEmissionIntervalScale;       // +0x54
     f32 mParticleLifeScale;           // +0x58
-    u8 _5c[0x1c0 - 0x5c];
+    u8 _5c[0x150 - 0x5c];
+    Emitter* mFirstEmitter;           // +0x150
+    u8 _158[0x1c0 - 0x158];
     EmitterSet* _1c0;
     EmitterSet* _1c8;
     u8 _1d0[0x228 - 0x1d0];

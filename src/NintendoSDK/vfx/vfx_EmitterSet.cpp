@@ -10,6 +10,20 @@ void EmitterSet::Kill(bool immediate) {
     mSystem->KillEmitterSet(this, immediate);
 }
 
+// NON_MATCHING: the compiler emits a different loop and countdown sequence.
+Emitter* EmitterSet::GetAliveEmitter(int index) const {
+    Emitter* emitter = mFirstEmitter;
+    unsigned int remaining = index;
+    while (emitter && remaining--)
+        emitter = emitter->mNext;
+    return emitter;
+}
+
+void EmitterSet::OverwriteCustomActionCallbackSet(CallbackSet* callbacks) {
+    for (Emitter* emitter = mFirstEmitter; emitter; emitter = emitter->mNext)
+        emitter->mCustomActionCallbackSet = callbacks;
+}
+
 void EmitterSet::Fade() {
     mFade = true;
 }
