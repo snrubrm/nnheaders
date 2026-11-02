@@ -1,6 +1,7 @@
 #pragma once
 
 #include <nn/audio.h>
+#include <nn/atk/OutputMode.h>
 #include <nn/types.h>
 #include <nn/util/util_IntrusiveList.h>
 
@@ -10,7 +11,16 @@ namespace nn::atk {
 class EffectAux {
 public:
     EffectAux();
-    struct UpdateSamplesArg;
+    struct UpdateSamplesArg {
+        s32 samplesPerFrame;
+        s32 sampleRate;
+        s32 audioFrameCount;
+        s32 channelCount;
+        s32 sampleCount;
+        OutputMode outputMode;
+    };
+
+    static_assert(sizeof(UpdateSamplesArg) == 0x18);
 
     virtual ~EffectAux();
     virtual bool Initialize();
@@ -25,6 +35,7 @@ public:
     void SetEffectInputOutput(const s8* input, const s8*, int, int);
     void RemoveEffect(nn::audio::AudioRendererConfig* config, nn::audio::FinalMixType* mix);
     void RemoveEffect(nn::audio::AudioRendererConfig* config, nn::audio::SubMixType* mix);
+    void Update();
     // 0x710135bde8
     bool IsRemovable() const;
 

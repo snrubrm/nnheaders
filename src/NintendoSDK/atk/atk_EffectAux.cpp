@@ -84,6 +84,24 @@ void EffectAux::RemoveEffect(nn::audio::AudioRendererConfig* config, nn::audio::
     }
 }
 
+void EffectAux::Update() {
+    if (!mIsAdded)
+        return;
+
+    const s32 sampleCount = nn::audio::GetAuxSampleCount(&mAux);
+    UpdateSamplesArg arg;
+    arg.samplesPerFrame = sampleCount / (mAudioFrameCount * mChannelCount);
+    arg.sampleRate = nn::audio::GetAuxSampleRate(&mAux);
+    arg.audioFrameCount = mAudioFrameCount;
+    arg.channelCount = mChannelCount;
+    arg.outputMode = detail::Util::Singleton<detail::driver::HardwareManager>::GetInstance()
+                         .GetOutputMode();
+    const s32 readCount = nn::audio::ReadAuxSendBuffer(&mAux, mSampleBuffer, sampleCount);
+    arg.sampleCount = readCount;
+    UpdateSamples(mSampleBuffer, arg);
+    nn::audio::WriteAuxReturnBuffer(&mAux, mSampleBuffer, readCount);
+}
+
 bool EffectAux::IsRemovable() const {
     return nn::audio::IsAuxRemovable(&mAux);
 }
