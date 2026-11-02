@@ -10,6 +10,10 @@ class TaskProfileLogger;
 
 namespace nn::atk::detail {
 
+namespace driver {
+class WaveSoundLoader;
+}
+
 // A unit of work for the sound task manager. Layout from the constructor (0x7101353040) and
 // TaskManager::ExecuteTask / RemoveTaskById: the manager links tasks through the node at +0x8,
 // waits on the event at +0x18, sets the status at +0x40 (3 when executed, 4 when removed) and
@@ -26,6 +30,7 @@ public:
 
 private:
     friend class TaskManager;
+    friend class driver::WaveSoundLoader;
     util::IntrusiveListNode m_TaskLink;  // +0x8
     os::Event m_Event;                   // +0x18
     u32 m_Status;                        // +0x40

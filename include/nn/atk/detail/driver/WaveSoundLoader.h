@@ -2,6 +2,10 @@
 
 #include <nn/atk/detail/Task.h>
 
+namespace nn::atk {
+class SoundPlayer;
+}
+
 namespace nn::atk::detail {
 class PlayerHeap;
 }
@@ -12,6 +16,7 @@ namespace nn::atk::detail::driver {
 class WaveSoundLoader {
 public:
     bool IsInUse();
+    bool TryWait();
     // LoaderManager's callback discards the result; void is inferred.
     void Finalize();
 
@@ -23,7 +28,9 @@ private:
 
     private:
         friend class WaveSoundLoader;
-        u8 _48[0x88 - 0x48];
+        u8 _48[0x58 - 0x48];
+        SoundPlayer* mSoundPlayer;  // +0x58, copied from the loader argument
+        u8 _60[0x88 - 0x60];
         PlayerHeap* mPlayerHeap;  // +0x88
         u8 _90[0xa0 - 0x90];
     };

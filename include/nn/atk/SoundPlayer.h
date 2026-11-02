@@ -15,6 +15,7 @@ enum PauseMode {
 
 namespace detail {
 class BasicSound;
+class PlayerHeap;
 }
 
 class SoundPlayer {
@@ -25,6 +26,8 @@ public:
     void StopAllSound(s32);
     void Update();
     void DoFreePlayerHeap();
+    // WaveSoundLoader uses the result as a PlayerHeap; return type inferred.
+    detail::PlayerHeap* detail_AllocPlayerHeap();
     void detail_SortPriorityList(bool);
     void detail_SortPriorityList(nn::atk::detail::BasicSound*);
     void PauseAllSound(s32, bool);
