@@ -49,6 +49,22 @@ void SoundThread::CreateSoundThread(int priority, void* stack, size_t stackSize,
     _3dc = mThread.Run(args);
 }
 
+void SoundThread::Initialize(void* buffer, size_t size, bool enabled, bool) {
+    _414 = enabled;
+    mPerformanceReader = nullptr;
+    mPerformanceBufferIndex = 0;
+    _4c0.store(0, std::memory_order_release);
+
+    const size_t part_size = size / 3;
+    auto* first = static_cast<u8*>(buffer);
+    auto* second = first + part_size;
+    mPerformanceBufferSize = part_size;
+    mPerformanceBuffers[0] = first;
+    mPerformanceBuffers[1] = second;
+    mPerformanceBuffers[2] = second + part_size;
+    VirtualVoiceManager::GetInstance().Initialize();
+}
+
 // NON_MATCHING: the native Join call passes through a separate branch thunk.
 void SoundThread::Destroy() {
     if (_3dc) {

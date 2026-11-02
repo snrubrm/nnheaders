@@ -4,6 +4,11 @@
 #include <nn/os/os_Mutex.h>
 #include <nn/os/os_MessageQueue.h>
 #include <nn/util/util_IntrusiveList.h>
+#include <atomic>
+
+namespace nn::atk {
+class AudioRendererPerformanceReader;
+}
 
 namespace nn::atk::detail::driver {
 
@@ -30,7 +35,8 @@ public:
     static SoundThread& GetInstance();
     // Native caller discards the result; void is inferred.
     void CreateSoundThread(int priority, void* stack, size_t stackSize, int core, u32 affinity);
-    // SoundSystem::Finalize discards the native result; void is inferred.
+    // SoundSystem discards the native results; void is inferred.
+    void Initialize(void* buffer, size_t size, bool enabled, bool unused);
     void Destroy();
     void RegisterPlayerCallback(PlayerCallback* callback);
     // Return type inferred from callers that discard the result.
@@ -58,8 +64,18 @@ private:
     u8 _3b8[0x3d8 - 0x3b8];
     u32 _3d8;
     u8 _3dc;
+    u8 _3dd[0x3f0 - 0x3dd];
+    u8* mPerformanceBuffers[3];  // +0x3f0
+    size_t mPerformanceBufferSize;  // +0x408
+    s32 mPerformanceBufferIndex;  // +0x410
+    u8 _414;
+    u8 _415[0x428 - 0x415];
+    nn::atk::AudioRendererPerformanceReader* mPerformanceReader;  // +0x428
+    u8 _430[0x4c0 - 0x430];
+    std::atomic<u32> _4c0;
 };
 
+static_assert(sizeof(SoundThread) == 0x4c8);
 static_assert(sizeof(fnd::Thread) == 0x1f0);
 static_assert(sizeof(SoundThread::PlayerCallback) == 0x18);
 
