@@ -17,6 +17,9 @@ class Emitter;
 class EmitterSet;
 class Heap;
 class Resource;
+struct RenderStateSetArg;
+// The enumerators and signedness are not established; the value is used as a 32-bit mask.
+enum class DrawPathFlag : u32;
 
 class System {
 public:
@@ -24,6 +27,9 @@ public:
 
     virtual ~System();
     virtual void Initialize(nn::vfx::Heap*, nn::vfx::Heap*, nn::vfx::Config const&);
+
+    using RenderStateSetCallback = void (*)(RenderStateSetArg&);
+    RenderStateSetCallback GetDrawPathRenderStateSetCallback(DrawPathFlag flag);
 
     void ClearResource(Heap* heap, int resource_id);
     void KillEmitterSet(EmitterSet* emitter_set, bool immediate);
@@ -58,7 +64,11 @@ private:
     EmitterSet* _6a8[64];
     EmitterSet** mPendingKillSets;       // +0x8a8
     s32 mPendingKillSetCount;            // +0x8b0
-    u8 _8b4[0x1298 - 0x8b4];
+    u8 _8b4[0x1170 - 0x8b4];
+    u32 mDrawPathFlags[8];                // +0x1170
+    u8 _1190[0x10];
+    RenderStateSetCallback mDrawPathCallbacks[8];  // +0x11a0
+    u8 _11e0[0x1298 - 0x11e0];
     Emitter* _1298;  // Compute emitter list head.
     Emitter* _12a0;  // Compute emitter list tail.
     u8 _12a8[0x1770 - 0x12a8];

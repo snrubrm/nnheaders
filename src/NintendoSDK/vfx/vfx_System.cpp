@@ -8,6 +8,17 @@
 namespace nn {
 namespace vfx {
 
+System::RenderStateSetCallback System::GetDrawPathRenderStateSetCallback(DrawPathFlag flag) {
+    const u32 mask = static_cast<u32>(flag);
+    if (!mask)
+        return nullptr;
+    for (int i = 0; i < 8; ++i) {
+        if (mDrawPathFlags[i] & mask)
+            return mDrawPathCallbacks[i];
+    }
+    return nullptr;
+}
+
 void System::ClearResource(Heap* heap, int resource_id) {
     if (_90[resource_id]) {
         _90[resource_id]->Finalize(heap);
