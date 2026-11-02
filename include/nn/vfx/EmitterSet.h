@@ -35,13 +35,17 @@ public:
     u8 IsHaveInfinityEmitter() const;
 
 private:
+    friend class System;
+
     u8 _0[0x9];
     bool mFade;                       // +0x9
     u8 _a[2];
     u8 _c;
     u8 _d[2];
     u8 _f;
-    u8 _10[0x20 - 0x10];
+    u8 _10[4];
+    s32 _14;
+    u8 _18[0x20 - 0x18];
     System* mSystem;                   // +0x20
     u8 _28[0x2c - 0x28];
     int m_CreateId;                    // +0x2c

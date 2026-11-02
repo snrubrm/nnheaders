@@ -39,6 +39,49 @@ void System::KillEmitterSet(EmitterSet* emitter_set, bool) {
     mPendingKillMutex.Unlock();
 }
 
+// NON_MATCHING: link-clear stores and address scheduling differ.
+void System::RemoveEmitterSetList(EmitterSet* set) {
+    EmitterSet* next = set->_1c0;
+    if (next || set->_1c8 || !set->_f) {
+        if (_a8[set->_14] == set) {
+            _a8[set->_14] = next;
+            if (_a8[set->_14])
+                _a8[set->_14]->_1c8 = nullptr;
+            if (_2a8[set->_14] == set)
+                _2a8[set->_14] = nullptr;
+        } else {
+            if (_2a8[set->_14] == set)
+                _2a8[set->_14] = set->_1c8;
+            if (set->_1c0)
+                set->_1c0->_1c8 = set->_1c8;
+            if (set->_1c8)
+                set->_1c8->_1c0 = set->_1c0;
+            else
+                detail::OutputError("EmitterSet Remove Failed.\n");
+        }
+    } else {
+        if (_4a8[set->_14] == set) {
+            _4a8[set->_14] = next;
+            if (_4a8[set->_14])
+                _4a8[set->_14]->_1c8 = nullptr;
+            if (_6a8[set->_14] == set)
+                _6a8[set->_14] = nullptr;
+        } else {
+            if (_6a8[set->_14] == set)
+                _6a8[set->_14] = set->_1c8;
+            if (set->_1c0)
+                set->_1c0->_1c8 = set->_1c8;
+            if (set->_1c8)
+                set->_1c8->_1c0 = set->_1c0;
+            else
+                detail::OutputError("EmitterSet Remove Failed.\n");
+        }
+        set->_f = 0;
+    }
+    set->_1c0 = nullptr;
+    set->_1c8 = nullptr;
+}
+
 void System::KillEmitterSetGroup(int group) {
     EmitterSet* set = _a8[group];
     while (set) {

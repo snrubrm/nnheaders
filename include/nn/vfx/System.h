@@ -28,6 +28,7 @@ public:
     void ClearResource(Heap* heap, int resource_id);
     void KillEmitterSet(EmitterSet* emitter_set, bool immediate);
     void KillEmitterSetGroup(int group);
+    void RemoveEmitterSetList(EmitterSet* set);
 
     // 0x7100accbac: kills the emitters of all 64 emitter sets and clears the two list heads.
     void KillAllEmitterSet();
