@@ -30,6 +30,8 @@ public:
         u8 GetPan() const;
         u8 GetSurroundPan() const;
         f32 GetPitch() const;
+        // ReadWaveSoundInfo discards the result; void is inferred.
+        void GetSendValue(u8* mainSend, u8* auxSends, u8 auxCount) const;
         u8 GetLpfFreq() const;
         u8 GetBiquadType() const;
         u16 GetBiquadValue() const;

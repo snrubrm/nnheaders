@@ -1,6 +1,8 @@
 #include <nn/atk/detail/WaveSoundFile.h>
 #include <nn/atk/detail/Util.h>
 #include <nn/util/util_BytePtr.h>
+#include <algorithm>
+#include <cstring>
 
 namespace nn::atk::detail {
 
@@ -87,6 +89,23 @@ f32 WaveSoundFile::WaveSoundInfo::GetPitch() const {
     if (!Util::ReadOptionParameter(&mOptionFlags, 1, &value))
         return 1.0f;
     return value;
+}
+
+// NON_MATCHING: the default-path memset is emitted as a tail call.
+void WaveSoundFile::WaveSoundInfo::GetSendValue(u8* mainSend, u8* auxSends,
+                                               u8 auxCount) const {
+    u32 offset;
+    if (Util::ReadOptionParameter(&mOptionFlags, 8, &offset)) {
+        const u8* values = nn::util::ConstBytePtr(this, offset).Get<u8>();
+        *mainSend = values[0];
+        const u8 count = std::min<u8>(values[1], 3);
+        for (u8 i = 0; i < count; ++i)
+            auxSends[i] = values[i + 2];
+    } else {
+        *mainSend = 0x7f;
+        if (auxCount)
+            std::memset(auxSends, 0, auxCount);
+    }
 }
 
 u8 WaveSoundFile::WaveSoundInfo::GetLpfFreq() const {
