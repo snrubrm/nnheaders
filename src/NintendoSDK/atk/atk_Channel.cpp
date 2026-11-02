@@ -3,6 +3,20 @@
 
 namespace nn::atk::detail::driver {
 
+void Channel::Release() {
+    if (mEnvelope.GetState() != 4) {
+        if (mVoice && !_c4)
+            mVoice->SetPriority(1);
+        mEnvelope.SetState(4);
+    }
+    mPaused = 0;
+}
+
+void Channel::NoteOff() {
+    if (!_c5)
+        Release();
+}
+
 void Channel::Stop() {
     if (mVoice) {
         mVoice->Stop();

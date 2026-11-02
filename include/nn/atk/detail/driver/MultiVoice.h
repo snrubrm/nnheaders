@@ -39,6 +39,8 @@ public:
     void SetLpfFreq(f32 frequency);
     // 0x7101357c04
     void SetOutputLine(u32 line);
+    // Channel::Release discards the result; void is inferred.
+    void SetPriority(int priority);
 
 private:
     u8 _d8[0x1b0 - 0xd8];

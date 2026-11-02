@@ -63,7 +63,8 @@ private:
     u8 mActive;               // +0xc1
     u8 _c2;
     u8 _c3;
-    u8 _c4[2];
+    u8 _c4;
+    u8 _c5;
     u8 mBiquadType;           // +0xc6
     u8 _c7[0xd4 - 0xc7];
     f32 mBiquadFrequency;     // +0xd4

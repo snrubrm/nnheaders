@@ -15,6 +15,9 @@ public:
     // Inline-only, name guessed: Channel::Release/NoteOff and SequenceTrack::NoteOn all
     // independently compare the envelope state at +0.
     u32 GetState() const { return mState; }
+    // Inline-only in the original; name is a guess. Channel::Release and
+    // Channel::NoteOff both write the envelope state directly.
+    void SetState(u32 state) { mState = state; }
     void SetDecay(int decay);
     void SetRelease(int release);
     void SetAttack(int attack);
