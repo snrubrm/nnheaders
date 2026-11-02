@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <nn/atk/SoundArchive.h>
 #include <nn/types.h>
 
 namespace nn {
@@ -19,6 +20,9 @@ public:
     // Static 1350678 reads the archive's player information and scales the
     // caller's size_t cache size; no StreamSoundRuntime receiver is passed.
     static size_t GetRequiredStreamCacheSize(const SoundArchive* archive, size_t cache_size);
+    // Size return inferred from allocation-size callers.
+    static size_t GetRequiredMemorySize(const SoundArchive::SoundArchivePlayerInfo& info,
+                                        int alignment);
     // 0x710135035c / 0x71013503ac (declared only; bodies U).
     size_t GetRequiredStreamBufferSize(const SoundArchive* archive) const;
     static u32 GetRequiredStreamBufferTimes(const SoundArchive* archive);

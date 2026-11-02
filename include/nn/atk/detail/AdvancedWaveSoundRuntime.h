@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <nn/atk/SoundArchive.h>
 #include <nn/atk/detail/SoundInstanceManager.h>
 #include <nn/types.h>
 
@@ -18,6 +19,9 @@ public:
     AdvancedWaveSoundRuntime();
     ~AdvancedWaveSoundRuntime();
 
+    // Size return inferred from allocation-size callers.
+    static size_t GetRequiredMemorySize(const SoundArchive::SoundArchivePlayerInfo& info,
+                                        size_t alignment);
     void Initialize(s32, void**, void const*);
     void Finalize();
     s32 GetActiveCount() const;

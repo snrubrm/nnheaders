@@ -23,6 +23,9 @@ public:
 
     static size_t GetRequiredSequenceTrackMemorySize(
         const SoundArchive::SoundArchivePlayerInfo& info, int alignment);
+    // Size return inferred from allocation-size callers.
+    static size_t GetRequiredMemorySize(const SoundArchive::SoundArchivePlayerInfo& info,
+                                        int alignment);
 
     void Initialize(s32, void**, void const*);
     void Finalize();
