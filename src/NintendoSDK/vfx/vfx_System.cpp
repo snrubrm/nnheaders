@@ -19,6 +19,11 @@ System::RenderStateSetCallback System::GetDrawPathRenderStateSetCallback(DrawPat
     return nullptr;
 }
 
+bool System::CreateEmitterSetId(Handle* handle, int emitter_set_id, int resource_id, int group,
+                                Heap* heap, bool flag) {
+    return CreateEmitterSetId(handle, emitter_set_id, resource_id, group, 0, heap, flag);
+}
+
 void System::ClearResource(Heap* heap, int resource_id) {
     if (_90[resource_id]) {
         _90[resource_id]->Finalize(heap);

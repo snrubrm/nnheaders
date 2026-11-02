@@ -16,6 +16,7 @@ namespace vfx {
 class Emitter;
 class EmitterSet;
 class Heap;
+class Handle;
 class Resource;
 struct RenderStateSetArg;
 // The enumerators and signedness are not established; the value is used as a 32-bit mask.
@@ -31,6 +32,11 @@ public:
     using RenderStateSetCallback = void (*)(RenderStateSetArg&);
     RenderStateSetCallback GetDrawPathRenderStateSetCallback(DrawPathFlag flag);
 
+    // The full overload returns normalized success/failure in native callers.
+    bool CreateEmitterSetId(Handle* handle, int emitter_set_id, int resource_id, int group,
+                            int option, Heap* heap, bool flag);
+    bool CreateEmitterSetId(Handle* handle, int emitter_set_id, int resource_id, int group,
+                            Heap* heap, bool flag);
     void ClearResource(Heap* heap, int resource_id);
     void KillEmitterSet(EmitterSet* emitter_set, bool immediate);
     void KillEmitterSetGroup(int group);
