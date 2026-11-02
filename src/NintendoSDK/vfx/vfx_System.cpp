@@ -24,6 +24,10 @@ bool System::CreateEmitterSetId(Handle* handle, int emitter_set_id, int resource
     return CreateEmitterSetId(handle, emitter_set_id, resource_id, group, 0, heap, flag);
 }
 
+void System::InitializeEmitter(Emitter* emitter) {
+    emitter->mCalculator = mEmitterCalculator;
+}
+
 void System::ClearResource(Heap* heap, int resource_id) {
     if (_90[resource_id]) {
         _90[resource_id]->Finalize(heap);

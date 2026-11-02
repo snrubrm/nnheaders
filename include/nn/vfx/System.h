@@ -18,6 +18,7 @@ class EmitterSet;
 class Heap;
 class Handle;
 class Resource;
+namespace detail { class EmitterCalculator; }
 struct RenderStateSetArg;
 // The enumerators and signedness are not established; the value is used as a 32-bit mask.
 enum class DrawPathFlag : u32;
@@ -37,6 +38,7 @@ public:
                             int option, Heap* heap, bool flag);
     bool CreateEmitterSetId(Handle* handle, int emitter_set_id, int resource_id, int group,
                             Heap* heap, bool flag);
+    void InitializeEmitter(Emitter* emitter);
     void ClearResource(Heap* heap, int resource_id);
     void KillEmitterSet(EmitterSet* emitter_set, bool immediate);
     void KillEmitterSetGroup(int group);
@@ -70,7 +72,9 @@ private:
     EmitterSet* _6a8[64];
     EmitterSet** mPendingKillSets;       // +0x8a8
     s32 mPendingKillSetCount;            // +0x8b0
-    u8 _8b4[0x1170 - 0x8b4];
+    u8 _8b4[4];
+    detail::EmitterCalculator* mEmitterCalculator;  // +0x8b8
+    u8 _8c0[0x1170 - 0x8c0];
     u32 mDrawPathFlags[8];                // +0x1170
     u8 _1190[0x10];
     RenderStateSetCallback mDrawPathCallbacks[8];  // +0x11a0

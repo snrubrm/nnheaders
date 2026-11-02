@@ -34,7 +34,7 @@ void EmitterSet::SetManualParticleEmissionWithParticleCount(int count) {
     mManualParticleEmission = true;
     mManualParticleCount = count;
     for (Emitter* emitter = mFirstEmitter; emitter; emitter = emitter->mNext) {
-        if (emitter->_90) {
+        if (emitter->mCalculator) {
             emitter->mParticleCount = mManualParticleCount;
             emitter->ResourceUpdate(mDevice, emitter->_508);
         }

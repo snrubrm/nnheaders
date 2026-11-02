@@ -10,11 +10,13 @@ class System;
 class CallbackSet;
 class EmitterSet;
 struct RenderStateSetArg;
+namespace detail { class EmitterCalculator; }
 
 // Partial emitter model: the complete extent is unknown. The set traverses the link
 // and updates the callback pointer.
 class Emitter {
     friend class EmitterSet;
+    friend class System;
 public:
     // The draw-path bit index is inferred to be in the range 0..31.
     void SetDrawPath(u32 index);
@@ -27,7 +29,7 @@ private:
     EmitterSet* mEmitterSet;  // +0x70
     Emitter* mNext;  // +0x78
     u8 _80[0x10];
-    void* _90;  // +0x90; assigned by System::InitializeEmitter
+    detail::EmitterCalculator* mCalculator;  // +0x90
     u8 _98[0x390 - 0x98];
     CallbackSet* mCustomActionCallbackSet;  // +0x390
     u8 _398[0x3a8 - 0x398];
