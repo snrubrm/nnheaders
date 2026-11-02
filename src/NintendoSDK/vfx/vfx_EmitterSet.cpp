@@ -6,6 +6,12 @@
 namespace nn {
 namespace vfx {
 
+void Emitter::SetDrawPath(u32 index) {
+    mDrawPathIndex = index;
+    mRenderStateSetCallback = mEmitterSet->mSystem->GetDrawPathRenderStateSetCallback(
+        static_cast<DrawPathFlag>(1u << index));
+}
+
 void EmitterSet::Kill(bool immediate) {
     mSystem->KillEmitterSet(this, immediate);
 }

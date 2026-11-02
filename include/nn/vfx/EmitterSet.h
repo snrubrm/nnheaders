@@ -8,21 +8,32 @@ namespace vfx {
 
 class System;
 class CallbackSet;
+class EmitterSet;
+struct RenderStateSetArg;
 
 // Partial emitter model: the complete extent is unknown. The set traverses the link
 // and updates the callback pointer.
 class Emitter {
     friend class EmitterSet;
+public:
+    // The draw-path bit index is inferred to be in the range 0..31.
+    void SetDrawPath(u32 index);
+
+private:
     bool ResourceUpdate(gfx::Device* device, Emitter* parent);
     u8 _0[0x20];
     int mParticleCount;  // +0x20
-    u8 _24[0x78 - 0x24];
+    u8 _24[0x70 - 0x24];
+    EmitterSet* mEmitterSet;  // +0x70
     Emitter* mNext;  // +0x78
     u8 _80[0x10];
     void* _90;  // +0x90; assigned by System::InitializeEmitter
     u8 _98[0x390 - 0x98];
     CallbackSet* mCustomActionCallbackSet;  // +0x390
-    u8 _398[0x508 - 0x398];
+    u8 _398[0x3a8 - 0x398];
+    void (*mRenderStateSetCallback)(RenderStateSetArg&);  // +0x3a8
+    u32 mDrawPathIndex;  // +0x3b0
+    u8 _3b4[0x508 - 0x3b4];
     Emitter* _508;  // +0x508
 };
 
@@ -58,6 +69,7 @@ public:
 
 private:
     friend class System;
+    friend class Emitter;
 
     gfx::Device* mDevice;  // +0x0
     u8 _8;
