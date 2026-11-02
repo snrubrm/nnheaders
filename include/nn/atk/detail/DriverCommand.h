@@ -9,6 +9,7 @@ class CommandManager;
 class DriverCommand {
 public:
     static CommandManager& GetInstance();
+    static void RequestProcessCommand();
 };
 
 }  // namespace nn::atk::detail
