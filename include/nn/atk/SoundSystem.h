@@ -7,6 +7,8 @@
 
 namespace nn::atk {
 
+class EffectAux;
+
 /// The global state of the sound library. TODO: only the effect functions that sead::AudioSystemCafe calls.
 class SoundSystem {
 public:
@@ -59,6 +61,9 @@ public:
     static void Finalize();
     /// 0x710133dd80 (declared only)
     static bool IsInitialized();
+    // The native implementations return normalized success/failure.
+    static bool AppendEffect(AuxBus bus, EffectAux* effect, void* buffer, size_t size);
+    static bool AppendEffectToFinalMix(EffectAux* effect, void* buffer, size_t size);
     static void AttachMemoryPool(nn::audio::MemoryPoolType* pool, void* address, size_t size);
     static void DetachMemoryPool(nn::audio::MemoryPoolType* pool);
     static int GetRendererChannelCountMax();
