@@ -6,6 +6,15 @@ namespace atk {
 namespace detail {
 namespace driver {
 
+// NON_MATCHING: the second target load is scheduled before the frame-count load.
+f32 HardwareManager::GetOutputVolume() const {
+    const f32 master_volume = GetMasterVolume();
+    f32 volume = _f0;
+    if (_f8 < _f4)
+        volume = _ec + _f8 * (_f0 - _ec) / _f4;
+    return master_volume * volume;
+}
+
 void HardwareManager::SetupAudioRendererParameter(
     nn::audio::AudioRendererParameter* renderer, const HardwareManagerParameter& parameter) const {
     const u32 channel_count = parameter._1a ? 2 : 6;

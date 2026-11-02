@@ -81,6 +81,7 @@ public:
     // both lock the mutex at +0x760 around nn::audio calls.
     nn::os::MutexType* GetAudioRendererMutex() { return &mAudioRendererMutex; }
 
+    f32 GetOutputVolume() const;
     void SetMasterVolume(f32 volume, s32 frames);
     void UpdateEffect();
     // The native method returns the renderer's 32-bit result; nn::Result is inferred.
@@ -135,7 +136,11 @@ private:
     f32 mMasterVolumeTarget;
     s32 mMasterVolumeFrames;
     s32 mMasterVolumeCurrentFrame;
-    u8 _ec[0x368 - 0xec];
+    f32 _ec;
+    f32 _f0;
+    s32 _f4;
+    s32 _f8;
+    u8 _fc[0x368 - 0xfc];
     /* 0x368 */ nn::os::MutexType mEffectAuxMutex;
     u8 _388[0x600 - 0x388];
     LowLevelVoiceAllocator mLowLevelVoiceAllocator;  // +0x600
