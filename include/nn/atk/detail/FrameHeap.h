@@ -1,6 +1,7 @@
 #pragma once
 
 #include <nn/types.h>
+#include <nn/util/util_IntrusiveList.h>
 
 namespace nn::atk::detail {
 
@@ -22,8 +23,7 @@ public:
 
 private:
     void* mHeap;
-    void* mNext;
-    void* mPrev;
+    nn::util::IntrusiveListNode mNode;  // +0x8
 };
 static_assert(sizeof(FrameHeap) == 0x18);
 
