@@ -15,6 +15,19 @@ namespace nn::atk::detail::driver {
 // Partial native model: the Handler base and callback-list root are established.
 class SoundThread : public fnd::Thread::Handler {
 public:
+    // LoaderManager RTTI identifies this base; FrameProcess dispatches the two frame slots.
+    class SoundFrameCallback {
+    public:
+        virtual ~SoundFrameCallback();
+        // Native frame dispatch ignores results; void is inferred.
+        virtual void OnBeginSoundFrame();
+        virtual void OnEndSoundFrame();
+
+    private:
+        friend class SoundThread;
+        nn::util::IntrusiveListNode mNode;
+    };
+
     class PlayerCallback {
     public:
         PlayerCallback();
@@ -42,6 +55,9 @@ public:
     void RegisterPlayerCallback(PlayerCallback* callback);
     // Return type inferred from callers that discard the result.
     void UnregisterPlayerCallback(PlayerCallback* callback);
+    // Native callers discard results; void is inferred.
+    void RegisterSoundFrameCallback(SoundFrameCallback* callback);
+    void UnregisterSoundFrameCallback(SoundFrameCallback* callback);
 
     /// Registers a function that is called by the sound thread every sound frame with `arg`.
     void RegisterSoundFrameUserCallback(void (*callback)(unsigned long), unsigned long arg);
@@ -58,7 +74,8 @@ private:
     u64 mQueueBuffer[32];             // +0x240
     u8 _340[0x348 - 0x340];
     nn::os::MutexType mUserCallbackMutex;  // +0x348
-    u8 _368[0x398 - 0x368];
+    u8 _368[0x388 - 0x368];
+    nn::util::detail::IntrusiveListImplementation mFrameCallbacks;  // +0x388
     using PlayerCallbackList = nn::util::IntrusiveList<
         PlayerCallback, nn::util::IntrusiveListMemberNodeTraits<PlayerCallback, &PlayerCallback::mNode>>;
     static_assert(sizeof(PlayerCallbackList) == sizeof(nn::util::detail::IntrusiveListImplementation));
@@ -82,5 +99,6 @@ private:
 static_assert(sizeof(SoundThread) == 0x4c8);
 static_assert(sizeof(fnd::Thread) == 0x1f0);
 static_assert(sizeof(SoundThread::PlayerCallback) == 0x18);
+static_assert(sizeof(SoundThread::SoundFrameCallback) == 0x18);
 
 }  // namespace nn::atk::detail::driver

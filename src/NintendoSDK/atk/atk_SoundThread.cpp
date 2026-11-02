@@ -97,6 +97,18 @@ void SoundThread::UnregisterPlayerCallback(PlayerCallback* callback) {
     mPlayerCallbacks.erase(mPlayerCallbacks.iterator_to(*callback));
 }
 
+void SoundThread::RegisterSoundFrameCallback(SoundFrameCallback* callback) {
+    nn::os::LockMutex(&mUserCallbackMutex);
+    mFrameCallbacks.push_back(callback->mNode);
+    nn::os::UnlockMutex(&mUserCallbackMutex);
+}
+
+void SoundThread::UnregisterSoundFrameCallback(SoundFrameCallback* callback) {
+    nn::os::LockMutex(&mUserCallbackMutex);
+    mFrameCallbacks.erase(mFrameCallbacks.iterator_to(callback->mNode));
+    nn::os::UnlockMutex(&mUserCallbackMutex);
+}
+
 void SoundThread::ForceWakeup() {
 }
 
