@@ -28,6 +28,7 @@ public:
     void Update();
     void DoFreePlayerHeap();
     void detail_AppendPlayerHeap(detail::PlayerHeap* heap);
+    void detail_FreePlayerHeap(detail::PlayerHeap* heap);
     // WaveSoundLoader uses the result as a PlayerHeap; return type inferred.
     detail::PlayerHeap* detail_AllocPlayerHeap();
     void detail_SortPriorityList(bool);
@@ -48,8 +49,7 @@ public:
     u64 _10;
     u64 _18;
     nn::util::detail::IntrusiveListImplementation mPlayerHeapList;  // +0x20
-    u64 _30;
-    u64 _38;
+    nn::util::detail::IntrusiveListImplementation mOtherPlayerHeapList;  // +0x30
     s32 _40;
     s32 mPlayableSoundCount;  // _44
     s32 _48;
