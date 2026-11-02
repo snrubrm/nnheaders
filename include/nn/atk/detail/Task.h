@@ -20,6 +20,10 @@ public:
     virtual ~Task();
     virtual void Execute(TaskProfileLogger& logger) = 0;
 
+    // Inline-only in the original; name is a guess. SequenceSoundLoader::IsInUse
+    // and WaveSoundLoader::IsInUse both try the embedded completion event.
+    bool IsFinishedMaybe() { return m_Event.TryWait(); }
+
 private:
     friend class TaskManager;
     util::IntrusiveListNode m_TaskLink;  // +0x8

@@ -429,6 +429,8 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_MmlParser.cpp
   src/NintendoSDK/atk/atk_MmlSequenceTrack.cpp
   src/NintendoSDK/atk/atk_SequenceSoundRuntime.cpp
+  src/NintendoSDK/atk/atk_SequenceSoundLoader.cpp
+  src/NintendoSDK/atk/atk_WaveSoundLoader.cpp
   src/NintendoSDK/atk/atk_WaveSoundRuntime.cpp
   src/NintendoSDK/atk/atk_AdvancedWaveSoundRuntime.cpp
   src/NintendoSDK/atk/atk_Voice.cpp
