@@ -4,6 +4,10 @@
 
 namespace nn::atk {
 
+EffectAux::EffectAux()
+    : mAudioFrameCount(4), mChannelCount(4), mIsAdded(false), mIsEnabled(false),
+      mBuffer(nullptr), mBufferSize(0), mSampleBuffer(nullptr), mChannelIndices{0, 1, 2, 3, 4, 5} {}
+
 EffectAux::~EffectAux() {}
 
 bool EffectAux::Initialize() {
