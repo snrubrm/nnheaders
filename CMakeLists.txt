@@ -383,6 +383,7 @@ add_library(NintendoSDK OBJECT
   src/NintendoSDK/atk/atk_SoundHandle.cpp
   src/NintendoSDK/atk/atk_FrameHeap.cpp
   src/NintendoSDK/atk/atk_SoundHeap.cpp
+  src/NintendoSDK/atk/atk_SoundPlayer.cpp
   src/NintendoSDK/atk/atk_Util.cpp
   src/NintendoSDK/atk/atk_CurveLfo.cpp
   src/NintendoSDK/atk/atk_CurveAdshr.cpp

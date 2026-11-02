@@ -6,6 +6,7 @@
 #pragma once
 
 #include <nn/types.h>
+#include <nn/util/util_IntrusiveList.h>
 
 namespace nn {
 namespace atk {
@@ -26,6 +27,7 @@ public:
     void StopAllSound(s32);
     void Update();
     void DoFreePlayerHeap();
+    void detail_AppendPlayerHeap(detail::PlayerHeap* heap);
     // WaveSoundLoader uses the result as a PlayerHeap; return type inferred.
     detail::PlayerHeap* detail_AllocPlayerHeap();
     void detail_SortPriorityList(bool);
@@ -45,8 +47,7 @@ public:
     u64 _8;
     u64 _10;
     u64 _18;
-    u64 _20;
-    u64 _28;
+    nn::util::detail::IntrusiveListImplementation mPlayerHeapList;  // +0x20
     u64 _30;
     u64 _38;
     s32 _40;

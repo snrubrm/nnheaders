@@ -21,6 +21,8 @@ public:
     size_t GetAllocateSize(size_t size, bool withCallback) override;
 
 private:
+    friend class nn::atk::SoundPlayer;
+
     SoundPlayer* mPlayer;  // +0x8
     void* mBegin;          // +0x10
     void* mEnd;            // +0x18
