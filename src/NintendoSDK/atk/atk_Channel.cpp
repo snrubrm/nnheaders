@@ -1,7 +1,12 @@
 #include <nn/atk/detail/driver/Channel.h>
+#include <nn/atk/detail/driver/ChannelManager.h>
 #include <nn/atk/detail/driver/MultiVoice.h>
 
 namespace nn::atk::detail::driver {
+
+void Channel::FreeChannel(Channel* channel) {
+    ChannelManager::GetInstance().Free(channel);
+}
 
 void Channel::Release() {
     if (mEnvelope.GetState() != 4) {
