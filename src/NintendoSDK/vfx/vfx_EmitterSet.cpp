@@ -24,6 +24,17 @@ void EmitterSet::OverwriteCustomActionCallbackSet(CallbackSet* callbacks) {
         emitter->mCustomActionCallbackSet = callbacks;
 }
 
+void EmitterSet::SetManualParticleEmissionWithParticleCount(int count) {
+    mManualParticleEmission = true;
+    mManualParticleCount = count;
+    for (Emitter* emitter = mFirstEmitter; emitter; emitter = emitter->mNext) {
+        if (emitter->_90) {
+            emitter->mParticleCount = mManualParticleCount;
+            emitter->ResourceUpdate(mDevice, emitter->_508);
+        }
+    }
+}
+
 void EmitterSet::Fade() {
     mFade = true;
 }

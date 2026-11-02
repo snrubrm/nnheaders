@@ -1,6 +1,7 @@
 #pragma once
 
 #include <nn/types.h>
+#include <nn/gfx/gfx_Types.h>
 
 namespace nn {
 namespace vfx {
@@ -12,10 +13,17 @@ class CallbackSet;
 // and updates the callback pointer.
 class Emitter {
     friend class EmitterSet;
-    u8 _0[0x78];
+    bool ResourceUpdate(gfx::Device* device, Emitter* parent);
+    u8 _0[0x20];
+    int mParticleCount;  // +0x20
+    u8 _24[0x78 - 0x24];
     Emitter* mNext;  // +0x78
-    u8 _80[0x390 - 0x80];
+    u8 _80[0x10];
+    void* _90;  // +0x90; assigned by System::InitializeEmitter
+    u8 _98[0x390 - 0x98];
     CallbackSet* mCustomActionCallbackSet;  // +0x390
+    u8 _398[0x508 - 0x398];
+    Emitter* _508;  // +0x508
 };
 
 // Partial model. The create id at +0x2c is compared by
@@ -27,6 +35,7 @@ public:
     void Kill(bool immediate);
     Emitter* GetAliveEmitter(int index) const;
     void OverwriteCustomActionCallbackSet(CallbackSet* callbacks);
+    void SetManualParticleEmissionWithParticleCount(int count);
 
     int GetCreateId() const { return m_CreateId; }
 
@@ -50,11 +59,13 @@ public:
 private:
     friend class System;
 
-    u8 _0[0x9];
+    gfx::Device* mDevice;  // +0x0
+    u8 _8;
     bool mFade;                       // +0x9
     u8 _a[2];
     u8 _c;
-    u8 _d[2];
+    u8 _d;
+    bool mManualParticleEmission;  // +0xe
     u8 _f;
     u8 _10[4];
     s32 _14;
@@ -62,7 +73,9 @@ private:
     System* mSystem;                   // +0x20
     u8 _28[0x2c - 0x28];
     int m_CreateId;                    // +0x2c
-    u8 _30[0x50 - 0x30];
+    u8 _30[0x44 - 0x30];
+    int mManualParticleCount;  // +0x44
+    u8 _48[0x50 - 0x48];
     f32 mEmissionRatioScale;          // +0x50
     f32 mEmissionIntervalScale;       // +0x54
     f32 mParticleLifeScale;           // +0x58
