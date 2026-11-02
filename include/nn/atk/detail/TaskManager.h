@@ -18,6 +18,8 @@ public:
 
     TaskManager();
     ~TaskManager();
+    // Native callers use the returned singleton as a TaskManager receiver; reference inferred.
+    static TaskManager& GetInstance();
 
     // Native sound-system callers discard both results; void is inferred.
     void Initialize(bool profilingEnabled);
