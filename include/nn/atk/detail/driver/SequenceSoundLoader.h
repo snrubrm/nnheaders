@@ -1,6 +1,13 @@
 #pragma once
 
 #include <nn/atk/detail/Task.h>
+#include <nn/atk/detail/LoadItemInfo.h>
+
+namespace nn::atk {
+class SoundArchive;
+class SoundDataManager;
+class SoundPlayer;
+}
 
 namespace nn::atk::detail {
 class PlayerHeap;
@@ -11,6 +18,18 @@ namespace nn::atk::detail::driver {
 // LoaderManager::Create 0x7101349754 constructs the two Task subobjects at +0 and +0x118.
 class SequenceSoundLoader {
 public:
+    struct LoadInfo {
+        LoadInfo(const SoundArchive* archive, const SoundDataManager* dataManager,
+                 LoadItemInfo* sequence, LoadItemInfo* banks, SoundPlayer* player);
+
+        const SoundArchive* mArchive;
+        const SoundDataManager* mDataManager;
+        LoadItemInfo* mSequence;
+        LoadItemInfo* mBanks[4];
+        SoundPlayer* mSoundPlayer;
+    };
+    static_assert(sizeof(LoadInfo) == 0x40);
+
     bool IsInUse();
     // LoaderManager's callback discards the result; void is inferred.
     void Finalize();
