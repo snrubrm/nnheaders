@@ -1,6 +1,7 @@
 #pragma once
 
 #include <nn/atk/detail/fnd/Thread.h>
+#include <nn/os/os_Mutex.h>
 #include <nn/util/util_IntrusiveList.h>
 
 namespace nn::atk::detail::driver {
@@ -43,9 +44,13 @@ public:
 
 private:
     fnd::Thread mThread;  // +0x8
-    u8 _1f8[0x398 - 0x1f8];
+    u8 _1f8[0x348 - 0x1f8];
+    nn::os::MutexType mUserCallbackMutex;  // +0x348
+    u8 _368[0x398 - 0x368];
     nn::util::detail::IntrusiveListImplementation mPlayerCallbacks;  // +0x398
-    u8 _3a8[0x3d8 - 0x3a8];
+    void (*mUserCallback)(unsigned long);  // +0x3a8
+    unsigned long mUserCallbackArg;          // +0x3b0
+    u8 _3b8[0x3d8 - 0x3b8];
     u32 _3d8;
     u8 _3dc;
 };

@@ -6,6 +6,26 @@
 
 namespace nn::atk::detail::driver {
 
+// NON_MATCHING: the singleton mutex address is obtained from the returned pointer.
+void SoundThread::RegisterSoundFrameUserCallback(void (*callback)(unsigned long), unsigned long arg) {
+    nn::os::MutexType* mutex = &GetInstance().mUserCallbackMutex;
+    nn::os::LockMutex(mutex);
+    mUserCallbackArg = arg;
+    mUserCallback = callback;
+    GetInstance();
+    nn::os::UnlockMutex(mutex);
+}
+
+// NON_MATCHING: singleton address materialization and callback-field store order differ.
+void SoundThread::ClearSoundFrameUserCallback() {
+    nn::os::MutexType* mutex = &GetInstance().mUserCallbackMutex;
+    nn::os::LockMutex(mutex);
+    mUserCallback = nullptr;
+    mUserCallbackArg = 0;
+    GetInstance();
+    nn::os::UnlockMutex(mutex);
+}
+
 void SoundThread::UpdateLowLevelVoices() {
     LowLevelVoiceCommand::GetInstance().ProcessCommand();
     const OutputMode mode = Util::Singleton<HardwareManager>::GetInstance().GetOutputMode();
