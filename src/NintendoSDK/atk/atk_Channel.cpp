@@ -4,6 +4,20 @@
 
 namespace nn::atk::detail::driver {
 
+// NON_MATCHING: loop metadata load order and register allocation differ.
+s64 Channel::GetCurrentPlayingSample(bool loop) const {
+    if (!mActive)
+        return 0;
+
+    s64 sample = mVoice->GetCurrentPlayingSample();
+    if (loop && _3d8) {
+        const s64 limit = _3d0 - _3c8 + mWaveBuffers[0]._10;
+        if (sample > limit)
+            sample = _3d0 + sample - limit;
+    }
+    return sample;
+}
+
 void Channel::FreeChannel(Channel* channel) {
     ChannelManager::GetInstance().Free(channel);
 }

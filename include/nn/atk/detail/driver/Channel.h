@@ -1,5 +1,6 @@
 #pragma once
 
+#include <nn/atk/WaveBuffer.h>
 #include <nn/atk/detail/CurveAdshr.h>
 #include <nn/atk/detail/CurveLfo.h>
 #include <nn/atk/detail/driver/DisposeCallback.h>
@@ -84,7 +85,14 @@ private:
     void* mCallbackArg;       // +0x178
     MultiVoice* mVoice;       // +0x180
     Channel* mNext;           // +0x188
-    u8 _190[0x3e0 - 0x190];
+    nn::atk::WaveBuffer mWaveBuffers[4];  // +0x190
+    u8 _290[0x3c8 - 0x290];
+    // Signed width inferred from GetCurrentPlayingSample; readers populate these
+    // through WaveInfo from zero-extended 32-bit values.
+    s64 _3c8;
+    s64 _3d0;
+    u8 _3d8;
+    u8 _3d9[0x3e0 - 0x3d9];
     nn::util::IntrusiveListNode mPoolNode;  // +0x3e0
 };
 
