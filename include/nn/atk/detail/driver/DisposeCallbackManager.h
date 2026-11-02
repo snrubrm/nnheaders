@@ -9,9 +9,14 @@ public:
     static DisposeCallbackManager& GetInstance();
     void RegisterDisposeCallback(DisposeCallback* callback);
     void UnregisterDisposeCallback(DisposeCallback* callback);
+    // Native callers discard the result; void is inferred.
+    void Dispose(const void* address, size_t size);
 
 private:
-    nn::util::detail::IntrusiveListImplementation mCallbacks;
+    using CallbackList = nn::util::IntrusiveList<
+        DisposeCallback, nn::util::IntrusiveListMemberNodeTraits<DisposeCallback, &DisposeCallback::mNode>>;
+    static_assert(sizeof(CallbackList) == sizeof(nn::util::detail::IntrusiveListImplementation));
+    CallbackList mCallbacks;
 };
 
 }  // namespace nn::atk::detail::driver
