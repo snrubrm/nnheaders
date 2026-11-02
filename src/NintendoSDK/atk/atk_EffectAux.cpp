@@ -1,6 +1,7 @@
 #include <nn/atk/EffectAux.h>
 #include <nn/atk/detail/Util.h>
 #include <nn/atk/detail/driver/HardwareManager.h>
+#include <nn/util/util_BytePtr.h>
 
 namespace nn::atk {
 
@@ -53,6 +54,64 @@ void EffectAux::SetEnabled(bool enabled) {
         nn::os::UnlockMutex(detail::Util::Singleton<detail::driver::HardwareManager>::GetInstance()
                                 .GetAudioRendererMutex());
     }
+}
+
+bool EffectAux::AddEffect(nn::audio::AudioRendererConfig* config,
+                          const nn::audio::AudioRendererParameter& parameter,
+                          nn::audio::FinalMixType* mix) {
+    if (mIsAdded)
+        return false;
+
+    const size_t size = nn::audio::GetRequiredBufferSizeForAuxSendReturnBuffer(
+        &parameter, mAudioFrameCount, mChannelCount);
+    nn::util::BytePtr sendBuffer(mBuffer);
+    sendBuffer.AlignUp(0x40);
+    nn::util::BytePtr returnBuffer(sendBuffer.Get(), size);
+    returnBuffer.AlignUp(0x40);
+    nn::util::BytePtr sampleBuffer(returnBuffer.Get(), size);
+    sampleBuffer.AlignUp(0x40);
+    mSampleBuffer = sampleBuffer.Get<s32>();
+
+    nn::os::LockMutex(detail::Util::Singleton<detail::driver::HardwareManager>::GetInstance()
+                          .GetAudioRendererMutex());
+    const nn::Result result = nn::audio::AddAux(config, &mAux, mix, sendBuffer.Get(),
+                                                returnBuffer.Get(), size);
+    nn::os::UnlockMutex(detail::Util::Singleton<detail::driver::HardwareManager>::GetInstance()
+                            .GetAudioRendererMutex());
+    if (result.IsFailure())
+        return false;
+    nn::audio::SetAuxEnabled(&mAux, mIsEnabled);
+    mIsAdded = true;
+    return true;
+}
+
+bool EffectAux::AddEffect(nn::audio::AudioRendererConfig* config,
+                          const nn::audio::AudioRendererParameter& parameter,
+                          nn::audio::SubMixType* mix) {
+    if (mIsAdded)
+        return false;
+
+    const size_t size = nn::audio::GetRequiredBufferSizeForAuxSendReturnBuffer(
+        &parameter, mAudioFrameCount, mChannelCount);
+    nn::util::BytePtr sendBuffer(mBuffer);
+    sendBuffer.AlignUp(0x40);
+    nn::util::BytePtr returnBuffer(sendBuffer.Get(), size);
+    returnBuffer.AlignUp(0x40);
+    nn::util::BytePtr sampleBuffer(returnBuffer.Get(), size);
+    sampleBuffer.AlignUp(0x40);
+    mSampleBuffer = sampleBuffer.Get<s32>();
+
+    nn::os::LockMutex(detail::Util::Singleton<detail::driver::HardwareManager>::GetInstance()
+                          .GetAudioRendererMutex());
+    const nn::Result result = nn::audio::AddAux(config, &mAux, mix, sendBuffer.Get(),
+                                                returnBuffer.Get(), size);
+    nn::os::UnlockMutex(detail::Util::Singleton<detail::driver::HardwareManager>::GetInstance()
+                            .GetAudioRendererMutex());
+    if (result.IsFailure())
+        return false;
+    nn::audio::SetAuxEnabled(&mAux, mIsEnabled);
+    mIsAdded = true;
+    return true;
 }
 
 void EffectAux::SetEffectInputOutput(const s8* input, const s8*, int, int) {

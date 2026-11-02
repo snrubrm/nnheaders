@@ -32,6 +32,10 @@ public:
     bool SetChannelCount(s32 count);
     bool SetAudioFrameCount(s32 count);
     void SetEnabled(bool enabled);
+    bool AddEffect(nn::audio::AudioRendererConfig* config,
+                   const nn::audio::AudioRendererParameter& parameter, nn::audio::FinalMixType* mix);
+    bool AddEffect(nn::audio::AudioRendererConfig* config,
+                   const nn::audio::AudioRendererParameter& parameter, nn::audio::SubMixType* mix);
     void SetEffectInputOutput(const s8* input, const s8*, int, int);
     void RemoveEffect(nn::audio::AudioRendererConfig* config, nn::audio::FinalMixType* mix);
     void RemoveEffect(nn::audio::AudioRendererConfig* config, nn::audio::SubMixType* mix);
