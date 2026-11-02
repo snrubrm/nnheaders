@@ -49,6 +49,17 @@ void SoundThread::CreateSoundThread(int priority, void* stack, size_t stackSize,
     _3dc = mThread.Run(args);
 }
 
+// NON_MATCHING: the native Join call passes through a separate branch thunk.
+void SoundThread::Destroy() {
+    if (_3dc) {
+        nn::os::JamMessageQueue(&mQueue, 0x20000000);
+        mThread.Join();
+        mThread.Release();
+        _3d8 = 0;
+        _3dc = 0;
+    }
+}
+
 void SoundThread::RegisterPlayerCallback(PlayerCallback* callback) {
     mPlayerCallbacks.push_back(callback->mNode);
 }

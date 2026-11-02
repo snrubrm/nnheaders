@@ -2,6 +2,7 @@
 
 #include <nn/atk/detail/fnd/Thread.h>
 #include <nn/os/os_Mutex.h>
+#include <nn/os/os_MessageQueue.h>
 #include <nn/util/util_IntrusiveList.h>
 
 namespace nn::atk::detail::driver {
@@ -29,6 +30,8 @@ public:
     static SoundThread& GetInstance();
     // Native caller discards the result; void is inferred.
     void CreateSoundThread(int priority, void* stack, size_t stackSize, int core, u32 affinity);
+    // SoundSystem::Finalize discards the native result; void is inferred.
+    void Destroy();
     void RegisterPlayerCallback(PlayerCallback* callback);
     // Return type inferred from callers that discard the result.
     void UnregisterPlayerCallback(PlayerCallback* callback);
@@ -44,7 +47,9 @@ public:
 
 private:
     fnd::Thread mThread;  // +0x8
-    u8 _1f8[0x348 - 0x1f8];
+    nn::os::MessageQueueType mQueue;  // +0x1f8
+    u64 mQueueBuffer[32];             // +0x240
+    u8 _340[0x348 - 0x340];
     nn::os::MutexType mUserCallbackMutex;  // +0x348
     u8 _368[0x398 - 0x368];
     nn::util::detail::IntrusiveListImplementation mPlayerCallbacks;  // +0x398
